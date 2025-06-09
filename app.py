@@ -224,7 +224,6 @@ if "person" in st.session_state:
             <b>HN:</b> {person.get('HN', '-')}<br>
             <b>วันที่ตรวจ:</b> {person.get('วันที่ตรวจ', '-')}<br>
             <b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}<br>
-            <b>บริษัท:</b> {person.get('บริษัท', '-')}<br>
             <b>โรคประจำตัว:</b> {person.get('โรคประจำตัว', '-')}
         </div>
     </div>

@@ -211,25 +211,17 @@ if "person" in st.session_state:
 
     st.markdown("---")
     st.markdown(f"""
-    <div style='background-color: white; padding: 25px 30px; border-radius: 10px; border: 1px solid #aaa; color: black;'>
-        <div style='text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 5px;'>รายงานผลการตรวจสุขภาพ</div>
-        <div style='text-align: center; font-size: 16px;'>
-            โรงพยาบาลสันทราย 201 หมู่ที่ 11 ถนน เชียงใหม่ - พร้าว<br>
-            ตำบลหนองหาร อำเภอสันทราย เชียงใหม่ 50290 โทร 053 921 199 ต่อ 167
-        </div>
-        <hr style='border: none; border-top: 1px solid #000; margin: 1rem 0;'>
-
-        <div style='font-size: 16px; line-height: 2;'>
-            <b>ชื่อ-สกุล:</b> {person.get('ชื่อ-สกุล', '-')}<br>
-            <b>อายุ:</b> {person.get('อายุ', '-')} ปี &nbsp;&nbsp;&nbsp;&nbsp; <b>เพศ:</b> {person.get('เพศ', '-')}<br>
-            <b>HN:</b> {person.get('HN', '-')} &nbsp;&nbsp;&nbsp;&nbsp; <b>วันที่ตรวจ:</b> {person.get('วันที่ตรวจ', '-')}<br>
-            <b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}<br>
-            <b>บริษัท:</b> {person.get('บริษัท', '-')}<br>
-            <b>โรคประจำตัว:</b> {person.get('โรคประจำตัว', '-')}
-        </div>
+    <div style='font-size: 16px; line-height: 2;'>
+        <b>ชื่อ-สกุล:</b> {person.get('ชื่อ-สกุล', '-')}<br>
+        <b>อายุ:</b> {person.get('อายุ', '-')} ปี &nbsp;&nbsp;&nbsp;&nbsp;
+        <b>เพศ:</b> {person.get('เพศ', '-')}<br>
+        <b>HN:</b> {person.get('HN', '-')} &nbsp;&nbsp;&nbsp;&nbsp;
+        <b>วันที่ตรวจ:</b> {person.get('วันที่ตรวจ', '-')}<br>
+        <b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}<br>
+        <b>บริษัท:</b> {person.get('บริษัท', '-')}<br>
+        <b>โรคประจำตัว:</b> {person.get('โรคประจำตัว', '-')}
     </div>
     """, unsafe_allow_html=True)
-    st.markdown("---")
 
     # ✅ แสดงเลขบัตร / HN / เพศ ด้วยสีขาว (เพื่อ contrast กับพื้นเข้ม)
     st.markdown(f"""

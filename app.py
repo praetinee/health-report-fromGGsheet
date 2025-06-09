@@ -226,31 +226,42 @@ if "person" in st.session_state:
     pulse_value = person.get("pulse", "-")
     pulse_value = f"{pulse_value} ครั้ง/นาที" if pulse_value != "-" else "-"
 
-    st.markdown("---")
     st.markdown(f"""
-    <div style='background-color: #f8f9fa; padding: 20px; border-radius: 10px; border: 1px solid #ccc; color: black;'>
-        <div style='text-align: center; font-size: 20px; font-weight: bold;'>รายงานผลการตรวจสุขภาพ</div>
+    <div style='
+        max-width: 800px;
+        margin: auto;
+        background-color: #f8f9fa;
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid #ccc;
+        color: black;
+        font-size: 16px;
+        line-height: 1.8;
+    '>
+        <div style='text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 5px;'>รายงานผลการตรวจสุขภาพ</div>
         <div style='text-align: center; font-size: 16px;'>วันที่ตรวจ: {person.get('วันที่ตรวจ', '-')}</div>
-        <div style='text-align: center; font-size: 16px; margin-top: 4px;'>
+    
+        <div style='text-align: center; margin-top: 10px;'>
             โรงพยาบาลสันทราย 201 หมู่ที่ 11 ถนน เชียงใหม่ - พร้าว<br>
             ตำบลหนองหาร อำเภอสันทราย เชียงใหม่ 50290 โทร 053 921 199 ต่อ 167
         </div>
-        <hr>
-        <div style='font-size: 16px; line-height: 1.6;'>
-            <b>ชื่อ-สกุล:</b> {person.get('ชื่อ-สกุล', '-')} &nbsp;&nbsp;&nbsp;
-            <b>อายุ:</b> {person.get('อายุ', '-')} ปี &nbsp;&nbsp;&nbsp;
-            <b>เพศ:</b> {person.get('เพศ', '-')} &nbsp;&nbsp;&nbsp;
-            <b>HN:</b> {person.get('HN', '-')} &nbsp;&nbsp;&nbsp;
-            <b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}
+    
+        <hr style='margin: 24px 0;'>
+    
+        <div style='display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 16px;'>
+            <div><b>ชื่อ-สกุล:</b> {person.get('ชื่อ-สกุล', '-')}</div>
+            <div><b>อายุ:</b> {person.get('อายุ', '-')} ปี</div>
+            <div><b>เพศ:</b> {person.get('เพศ', '-')}</div>
+            <div><b>HN:</b> {person.get('HN', '-')}</div>
+            <div><b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}</div>
         </div>
-        <div style='font-size: 16px; line-height: 1.6; margin-top: 8px;'>
-            <b>ความดันโลหิต:</b> {bp_result} &nbsp;&nbsp;&nbsp;
-            <b>ชีพจร:</b> {pulse_value}
+    
+        <div style='display: flex; flex-wrap: wrap; justify-content: space-between;'>
+            <div><b>ความดันโลหิต:</b> {bp_result}</div>
+            <div><b>ชีพจร:</b> {pulse_value}</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
-    st.markdown("---")
-
 
     # ✅ สร้างตารางข้อมูลสุขภาพตามปี
     table_data = {

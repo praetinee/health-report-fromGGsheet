@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 import gspread
 import json
-import matplotlib.pyplot as plt
 from oauth2client.service_account import ServiceAccountCredentials
 
 st.set_page_config(page_title="ระบบรายงานสุขภาพ", layout="wide")
@@ -76,12 +75,6 @@ def interpret_bmi(bmi):
     except (ValueError, TypeError):
         return "-"
 
-def interpret_waist(waist, height):
-    try:
-        return "เกินเกณฑ์" if float(waist) > float(height) else "ปกติ"
-    except (ValueError, TypeError):
-        return "-"
-
 def interpret_bp(sbp, dbp):
     try:
         sbp = float(sbp)
@@ -98,41 +91,6 @@ def interpret_bp(sbp, dbp):
             return "ความดันค่อนข้างสูง"
     except (ValueError, TypeError):
         return "-"
-
-cbc_messages = {
-    2:  "ดูแลสุขภาพ ออกกำลังกาย ทานอาหารมีประโยชน์ ติดตามผลเลือดสม่ำเสมอ",
-    4:  "ควรพบแพทย์เพื่อตรวจหาสาเหตุเกล็ดเลือดต่ำ และเฝ้าระวังอาการผิดปกติ",
-    6:  "ควรตรวจซ้ำเพื่อติดตามเม็ดเลือดขาว และดูแลสุขภาพร่างกายให้แข็งแรง",
-    8:  "ควรพบแพทย์เพื่อตรวจหาสาเหตุภาวะโลหิตจาง และรักษาตามนัด",
-    9:  "ควรพบแพทย์เพื่อตรวจหาและติดตามภาวะโลหิตจางร่วมกับเม็ดเลือดขาวผิดปกติ",
-    10: "ควรพบแพทย์เพื่อตรวจหาสาเหตุเกล็ดเลือดสูง และพิจารณาการรักษา",
-    13: "ควรดูแลสุขภาพ ติดตามภาวะโลหิตจางและเม็ดเลือดขาวผิดปกติอย่างใกล้ชิด",
-}
-
-def cbc_advice(hb, wbc, plt):
-    if all(x in ["", "-", None] for x in [hb, wbc, plt]):
-        return "-"
-    hb = hb.strip()
-    wbc = wbc.strip()
-    plt = plt.strip()
-
-    if plt in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย"]:
-        return cbc_messages[4]
-    if hb == "ปกติ" and wbc == "ปกติ" and plt == "ปกติ":
-        return ""
-    if hb == "พบภาวะโลหิตจาง" and wbc == "ปกติ" and plt == "ปกติ":
-        return cbc_messages[8]
-    if hb == "พบภาวะโลหิตจาง" and wbc in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์"]:
-        return cbc_messages[9]
-    if hb == "พบภาวะโลหิตจางเล็กน้อย" and wbc == "ปกติ" and plt == "ปกติ":
-        return cbc_messages[2]
-    if hb == "ปกติ" and wbc in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์"]:
-        return cbc_messages[6]
-    if plt == "สูงกว่าเกณฑ์":
-        return cbc_messages[10]
-    if hb == "พบภาวะโลหิตจางเล็กน้อย" and wbc in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์"] and plt == "ปกติ":
-        return cbc_messages[13]
-    return "ควรพบแพทย์เพื่อตรวจเพิ่มเติม"
 
 # ==================== UI FORM ====================
 st.markdown("<h1 style='text-align:center;'>ระบบรายงานผลตรวจสุขภาพ</h1>", unsafe_allow_html=True)
@@ -163,10 +121,17 @@ if submitted:
 if "person" in st.session_state:
     person = st.session_state["person"]
 
-    def render_health_report(person):
-        sbp = person.get("SBP", "")
-        dbp = person.get("DBP", "")
-        pulse = person.get("pulse", "-")
+    selected_year = st.selectbox(
+        "📅 เลือกปีที่ต้องการดูผลตรวจรายงาน", 
+        options=sorted(years, reverse=True),
+        format_func=lambda y: f"พ.ศ. {y + 2500}"
+    )
+    selected_cols = columns_by_year[selected_year]
+
+    def render_health_report(person, year_cols):
+        sbp = person.get(year_cols["sbp"], "")
+        dbp = person.get(year_cols["dbp"], "")
+        pulse = person.get(year_cols["pulse"], "-")
 
         if sbp and dbp:
             bp_val = f"{sbp}/{dbp} ม.ม.ปรอท"
@@ -201,8 +166,9 @@ if "person" in st.session_state:
         </div>
         """
 
-    st.markdown(render_health_report(person), unsafe_allow_html=True)
+    st.markdown(render_health_report(person, selected_cols), unsafe_allow_html=True)
 
+    # ==================== HEALTH TABLE ====================
     st.markdown("### 📊 น้ำหนัก / รอบเอว / ความดัน")
     table_data = {
         "ปี พ.ศ.": [],
@@ -240,36 +206,3 @@ if "person" in st.session_state:
 
     html_table = pd.DataFrame(table_data).set_index("ปี พ.ศ.").T.to_html(escape=False)
     st.markdown(html_table, unsafe_allow_html=True)
-
-    # ==================== GRAPH: BMI ====================
-    st.markdown("### 📈 BMI Trend")
-    bmi_data, labels = [], []
-    for y in years:
-        col = columns_by_year[y]
-        try:
-            w = float(person.get(col["weight"], ""))
-            h = float(person.get(col["height"], ""))
-            if w > 0 and h > 0:
-                bmi_val = round(w / ((h / 100) ** 2), 1)
-                bmi_data.append(bmi_val)
-                labels.append(f"B.E. {y + 2500}")
-        except (ValueError, TypeError):
-            continue
-
-    if bmi_data:
-        fig, ax = plt.subplots(figsize=(10, 4))
-        ax.axhspan(30, 40, alpha=0.3, label='Severely Obese')
-        ax.axhspan(25, 30, alpha=0.3, label='Obese')
-        ax.axhspan(23, 25, alpha=0.3, label='Overweight')
-        ax.axhspan(18.5, 23, alpha=0.3, label='Normal')
-        ax.axhspan(0, 18.5, alpha=0.3, label='Underweight')
-        ax.plot(np.arange(len(labels)), bmi_data, marker='o', color='black', linewidth=2, label='BMI')
-        ax.set_xticks(np.arange(len(labels)))
-        ax.set_xticklabels(labels)
-        ax.set_ylabel("BMI", fontsize=12)
-        ax.set_ylim(15, 40)
-        ax.set_title("BMI Over Time", fontsize=14)
-        ax.legend(loc="upper left")
-        st.pyplot(fig)
-    else:
-        st.info("ไม่มีข้อมูล BMI เพียงพอสำหรับแสดงกราฟ")

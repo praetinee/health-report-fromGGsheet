@@ -209,13 +209,17 @@ if submitted:
 if "person" in st.session_state:
     person = st.session_state["person"]
 
+    # เตรียมค่าที่ต้องใช้
+    bp_result = person.get("ผลความดันโลหิต", "-")
+    bp_result = f"{bp_result} ม.ม.ปรอท" if bp_result != "-" else "-"
+    pulse_value = person.get("pulse", "-")
+    pulse_value = f"{pulse_value} ครั้ง/นาที" if pulse_value != "-" else "-"
+
     st.markdown("---")
     st.markdown(f"""
     <div style='background-color: #f8f9fa; padding: 20px; border-radius: 10px; border: 1px solid #ccc; color: black;'>
-        <div style='display: flex; justify-content: space-between; align-items: center;'>
-            <div style='font-size: 20px; font-weight: bold; text-align: center; flex: 1;'>รายงานผลการตรวจสุขภาพ</div>
-            <div style='font-size: 14px; text-align: right;'>วันที่ตรวจ: {person.get('วันที่ตรวจ', '-')}</div>
-        </div>
+        <div style='text-align: center; font-size: 20px; font-weight: bold;'>รายงานผลการตรวจสุขภาพ</div>
+        <div style='text-align: center; font-size: 16px;'>วันที่ตรวจ: {person.get('วันที่ตรวจ', '-')}</div>
         <div style='text-align: center; font-size: 16px; margin-top: 4px;'>
             โรงพยาบาลสันทราย 201 หมู่ที่ 11 ถนน เชียงใหม่ - พร้าว<br>
             ตำบลหนองหาร อำเภอสันทราย เชียงใหม่ 50290 โทร 053 921 199 ต่อ 167
@@ -229,9 +233,9 @@ if "person" in st.session_state:
             <b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}
         </div>
         <div style='font-size: 16px; line-height: 1.6; margin-top: 8px;'>
-            <b>ความดันโลหิต:</b> {person.get('ความดันโลหิต', '-')} &nbsp;&nbsp;&nbsp;
-            <b>ชีพจร:</b> {person.get('pulse', '-')} &nbsp;&nbsp;&nbsp;
-            <b>ผลความดันโลหิต:</b> {person.get('ผลความดันโลหิต', '-')}
+            <b>ความดันโลหิต:</b> - &nbsp;&nbsp;&nbsp;
+            <b>ชีพจร:</b> {pulse_value} &nbsp;&nbsp;&nbsp;
+            <b>ผลความดันโลหิต:</b> {bp_result}
         </div>
     </div>
     """, unsafe_allow_html=True)

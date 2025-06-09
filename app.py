@@ -210,7 +210,18 @@ if "person" in st.session_state:
     person = st.session_state["person"]
 
     # เตรียมค่าที่ต้องใช้
-    bp_result = person.get("ผลความดันโลหิต", "-")
+    # ===== ปีล่าสุด (2568) =====
+    bp_sbp = person.get("SBP", "")
+    bp_dbp = person.get("DBP", "")
+    
+    # ความดันโลหิตค่าตัวเลข
+    if bp_sbp and bp_dbp:
+        bp_numeric = f"{bp_sbp}/{bp_dbp} ม.ม.ปรอท"
+        bp_meaning = interpret_bp(bp_sbp, bp_dbp)
+        bp_result = f"{bp_numeric} - {bp_meaning}"
+    else:
+        bp_result = "-"
+
     bp_result = f"{bp_result} ม.ม.ปรอท" if bp_result != "-" else "-"
     pulse_value = person.get("pulse", "-")
     pulse_value = f"{pulse_value} ครั้ง/นาที" if pulse_value != "-" else "-"
@@ -233,8 +244,8 @@ if "person" in st.session_state:
             <b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}
         </div>
         <div style='font-size: 16px; line-height: 1.6; margin-top: 8px;'>
-            <b>ความดันโลหิต:</b> - &nbsp;&nbsp;&nbsp;
-            <b>ชีพจร:</b> {pulse_value} &nbsp;&nbsp;&nbsp;
+            <b>ความดันโลหิต:</b> {bp_result} &nbsp;&nbsp;&nbsp;
+            <b>ชีพจร:</b> {pulse_value}
             <b>ผลความดันโลหิต:</b> {bp_result}
         </div>
     </div>

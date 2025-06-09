@@ -246,7 +246,6 @@ if "person" in st.session_state:
         <div style='font-size: 16px; line-height: 1.6; margin-top: 8px;'>
             <b>ความดันโลหิต:</b> {bp_result} &nbsp;&nbsp;&nbsp;
             <b>ชีพจร:</b> {pulse_value}
-            <b>ผลความดันโลหิต:</b> {bp_result}
         </div>
     </div>
     """, unsafe_allow_html=True)

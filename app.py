@@ -1,3 +1,4 @@
+import html
 import numpy as np
 import streamlit as st
 import pandas as pd
@@ -179,7 +180,7 @@ if "person" in st.session_state:
         except:
             bmi_val = None
 
-        summary_advice = combined_health_advice(bmi_val, sbp, dbp)
+        summary_advice = html.escape(combined_health_advice(bmi_val, sbp, dbp))
 
         return f"""
         <div style='

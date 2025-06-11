@@ -214,13 +214,21 @@ if "person" in st.session_state:
                 <div><b>HN:</b> {person.get('HN', '-')}</div>
                 <div><b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}</div>
             </div>
-            <div style='margin-top: 12px;'>
-                <b>น้ำหนัก:</b> {weight} &nbsp;&nbsp;&nbsp;
-                <b>ส่วนสูง:</b> {height} &nbsp;&nbsp;&nbsp;
-                <b>รอบเอว:</b> {waist} &nbsp;&nbsp;&nbsp;
-                <b>ความดันโลหิต:</b> {bp_result} &nbsp;&nbsp;&nbsp;
-                <b>ชีพจร:</b> {pulse}
+            <div style='
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 32px;
+                margin-bottom: 16px;
+                text-align: center;
+            '>
+                <div><b>น้ำหนัก:</b> {weight}</div>
+                <div><b>ส่วนสูง:</b> {height}</div>
+                <div><b>รอบเอว:</b> {waist}</div>
+                <div><b>ความดันโลหิต:</b> {bp_result}</div>
+                <div><b>ชีพจร:</b> {pulse}</div>
             </div>
+
             <div style='margin-top: 16px;'>
                 <b>คำแนะนำ:</b> {summary_advice}
             </div>

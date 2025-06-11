@@ -132,16 +132,22 @@ if "person" in st.session_state:
         sbp = person.get(year_cols["sbp"], "")
         dbp = person.get(year_cols["dbp"], "")
         pulse = person.get(year_cols["pulse"], "-")
-
+        weight = person.get(year_cols["weight"], "-")
+        height = person.get(year_cols["height"], "-")
+        waist = person.get(year_cols["waist"], "-")
+    
         if sbp and dbp:
             bp_val = f"{sbp}/{dbp} ม.ม.ปรอท"
             bp_desc = interpret_bp(sbp, dbp)
             bp_result = f"{bp_val} - {bp_desc}"
         else:
             bp_result = "-"
-
+    
         pulse = f"{pulse} ครั้ง/นาที" if pulse != "-" else "-"
-
+        weight = f"{weight} กก." if weight else "-"
+        height = f"{height} ซม." if height else "-"
+        waist = f"{waist} ซม." if waist else "-"
+    
         return f"""
         <div style='max-width: 800px; margin: auto; background-color: #f8f9fa;
             padding: 30px; border-radius: 12px; border: 1px solid #ccc; color: black; font-size: 16px; line-height: 1.8;'>
@@ -160,6 +166,9 @@ if "person" in st.session_state:
                 <div><b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}</div>
             </div>
             <div style='display: flex; flex-wrap: wrap; justify-content: space-between;'>
+                <div><b>น้ำหนัก:</b> {weight}</div>
+                <div><b>ส่วนสูง:</b> {height}</div>
+                <div><b>รอบเอว:</b> {waist}</div>
                 <div><b>ความดันโลหิต:</b> {bp_result}</div>
                 <div><b>ชีพจร:</b> {pulse}</div>
             </div>

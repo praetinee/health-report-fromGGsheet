@@ -1,9 +1,9 @@
-import html
 import numpy as np
 import streamlit as st
 import pandas as pd
 import gspread
 import json
+import html
 from oauth2client.service_account import ServiceAccountCredentials
 
 st.set_page_config(page_title="ระบบรายงานสุขภาพ", layout="wide")
@@ -54,7 +54,6 @@ columns_by_year = {
         "sbp": f"SBP{y}" if y != 68 else "SBP",
         "dbp": f"DBP{y}" if y != 68 else "DBP",
         "pulse": f"pulse{y}" if y != 68 else "pulse",
-        "bmi_value": f"BMI{y}" if y != 68 else "ดัชนีมวลกาย",
     }
     for y in years
 }
@@ -229,8 +228,7 @@ if "person" in st.session_state:
                 <div><b>ความดันโลหิต:</b> {bp_result}</div>
                 <div><b>ชีพจร:</b> {pulse}</div>
             </div>
-
-            <div style='margin-top: 16px;'>
+            <div style='margin-top: 16px; text-align: center;'>
                 <b>คำแนะนำ:</b> {summary_advice}
             </div>
         </div>
@@ -238,7 +236,7 @@ if "person" in st.session_state:
 
     st.markdown(render_health_report(person, selected_cols), unsafe_allow_html=True)
 
-    # ==================== HEALTH TABLE ====================
+    # ==================== TABLE ====================
     st.markdown("### 📊 น้ำหนัก / รอบเอว / ความดัน")
     table_data = {
         "ปี พ.ศ.": [],

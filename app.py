@@ -200,7 +200,14 @@ if "person" in st.session_state:
                 ตำบลหนองหาร อำเภอสันทราย เชียงใหม่ 50290 โทร 053 921 199 ต่อ 167
             </div>
             <hr style='margin: 24px 0;'>
-            <div style='display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 16px;'>
+            <div style='
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 32px;
+                margin-bottom: 20px;
+                text-align: center;
+            '>
                 <div><b>ชื่อ-สกุล:</b> {person.get('ชื่อ-สกุล', '-')}</div>
                 <div><b>อายุ:</b> {person.get('อายุ', '-')} ปี</div>
                 <div><b>เพศ:</b> {person.get('เพศ', '-')}</div>

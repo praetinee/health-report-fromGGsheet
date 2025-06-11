@@ -107,7 +107,7 @@ def combined_health_advice(bmi, sbp, dbp):
     if bmi is None:
         bmi_text = ""
     elif bmi > 30:
-        bmi_text = "มีน้ำหนักมากกว่ามาตรฐานอย่างชัดเจน"
+        bmi_text = "น้ำหนักเกินมาตรฐานมาก"
     elif bmi >= 25:
         bmi_text = "น้ำหนักเกินมาตรฐาน"
     elif bmi < 18.5:
@@ -138,7 +138,7 @@ def combined_health_advice(bmi, sbp, dbp):
         return f"{bp_text} แนะนำให้ดูแลสุขภาพ และติดตามค่าความดันอย่างสม่ำเสมอ"
 
     if bmi_text and bp_text:
-        return f"{bmi_text} และ {bp_text} แนะนำให้ดูแลสุขภาพด้วยการปรับพฤติกรรมด้านอาหารและการออกกำลังกาย"
+        return f"{bmi_text} และ {bp_text} แนะนำให้ปรับพฤติกรรมด้านอาหารและการออกกำลังกาย"
 
     return f"{bmi_text} แนะนำให้ดูแลเรื่องโภชนาการและการออกกำลังกายอย่างเหมาะสม"
 

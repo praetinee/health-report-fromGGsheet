@@ -92,6 +92,23 @@ def interpret_bp(sbp, dbp):
     except (ValueError, TypeError):
         return "-"
 
+def bmi_advice(bmi):
+    try:
+        bmi = float(bmi)
+        if bmi > 30:
+            return "แนะนำให้ดูแลน้ำหนักอย่างเหมาะสม และปรึกษาแพทย์หรือนักโภชนาการหากต้องการคำแนะนำเพิ่มเติม"
+        elif bmi >= 25:
+            return "ควรใส่ใจในการควบคุมอาหาร ออกกำลังกายอย่างสม่ำเสมอ และติดตามสุขภาพอย่างต่อเนื่อง"
+        elif bmi >= 23:
+            return "น้ำหนักอยู่ในช่วงเริ่มต้นของเกณฑ์เกิน ควรดูแลพฤติกรรมสุขภาพเพื่อป้องกันภาวะแทรกซ้อนในอนาคต"
+        elif bmi >= 18.5:
+            return "ดัชนีมวลกายอยู่ในเกณฑ์ปกติ ควรรักษาระดับสุขภาพนี้ต่อไป"
+        else:
+            return "น้ำหนักอยู่ในช่วงต่ำกว่าเกณฑ์ แนะนำให้ดูแลเรื่องโภชนาการและติดตามสุขภาพอย่างสม่ำเสมอ"
+    except (ValueError, TypeError):
+        return "-"
+
+
 # ==================== UI FORM ====================
 st.markdown("<h1 style='text-align:center;'>ระบบรายงานผลตรวจสุขภาพ</h1>", unsafe_allow_html=True)
 st.markdown("<h4 style='text-align:center; color:gray;'>- กลุ่มงานอาชีวเวชกรรม รพ.สันทราย -</h4>", unsafe_allow_html=True)
@@ -147,6 +164,12 @@ if "person" in st.session_state:
         weight = f"{weight} กก." if weight else "-"
         height = f"{height} ซม." if height else "-"
         waist = f"{waist} ซม." if waist else "-"
+        
+        try:
+            bmi_val = float(weight.replace(" กก.", "")) / ((float(height.replace(" ซม.", "")) / 100) ** 2)
+            bmi_tip = bmi_advice(bmi_val)
+        except (ValueError, TypeError, ZeroDivisionError):
+            bmi_tip = "-"
     
         return f"""
         <div style='max-width: 800px; margin: auto; background-color: #f8f9fa;
@@ -171,6 +194,8 @@ if "person" in st.session_state:
                 <div><b>รอบเอว:</b> {waist}</div>
                 <div><b>ความดันโลหิต:</b> {bp_result}</div>
                 <div><b>ชีพจร:</b> {pulse}</div>
+                </div>
+                <div style='margin-top: 12px;'><b>คำแนะนำดัชนีมวลกาย:</b> {bmi_tip}</div>
             </div>
         </div>
         """

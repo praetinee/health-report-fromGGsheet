@@ -92,22 +92,32 @@ def interpret_bp(sbp, dbp):
     except (ValueError, TypeError):
         return "-"
 
-def bmi_advice(bmi):
+def combined_health_advice(bmi, sbp, dbp):
+    advice_parts = []
     try:
         bmi = float(bmi)
         if bmi > 30:
-            return "แนะนำให้ดูแลน้ำหนักอย่างเหมาะสม และปรึกษาแพทย์หรือนักโภชนาการหากต้องการคำแนะนำเพิ่มเติม"
+            advice_parts.append("ควรดูแลเรื่องน้ำหนักโดยเน้นอาหารที่เหมาะสม และอาจปรึกษาผู้เชี่ยวชาญเพื่อแนวทางที่เหมาะกับแต่ละบุคคล")
         elif bmi >= 25:
-            return "ควรใส่ใจในการควบคุมอาหาร ออกกำลังกายอย่างสม่ำเสมอ และติดตามสุขภาพอย่างต่อเนื่อง"
-        elif bmi >= 23:
-            return "น้ำหนักอยู่ในช่วงเริ่มต้นของเกณฑ์เกิน ควรดูแลพฤติกรรมสุขภาพเพื่อป้องกันภาวะแทรกซ้อนในอนาคต"
-        elif bmi >= 18.5:
-            return "ดัชนีมวลกายอยู่ในเกณฑ์ปกติ ควรรักษาระดับสุขภาพนี้ต่อไป"
-        else:
-            return "น้ำหนักอยู่ในช่วงต่ำกว่าเกณฑ์ แนะนำให้ดูแลเรื่องโภชนาการและติดตามสุขภาพอย่างสม่ำเสมอ"
-    except (ValueError, TypeError):
-        return "-"
+            advice_parts.append("แนะนำให้ควบคุมน้ำหนักอย่างเหมาะสม ควบคู่กับการออกกำลังกายอย่างสม่ำเสมอ")
+        elif bmi < 18.5:
+            advice_parts.append("น้ำหนักอยู่ในระดับต่ำกว่ามาตรฐาน ควรดูแลเรื่องโภชนาการและตรวจติดตามสุขภาพต่อเนื่อง")
+    except:
+        pass
 
+    try:
+        sbp = float(sbp)
+        dbp = float(dbp)
+        if sbp >= 140 or dbp >= 90:
+            advice_parts.append("ค่าความดันโลหิตอยู่ในระดับสูง แนะนำให้ติดตามผลซ้ำ และปรับพฤติกรรมสุขภาพ")
+        elif sbp >= 120 or dbp >= 80:
+            advice_parts.append("ความดันโลหิตเริ่มสูง ควรเฝ้าระวังและดูแลสุขภาพให้สมดุล")
+    except:
+        pass
+
+    if advice_parts:
+        return " ".join(advice_parts)
+    return "สุขภาพโดยรวมอยู่ในเกณฑ์ปกติ ควรรักษาพฤติกรรมสุขภาพที่ดีต่อไป"
 
 # ==================== UI FORM ====================
 st.markdown("<h1 style='text-align:center;'>ระบบรายงานผลตรวจสุขภาพ</h1>", unsafe_allow_html=True)
@@ -152,41 +162,39 @@ if "person" in st.session_state:
         weight = person.get(year_cols["weight"], "-")
         height = person.get(year_cols["height"], "-")
         waist = person.get(year_cols["waist"], "-")
-    
+
+        bp_result = "-"
         if sbp and dbp:
             bp_val = f"{sbp}/{dbp} ม.ม.ปรอท"
             bp_desc = interpret_bp(sbp, dbp)
             bp_result = f"{bp_val} - {bp_desc}"
-        else:
-            bp_result = "-"
-    
+
         pulse = f"{pulse} ครั้ง/นาที" if pulse != "-" else "-"
         weight = f"{weight} กก." if weight else "-"
         height = f"{height} ซม." if height else "-"
         waist = f"{waist} ซม." if waist else "-"
-        
+
         try:
             bmi_val = float(weight.replace(" กก.", "")) / ((float(height.replace(" ซม.", "")) / 100) ** 2)
-            bmi_tip = bmi_advice(bmi_val)
-        except (ValueError, TypeError, ZeroDivisionError):
-            bmi_tip = "-"
-    
+        except:
+            bmi_val = None
+
+        summary_advice = combined_health_advice(bmi_val, sbp, dbp)
+
         return f"""
         <div style='
-            width: 794px;
-            min-height: 1123px;
-            margin: auto;
+            max-width: 100%;
             background-color: #ffffff;
-            padding: 48px;
-            border-radius: 6px;
-            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            padding: 36px;
+            border-radius: 8px;
             border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
             font-size: 18px;
-            line-height: 1.9;
+            line-height: 1.8;
             color: black;
         '>
-            <div style='text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 5px;'>รายงานผลการตรวจสุขภาพ</div>
-            <div style='text-align: center; font-size: 16px;'>วันที่ตรวจ: {person.get('วันที่ตรวจ', '-')}</div>
+            <div style='text-align: center; font-size: 22px; font-weight: bold;'>รายงานผลการตรวจสุขภาพ</div>
+            <div style='text-align: center;'>วันที่ตรวจ: {person.get('วันที่ตรวจ', '-')}</div>
             <div style='text-align: center; margin-top: 10px;'>
                 โรงพยาบาลสันทราย 201 หมู่ที่ 11 ถนน เชียงใหม่ - พร้าว<br>
                 ตำบลหนองหาร อำเภอสันทราย เชียงใหม่ 50290 โทร 053 921 199 ต่อ 167
@@ -199,14 +207,15 @@ if "person" in st.session_state:
                 <div><b>HN:</b> {person.get('HN', '-')}</div>
                 <div><b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}</div>
             </div>
-            <div style='display: flex; flex-wrap: wrap; justify-content: space-between;'>
-                <div><b>น้ำหนัก:</b> {weight}</div>
-                <div><b>ส่วนสูง:</b> {height}</div>
-                <div><b>รอบเอว:</b> {waist}</div>
-                <div><b>ความดันโลหิต:</b> {bp_result}</div>
-                <div><b>ชีพจร:</b> {pulse}</div>
-                </div>
-                <div style='margin-top: 12px;'><b>คำแนะนำดัชนีมวลกาย:</b> {bmi_tip}</div>
+            <div style='margin-top: 12px;'>
+                <b>น้ำหนัก:</b> {weight} &nbsp;&nbsp;&nbsp;
+                <b>ส่วนสูง:</b> {height} &nbsp;&nbsp;&nbsp;
+                <b>รอบเอว:</b> {waist} &nbsp;&nbsp;&nbsp;
+                <b>ความดันโลหิต:</b> {bp_result} &nbsp;&nbsp;&nbsp;
+                <b>ชีพจร:</b> {pulse}
+            </div>
+            <div style='margin-top: 16px;'>
+                <b>คำแนะนำ:</b> {summary_advice}
             </div>
         </div>
         """

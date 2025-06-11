@@ -172,8 +172,19 @@ if "person" in st.session_state:
             bmi_tip = "-"
     
         return f"""
-        <div style='max-width: 800px; margin: auto; background-color: #f8f9fa;
-            padding: 30px; border-radius: 12px; border: 1px solid #ccc; color: black; font-size: 16px; line-height: 1.8;'>
+        <div style='
+            width: 794px;
+            min-height: 1123px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 48px;
+            border-radius: 6px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+            font-size: 18px;
+            line-height: 1.9;
+            color: black;
+        '>
             <div style='text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 5px;'>รายงานผลการตรวจสุขภาพ</div>
             <div style='text-align: center; font-size: 16px;'>วันที่ตรวจ: {person.get('วันที่ตรวจ', '-')}</div>
             <div style='text-align: center; margin-top: 10px;'>

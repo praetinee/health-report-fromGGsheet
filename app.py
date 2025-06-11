@@ -93,31 +93,58 @@ def interpret_bp(sbp, dbp):
         return "-"
 
 def combined_health_advice(bmi, sbp, dbp):
-    advice_parts = []
     try:
         bmi = float(bmi)
-        if bmi > 30:
-            advice_parts.append("ควรดูแลเรื่องน้ำหนักโดยเน้นอาหารที่เหมาะสม และอาจปรึกษาผู้เชี่ยวชาญเพื่อแนวทางที่เหมาะกับแต่ละบุคคล")
-        elif bmi >= 25:
-            advice_parts.append("แนะนำให้ควบคุมน้ำหนักอย่างเหมาะสม ควบคู่กับการออกกำลังกายอย่างสม่ำเสมอ")
-        elif bmi < 18.5:
-            advice_parts.append("น้ำหนักอยู่ในระดับต่ำกว่ามาตรฐาน ควรดูแลเรื่องโภชนาการและตรวจติดตามสุขภาพต่อเนื่อง")
     except:
-        pass
-
+        bmi = None
     try:
         sbp = float(sbp)
         dbp = float(dbp)
-        if sbp >= 140 or dbp >= 90:
-            advice_parts.append("ค่าความดันโลหิตอยู่ในระดับสูง แนะนำให้ติดตามผลซ้ำ และปรับพฤติกรรมสุขภาพ")
-        elif sbp >= 120 or dbp >= 80:
-            advice_parts.append("ความดันโลหิตเริ่มสูง ควรเฝ้าระวังและดูแลสุขภาพให้สมดุล")
     except:
-        pass
+        sbp = dbp = None
 
-    if advice_parts:
-        return " ".join(advice_parts)
-    return "สุขภาพโดยรวมอยู่ในเกณฑ์ปกติ ควรรักษาพฤติกรรมสุขภาพที่ดีต่อไป"
+    # คำอธิบาย BMI
+    if bmi is None:
+        bmi_text = ""
+    elif bmi > 30:
+        bmi_text = "มีน้ำหนักมากกว่ามาตรฐานอย่างชัดเจน"
+    elif bmi >= 25:
+        bmi_text = "น้ำหนักเกินมาตรฐาน"
+    elif bmi < 18.5:
+        bmi_text = "น้ำหนักน้อยกว่ามาตรฐาน"
+    else:
+        bmi_text = "น้ำหนักอยู่ในเกณฑ์ปกติ"
+
+    # คำอธิบายความดัน
+    if sbp is None or dbp is None:
+        bp_text = ""
+    elif sbp >= 160 or dbp >= 100:
+        bp_text = "ความดันโลหิตอยู่ในระดับสูงมาก"
+    elif sbp >= 140 or dbp >= 90:
+        bp_text = "ความดันโลหิตอยู่ในระดับสูง"
+    elif sbp >= 120 or dbp >= 80:
+        bp_text = "ความดันโลหิตเริ่มสูง"
+    else:
+        bp_text = "ความดันโลหิตอยู่ในเกณฑ์ปกติ"
+
+    # สร้างคำแนะนำรวม
+    if bmi_text and bp_text:
+        if "ปกติ" in bmi_text and "ปกติ" in bp_text:
+            return "น้ำหนักและความดันโลหิตอยู่ในเกณฑ์ดี แนะนำให้รักษาพฤติกรรมสุขภาพนี้อย่างต่อเนื่อง"
+        else:
+            return f"{bmi_text} และ {bp_text} แนะนำให้ดูแลสุขภาพด้วยการปรับพฤติกรรมด้านอาหารและการออกกำลังกาย"
+    elif bmi_text:
+        if "ปกติ" in bmi_text:
+            return "น้ำหนักอยู่ในเกณฑ์ดี ควรรักษาพฤติกรรมสุขภาพนี้ต่อไป"
+        else:
+            return f"{bmi_text} แนะนำให้ดูแลเรื่องโภชนาการและการออกกำลังกายอย่างเหมาะสม"
+    elif bp_text:
+        if "ปกติ" in bp_text:
+            return "ความดันโลหิตอยู่ในเกณฑ์ดี ควรรักษาพฤติกรรมสุขภาพนี้ต่อไป"
+        else:
+            return f"{bp_text} แนะนำให้เฝ้าระวัง และติดตามความดันอย่างสม่ำเสมอ"
+    else:
+        return "ไม่พบข้อมูลเพียงพอในการประเมินสุขภาพ"
 
 # ==================== UI FORM ====================
 st.markdown("<h1 style='text-align:center;'>ระบบรายงานผลตรวจสุขภาพ</h1>", unsafe_allow_html=True)

@@ -103,7 +103,7 @@ def combined_health_advice(bmi, sbp, dbp):
     except:
         sbp = dbp = None
 
-    # คำอธิบาย BMI
+    # วิเคราะห์ BMI
     if bmi is None:
         bmi_text = ""
     elif bmi > 30:
@@ -115,7 +115,7 @@ def combined_health_advice(bmi, sbp, dbp):
     else:
         bmi_text = "น้ำหนักอยู่ในเกณฑ์ปกติ"
 
-    # คำอธิบายความดัน
+    # วิเคราะห์ความดัน
     if sbp is None or dbp is None:
         bp_text = ""
     elif sbp >= 160 or dbp >= 100:
@@ -125,26 +125,22 @@ def combined_health_advice(bmi, sbp, dbp):
     elif sbp >= 120 or dbp >= 80:
         bp_text = "ความดันโลหิตเริ่มสูง"
     else:
-        bp_text = "ความดันโลหิตอยู่ในเกณฑ์ปกติ"
+        bp_text = ""  # ❗ ถ้าปกติ = ไม่ต้องพูดถึง
 
     # สร้างคำแนะนำรวม
-    if bmi_text and bp_text:
-        if "ปกติ" in bmi_text and "ปกติ" in bp_text:
-            return "น้ำหนักและความดันโลหิตอยู่ในเกณฑ์ดี แนะนำให้รักษาพฤติกรรมสุขภาพนี้อย่างต่อเนื่อง"
-        else:
-            return f"{bmi_text} และ {bp_text} แนะนำให้ดูแลสุขภาพด้วยการปรับพฤติกรรมด้านอาหารและการออกกำลังกาย"
-    elif bmi_text:
-        if "ปกติ" in bmi_text:
-            return "น้ำหนักอยู่ในเกณฑ์ดี ควรรักษาพฤติกรรมสุขภาพนี้ต่อไป"
-        else:
-            return f"{bmi_text} แนะนำให้ดูแลเรื่องโภชนาการและการออกกำลังกายอย่างเหมาะสม"
-    elif bp_text:
-        if "ปกติ" in bp_text:
-            return "ความดันโลหิตอยู่ในเกณฑ์ดี ควรรักษาพฤติกรรมสุขภาพนี้ต่อไป"
-        else:
-            return f"{bp_text} แนะนำให้เฝ้าระวัง และติดตามความดันอย่างสม่ำเสมอ"
-    else:
+    if not bmi_text and not bp_text:
         return "ไม่พบข้อมูลเพียงพอในการประเมินสุขภาพ"
+
+    if "ปกติ" in bmi_text and not bp_text:
+        return "น้ำหนักอยู่ในเกณฑ์ดี ควรรักษาพฤติกรรมสุขภาพนี้ต่อไป"
+
+    if not bmi_text and bp_text:
+        return f"{bp_text} แนะนำให้ดูแลสุขภาพ และติดตามค่าความดันอย่างสม่ำเสมอ"
+
+    if bmi_text and bp_text:
+        return f"{bmi_text} และ {bp_text} แนะนำให้ดูแลสุขภาพด้วยการปรับพฤติกรรมด้านอาหารและการออกกำลังกาย"
+
+    return f"{bmi_text} แนะนำให้ดูแลเรื่องโภชนาการและการออกกำลังกายอย่างเหมาะสม"
 
 # ==================== UI FORM ====================
 st.markdown("<h1 style='text-align:center;'>ระบบรายงานผลตรวจสุขภาพ</h1>", unsafe_allow_html=True)

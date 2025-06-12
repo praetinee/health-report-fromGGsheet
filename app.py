@@ -275,14 +275,17 @@ if "person" in st.session_state:
         waist = f"{waist} ซม." if waist else "-"
     
         try:
-            bmi_val = float(weight.replace(" กก.", "")) / ((float(height.replace(" ซม.", "")) / 100) ** 2)
-        except:
+            weight_val = float(weight.replace(" กก.", "").strip())
+            height_val = float(height.replace(" ซม.", "").strip())
+            bmi_val = weight_val / ((height_val / 100) ** 2)
+        except Exception as e:
+            st.warning(f"❌ ไม่สามารถคำนวณ BMI ได้: {e}")
             bmi_val = None
     
         summary_advice = html.escape(combined_health_advice(bmi_val, sbp, dbp))
     
         return f"""
-        <div style="font-size: 18px; line-height: 1.8; color: black; padding: 24px 8px;">
+        <div style="font-size: 18px; line-height: 1.8; color: inherit; padding: 24px 8px;">
             <div style="text-align: center; font-size: 22px; font-weight: bold;">รายงานผลการตรวจสุขภาพ</div>
             <div style="text-align: center;">วันที่ตรวจ: {person.get('วันที่ตรวจ', '-')}</div>
             <div style="text-align: center; margin-top: 10px;">
@@ -356,16 +359,6 @@ if "person" in st.session_state:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
         df_bt = pd.DataFrame(blood_data)
         st.dataframe(df_bt, use_container_width=True)
-    
-    # ================== CBC คำแนะนำ ==================
-    hb_result = person.get("ผล_Hb", "")
-    wbc_result = person.get("ผล_WBC", "")
-    plt_result = person.get("ผล_Plt", "")
-    
-    cbc_summary = cbc_advice(hb_result, wbc_result, plt_result)
-    if cbc_summary and cbc_summary != "-":
-        st.markdown(f"**📌 คำแนะนำจากผล CBC:** {cbc_summary}")
-
     
     # ================== CBC คำแนะนำ ==================
     cbc_cols = cbc_columns_by_year[selected_year]

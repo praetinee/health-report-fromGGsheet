@@ -330,23 +330,24 @@ if "person" in st.session_state:
             if abnormal(val, low, high) != "normal":
                 add(f'{highlight(f"{label} ผิดปกติ", val, f"ค่าปกติ {tip}")} - อาจเกี่ยวกับ{short}')
     
-        for label, col, low, high, tip, rec, hib, critical in [
-            ("LDL", "LDL", None, 160, "≤160", "ควรลดไขมันอิ่มตัวและหลีกเลี่ยงอาหารทอด", False, True),
-            ("HDL", "HDL", 40, None, ">40", "ควรออกกำลังกายเป็นประจำเพื่อเพิ่มระดับไขมันดี", True, False),
-            ("Triglyceride", "TG", 35, 150, "35 - 150", "ควรลดอาหารมันและหวาน เช่น ของทอด น้ำหวาน", False, False),
-            ("Cholesterol", "Cholesterol", 150, 200, "150 - 200", "ควรควบคุมอาหารและออกกำลังกายอย่างสม่ำเสมอ", False, False),
-            ("GFR", "GFR", 60, None, ">60", "ควรดื่มน้ำให้เพียงพอและลดอาหารเค็ม", True, True),
-            ("Creatinine", "Cr", 0.5, 1.17, "0.5 - 1.17", "ควรตรวจติดตามการทำงานของไตเพิ่มเติม", False, True),
-            ("FBS", "FBS", 74, 106, "74 - 106", "ลดการบริโภคน้ำตาลและควบคุมน้ำหนัก", False, True),
-            ("SGOT", "SGOT", None, 37, "<37", "ควรพักผ่อนให้เพียงพอและหลีกเลี่ยงแอลกอฮอล์", False, False),
-            ("SGPT", "SGPT", None, 41, "<41", "ควรลดอาหารมันและหลีกเลี่ยงยาที่มีผลต่อตับ", False, False),
-        ]:
-            val = person.get(blood_cols.get(col))
-            if abnormal(val, low, high, higher_is_better=hib):
-                if critical:
-                    add(f"{label} ผิดปกติ ({val}) - ค่าดังกล่าวอยู่นอกช่วงมาตรฐาน ({tip}) ควรพบแพทย์เพื่อตรวจเพิ่มเติม", crit=True)
-                else:
-                    add(f"{label} ผิดปกติ ({val}) - ค่าดังกล่าวอยู่นอกช่วงปกติ ({tip}) แนะนำ {rec}")
+                for label, col, low, high, tip, rec, hib, critical in [
+                    ("LDL", "LDL", None, 160, "≤160", "ควรลดไขมันอิ่มตัวและหลีกเลี่ยงอาหารทอด", False, True),
+                    ("HDL", "HDL", 40, None, ">40", "ควรออกกำลังกายเป็นประจำเพื่อเพิ่มระดับไขมันดี", True, False),
+                    ("Triglyceride", "TG", 35, 150, "35 - 150", "ควรลดอาหารมันและหวาน เช่น ของทอด น้ำหวาน", False, False),
+                    ("Cholesterol", "Cholesterol", 150, 200, "150 - 200", "ควรควบคุมอาหารและออกกำลังกายอย่างสม่ำเสมอ", False, False),
+                    ("GFR", "GFR", 60, None, ">60", "ควรดื่มน้ำให้เพียงพอและลดอาหารเค็ม", True, True),
+                    ("Creatinine", "Cr", 0.5, 1.17, "0.5 - 1.17", "ควรตรวจติดตามการทำงานของไตเพิ่มเติม", False, True),
+                    ("FBS", "FBS", 74, 106, "74 - 106", "ลดการบริโภคน้ำตาลและควบคุมน้ำหนัก", False, True),
+                    ("SGOT", "SGOT", None, 37, "<37", "ควรพักผ่อนให้เพียงพอและหลีกเลี่ยงแอลกอฮอล์", False, False),
+                    ("SGPT", "SGPT", None, 41, "<41", "ควรลดอาหารมันและหลีกเลี่ยงยาที่มีผลต่อตับ", False, False),
+                ]:
+                    val = person.get(blood_cols.get(col))
+                    result = abnormal(val, low, high, higher_is_better=hib)
+                    if result != "normal":
+                        if critical:
+                            add(f"{label} ผิดปกติ ({val}) - ค่าดังกล่าวอยู่นอกช่วงมาตรฐาน ({tip}) ควรพบแพทย์เพื่อตรวจเพิ่มเติม", crit=True)
+                        else:
+                            add(f"{label} ผิดปกติ ({val}) - ค่าดังกล่าวอยู่นอกช่วงปกติ ({tip}) แนะนำ {rec}")
     
         def classify_status(val, low=None, high=None):
             status = abnormal(val, low, high)

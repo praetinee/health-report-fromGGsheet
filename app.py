@@ -458,3 +458,4 @@ if "person" in st.session_state:
     cbc_summary = cbc_advice(hb_result, wbc_result, plt_result)
     if cbc_summary and cbc_summary != "-":
         st.markdown(f"📌 <b>คำแนะนำจากผล CBC:</b> {cbc_summary}", unsafe_allow_html=True)
+

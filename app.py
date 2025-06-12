@@ -480,13 +480,12 @@ if "person" in st.session_state:
     with col2:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
-    
+
     # ✅ แสดงคำแนะนำใหม่แบบสรุปอ่อนโยน
-    summary = generate_summary_advice(person, selected_year, cbc_cols, blood_cols, sex)
-    
+    summary = generate_summary_advice(person, cbc_cols, blood_cols, sex)
     st.markdown(f"""
-    <div style='background-color:rgba(0, 0, 0, 0.04); padding: 20px; border-left: 6px solid #999999; border-radius: 8px; margin-top: 24px;'>
+    <div style='background-color:#2e0e0e33; padding:20px; border-left:6px solid #ff4d4d; border-radius:8px; margin-top:24px;'>
         <h4>📌 คำแนะนำโดยรวมจากผลตรวจ:</h4>
-        <p style="white-space: pre-line;">{summary}</p>
+        {summary}
     </div>
     """, unsafe_allow_html=True)

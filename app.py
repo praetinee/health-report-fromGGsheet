@@ -289,15 +289,15 @@ if "person" in st.session_state:
         def abnormal(val, low=None, high=None, higher_is_better=False):
             try:
                 val = float(str(val).replace(",", "").strip())
-                if higher_is_better and val < low:
-                    return "low"
+                if higher_is_better:
+                    return "low" if val < low else "normal"
                 if low is not None and val < low:
                     return "low"
                 if high is not None and val > high:
                     return "high"
+                return "normal"
             except:
                 return None
-            return "normal"
     
         def highlight(label, value, tooltip):
             return f'<span title="{tooltip}">{label} ({value})</span>'

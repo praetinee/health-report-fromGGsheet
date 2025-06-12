@@ -324,9 +324,17 @@ if "person" in st.session_state:
             "ลิมโฟไซต์ (Lymphocyte)", "โมโนไซต์ (Monocyte)", "อีโอซิโนฟิล (Eosinophil)",
             "เบโซฟิล (Basophil)", "เกล็ดเลือด (Platelet)"
         ],
-        "ผลตรวจ": [person.get("Hb"), person.get("Hct"), person.get("WBC"), person.get("Neutrophil"),
-                  person.get("Lymphocyte"), person.get("Monocyte"), person.get("Eosinophil"),
-                  person.get("Basophil"), person.get("Plt")],
+        "ผลตรวจ": [
+            person.get(cbc_cols["hb"]),
+            person.get(cbc_cols["hct"]),
+            person.get(cbc_cols["wbc"]),
+            person.get(cbc_cols["ne"], None),
+            person.get(cbc_cols["ly"], None),
+            person.get(cbc_cols["mo"], None),
+            person.get(cbc_cols["eo"], None),
+            person.get(cbc_cols["ba"], None),
+            person.get(cbc_cols["plt"])
+        ],
         "ค่าปกติ": [
             "ชาย > 13, หญิง >12 g/dl", "ชาย > 39%, หญิง >36%", "4,000-10,000 /cu.mm", "45-70%",
             "20-45%", "3-9%", "0-5%", "0-3%", "150,000-500,000 /cu.mm"
@@ -362,6 +370,33 @@ if "person" in st.session_state:
     
     # ================== CBC คำแนะนำ ==================
     cbc_cols = cbc_columns_by_year[selected_year]
+    cbc_data = {
+        "ชื่อการตรวจ": [
+            "ฮีโมโกลบิน (Hb)", "ฮีมาโทคริต (Hct)", "เม็ดเลือดขาว (wbc)", "นิวโทรฟิล (Neutrophil)",
+            "ลิมโฟไซต์ (Lymphocyte)", "โมโนไซต์ (Monocyte)", "อีโอซิโนฟิล (Eosinophil)",
+            "เบโซฟิล (Basophil)", "เกล็ดเลือด (Platelet)"
+        ],
+        "ผลตรวจ": [
+            person.get(cbc_cols["hb"]),
+            person.get(cbc_cols["hct"]),
+            person.get(cbc_cols["wbc"]),
+            person.get(cbc_cols.get("ne")),
+            person.get(cbc_cols.get("ly")),
+            person.get(cbc_cols.get("mo")),
+            person.get(cbc_cols.get("eo")),
+            person.get(cbc_cols.get("ba")),
+            person.get(cbc_cols["plt"])
+        ],
+        "ค่าปกติ": [
+            "ชาย > 13, หญิง >12 g/dl", "ชาย > 39%, หญิง >36%", "4,000-10,000 /cu.mm", "45-70%",
+            "20-45%", "3-9%", "0-5%", "0-3%", "150,000-500,000 /cu.mm"
+        ]
+    }
+    
+    with col1:
+        st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)")
+        df_cbc = pd.DataFrame(cbc_data)
+        st.dataframe(df_cbc, use_container_width=True)
     hb_result = person.get(cbc_cols["hb"], "")
     wbc_result = person.get(cbc_cols["wbc"], "")
     plt_result = person.get(cbc_cols["plt"], "")

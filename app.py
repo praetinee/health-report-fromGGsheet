@@ -340,52 +340,48 @@ if "person" in st.session_state:
     cbc_cols = cbc_columns_by_year[selected_year]
     blood_cols = blood_columns_by_year[selected_year]
     
-    # เพศมีผลต่อเกณฑ์ Hb / Hct
     sex = person.get("เพศ", "").strip()
     hb_low = 12 if sex == "หญิง" else 13
     hct_low = 36 if sex == "หญิง" else 39
     
-    # ตรวจผิดปกติแล้วไฮไลต์
-    def flag_result(value, low=None, high=None, higher_is_better=False):
+    def check_abnormal(val, low=None, high=None, higher_is_better=False):
         try:
-            if value in ["", "-", None]:
-                return "-", False, False
-            val = float(str(value).replace(",", "").strip())
-            low_flag = (low is not None and val < low)
-            high_flag = (high is not None and val > high)
-            better_flag = higher_is_better and low_flag
-            is_abnormal = low_flag or high_flag or better_flag
-            flag = " ⬇" if low_flag else " ⬆" if high_flag else ""
-            return f"{val:.1f}{flag}", is_abnormal, True
+            if val in ["", "-", None]:
+                return "-", False
+            v = float(str(val).replace(",", "").strip())
+            if higher_is_better:
+                return f"{v:.1f}", v < low
+            if (low is not None and v < low) or (high is not None and v > high):
+                return f"{v:.1f}", True
+            return f"{v:.1f}", False
         except:
-            return "-", False, False
+            return "-", False
     
-    def styled_table(headers, rows, abnormal_flags):
-        style = """
+    def styled_result_table(headers, rows):
+        html = """
         <style>
-            .styled-table td, .styled-table th {
+            .styled-result td {
                 padding: 6px 12px;
-                border: 1px solid #ccc;
+                vertical-align: middle;
             }
-            .styled-table tr:nth-child(even) { background-color: #f9f9f9; }
-            .styled-table .abnormal {
-                background-color: rgba(255, 0, 0, 0.2);
-                font-weight: bold;
-            }
+            .abn { background-color: rgba(255, 0, 0, 0.15); }
         </style>
-        """
-        html = style + "<table class='styled-table'>"
-        html += "<thead><tr>" + "".join(f"<th>{col}</th>" for col in headers) + "</tr></thead><tbody>"
-        for row, abn in zip(rows, abnormal_flags):
-            tr_class = "abnormal" if abn else ""
-            html += f"<tr class='{tr_class}'>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+        <table class='styled-result'>
+            <thead><tr>{}</tr></thead><tbody>
+        """.format("".join(f"<th>{h}</th>" for h in headers))
+    
+        for row in rows:
+            row_html = ""
+            for cell, abn in row:
+                css = " class='abn'" if abn else ""
+                row_html += f"<td{css}>{cell}</td>"
+            html += f"<tr>{row_html}</tr>"
         html += "</tbody></table>"
         return html
     
-    # === CBC DATA ===
-    cbc_tests = [
-        ("ฮีโมโกลบิน (Hb)", "hb", hb_low, None, "ชาย &gt; 13, หญิง &gt; 12 g/dl"),
-        ("ฮีมาโทคริต (Hct)", "hct", hct_low, None, "ชาย &gt; 39%, หญิง &gt; 36%"),
+    cbc_config = [
+        ("ฮีโมโกลบิน (Hb)", "hb", hb_low, None, "ชาย > 13, หญิง > 12 g/dl"),
+        ("ฮีมาโทคริต (Hct)", "hct", hct_low, None, "ชาย > 39%, หญิง > 36%"),
         ("เม็ดเลือดขาว (wbc)", "wbc", 4000, 10000, "4,000 - 10,000 /cu.mm"),
         ("นิวโทรฟิล (Neutrophil)", "ne", 43, 70, "43 - 70%"),
         ("ลิมโฟไซต์ (Lymphocyte)", "ly", 20, 44, "20 - 44%"),
@@ -395,60 +391,75 @@ if "person" in st.session_state:
         ("เกล็ดเลือด (Platelet)", "plt", 150000, 500000, "150,000 - 500,000 /cu.mm"),
     ]
     
-    cbc_rows, cbc_flags = [], []
-    cbc_summary_check = {}
-    for label, key, low, high, normal in cbc_tests:
+    cbc_rows = []
+    cbc_for_advice = {}
+    for label, key, low, high, normal in cbc_config:
         val = person.get(cbc_cols.get(key), "")
-        result, is_abnormal, has_data = flag_result(val, low, high)
-        cbc_rows.append((label, result, normal))
-        cbc_flags.append(is_abnormal)
-        cbc_summary_check[key] = result if has_data else "-"
+        res, is_abn = check_abnormal(val, low, high)
+        cbc_rows.append([(label, False), (res, is_abn), (normal, False)])
+        if key in ["hb", "wbc", "plt"]:
+            try:
+                cbc_for_advice[key] = float(res) if res != "-" else None
+            except:
+                cbc_for_advice[key] = None
     
-    # === BLOOD TEST DATA ===
-    blood_tests = [
+    blood_config = [
         ("น้ำตาลในเลือด (FBS)", "FBS", 74, 106, "74 - 106 mg/dl"),
         ("กรดยูริก (Uric Acid)", "Uric", 2.6, 7.2, "2.6 - 7.2 mg%"),
         ("ALK.POS", "ALK", 30, 120, "30 - 120 U/L"),
-        ("SGOT", "SGOT", None, 37, "&lt; 37 U/L"),
-        ("SGPT", "SGPT", None, 41, "&lt; 41 U/L"),
+        ("SGOT", "SGOT", None, 37, "< 37 U/L"),
+        ("SGPT", "SGPT", None, 41, "< 41 U/L"),
         ("Cholesterol", "Cholesterol", 150, 200, "150 - 200 mg/dl"),
         ("Triglyceride", "TG", 35, 150, "35 - 150 mg/dl"),
-        ("HDL", "HDL", 40, None, "&gt; 40 mg/dl", True),
+        ("HDL", "HDL", 40, None, "> 40 mg/dl", True),
         ("LDL", "LDL", 0, 160, "0 - 160 mg/dl"),
         ("BUN", "BUN", 7.9, 20, "7.9 - 20 mg/dl"),
         ("Creatinine (Cr)", "Cr", 0.5, 1.17, "0.5 - 1.17 mg/dl"),
-        ("GFR", "GFR", 60, None, "&gt; 60 mL/min", True),
+        ("GFR", "GFR", 60, None, "> 60 mL/min", True),
     ]
     
-    blood_rows, blood_flags = [], []
-    for item in blood_tests:
+    blood_rows = []
+    for item in blood_config:
         if len(item) == 6:
-            label, key, low, high, normal, better_high = item
+            label, key, low, high, normal, better = item
         else:
             label, key, low, high, normal = item
-            better_high = False
+            better = False
         val = person.get(blood_cols.get(key), "")
-        result, is_abnormal, _ = flag_result(val, low, high, higher_is_better=better_high)
-        blood_rows.append((label, result, normal))
-        blood_flags.append(is_abnormal)
+        res, is_abn = check_abnormal(val, low, high, higher_is_better=better)
+        blood_rows.append([(label, False), (res, is_abn), (normal, False)])
     
-    # === DISPLAY ===
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)")
-        st.markdown(styled_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows, cbc_flags), unsafe_allow_html=True)
+        st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (CBC)")
+        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows), unsafe_allow_html=True)
     
     with col2:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
-        st.markdown(styled_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows, blood_flags), unsafe_allow_html=True)
+        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
     
-    # === คำแนะนำจากผล CBC (ใช้คอลัมน์ตามสูตร)
-    hb_result = cbc_summary_check.get("hb", "-")
-    wbc_result = cbc_summary_check.get("wbc", "-")
-    plt_result = cbc_summary_check.get("plt", "-")
-    cbc_summary = cbc_advice(hb_result, wbc_result, plt_result)
+    # ✅ คำแนะนำ CBC ตามค่าตัวเลข
+    hb = cbc_for_advice.get("hb")
+    wbc = cbc_for_advice.get("wbc")
+    plt = cbc_for_advice.get("plt")
     
-    if cbc_summary and cbc_summary != "-":
-        st.markdown(f"<div style='margin-top:12px; color:#f33; font-weight:bold;'>📌 คำแนะนำจากผล CBC: {cbc_summary}</div>", unsafe_allow_html=True)
-
+    advice = ""
+    if hb is None and wbc is None and plt is None:
+        advice = "-"
+    elif plt is not None and plt < 150000:
+        advice = "ควรพบแพทย์เพื่อตรวจหาสาเหตุเกล็ดเลือดต่ำ และเฝ้าระวังอาการผิดปกติ"
+    elif hb is not None and hb < hb_low and wbc is not None and (wbc < 4000 or wbc > 10000):
+        advice = "ควรพบแพทย์เพื่อตรวจหาและติดตามภาวะโลหิตจางร่วมกับเม็ดเลือดขาวผิดปกติ"
+    elif hb is not None and hb < hb_low:
+        advice = "ควรพบแพทย์เพื่อตรวจหาสาเหตุภาวะโลหิตจาง และรักษาตามนัด"
+    elif wbc is not None and (wbc < 4000 or wbc > 10000):
+        advice = "ควรตรวจซ้ำเพื่อติดตามเม็ดเลือดขาว และดูแลสุขภาพร่างกายให้แข็งแรง"
+    else:
+        advice = ""
+    
+    if advice:
+        st.markdown(
+            f"<div style='margin-top:16px; color:#b30000; font-weight:bold;'>📌 คำแนะนำจากผล CBC: {advice}</div>",
+            unsafe_allow_html=True
+        )
 

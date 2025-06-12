@@ -549,8 +549,9 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
     else:
         st.markdown(f"""
-        <div style='background-color:#e6ffee; padding: 20px; border-left: 6px solid #00cc66; border-radius: 8px; margin-top: 24px;'>
+        <div style='background-color:rgba(0, 255, 0, 0.08); padding: 20px; border-left: 6px solid #00cc66; border-radius: 8px; margin-top: 24px;'>
             <h4>📌 คำแนะนำโดยรวมจากผลตรวจ:</h4>
-            <p>ไม่พบค่าที่ผิดปกติในระบบเม็ดเลือดหรือเลือดทั่วไป สุขภาพอยู่ในเกณฑ์ดี</p>
+            <p>ไม่พบค่าที่ผิดปกติ สุขภาพอยู่ในเกณฑ์ดี</p>
         </div>
         """, unsafe_allow_html=True)
+

@@ -108,9 +108,9 @@ def cbc_advice(hb_result, wbc_result, plt_result):
     if all(x in ["", "-", None] for x in [hb_result, wbc_result, plt_result]):
         return "-"
 
-    hb = hb_result.strip()
-    wbc = wbc_result.strip()
-    plt = plt_result.strip()
+    hb = str(hb_result).strip()
+    wbc = str(wbc_result).strip()
+    plt = str(plt_result).strip()
 
     if plt in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย"]:
         return cbc_messages[4]
@@ -283,16 +283,12 @@ if "person" in st.session_state:
 
         return f"""
         <div style='
-            max-width: 100%;
-            background-color: #ffffff;
-            padding: 36px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
             font-size: 18px;
             line-height: 1.8;
             color: black;
+            padding: 24px 8px;
         '>
+
             <div style='text-align: center; font-size: 22px; font-weight: bold;'>รายงานผลการตรวจสุขภาพ</div>
             <div style='text-align: center;'>วันที่ตรวจ: {person.get('วันที่ตรวจ', '-')}</div>
             <div style='text-align: center; margin-top: 10px;'>

@@ -262,40 +262,34 @@ if "person" in st.session_state:
         weight = person.get(year_cols["weight"], "-")
         height = person.get(year_cols["height"], "-")
         waist = person.get(year_cols["waist"], "-")
-
+    
         bp_result = "-"
         if sbp and dbp:
             bp_val = f"{sbp}/{dbp} ม.ม.ปรอท"
             bp_desc = interpret_bp(sbp, dbp)
             bp_result = f"{bp_val} - {bp_desc}"
-
+    
         pulse = f"{pulse} ครั้ง/นาที" if pulse != "-" else "-"
         weight = f"{weight} กก." if weight else "-"
         height = f"{height} ซม." if height else "-"
         waist = f"{waist} ซม." if waist else "-"
-
+    
         try:
             bmi_val = float(weight.replace(" กก.", "")) / ((float(height.replace(" ซม.", "")) / 100) ** 2)
         except:
             bmi_val = None
-
+    
         summary_advice = html.escape(combined_health_advice(bmi_val, sbp, dbp))
-
+    
         return f"""
-        <div style='
-            font-size: 18px;
-            line-height: 1.8;
-            color: black;
-            padding: 24px 8px;
-        '>
-
-            <div style='text-align: center; font-size: 22px; font-weight: bold;'>รายงานผลการตรวจสุขภาพ</div>
-            <div style='text-align: center;'>วันที่ตรวจ: {person.get('วันที่ตรวจ', '-')}</div>
-            <div style='text-align: center; margin-top: 10px;'>
+        <div style="font-size: 18px; line-height: 1.8; color: black; padding: 24px 8px;">
+            <div style="text-align: center; font-size: 22px; font-weight: bold;">รายงานผลการตรวจสุขภาพ</div>
+            <div style="text-align: center;">วันที่ตรวจ: {person.get('วันที่ตรวจ', '-')}</div>
+            <div style="text-align: center; margin-top: 10px;">
                 โรงพยาบาลสันทราย 201 หมู่ที่ 11 ถนน เชียงใหม่ - พร้าว<br>
                 ตำบลหนองหาร อำเภอสันทราย เชียงใหม่ 50290 โทร 053 921 199 ต่อ 167
             </div>
-            <hr style='margin: 24px 0;'>
+            <hr style="margin: 24px 0;">
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; margin-bottom: 20px; text-align: center;">
                 <div><b>ชื่อ-สกุล:</b> {person.get('ชื่อ-สกุล', '-')}</div>
                 <div><b>อายุ:</b> {person.get('อายุ', '-')} ปี</div>
@@ -303,14 +297,14 @@ if "person" in st.session_state:
                 <div><b>HN:</b> {person.get('HN', '-')}</div>
                 <div><b>หน่วยงาน:</b> {person.get('หน่วยงาน', '-')}</div>
             </div>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; margin-bottom: 20px; text-align: center;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; margin-bottom: 16px; text-align: center;">
                 <div><b>น้ำหนัก:</b> {weight}</div>
                 <div><b>ส่วนสูง:</b> {height}</div>
                 <div><b>รอบเอว:</b> {waist}</div>
                 <div><b>ความดันโลหิต:</b> {bp_result}</div>
                 <div><b>ชีพจร:</b> {pulse}</div>
             </div>
-            <div style='margin-top: 16px; text-align: center;'>
+            <div style="margin-top: 16px; text-align: center;">
                 <b>คำแนะนำ:</b> {summary_advice}
             </div>
         </div>

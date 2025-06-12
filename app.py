@@ -205,6 +205,25 @@ with st.form("search_form"):
     full_name = col3.text_input("ชื่อ-สกุล")
     submitted = st.form_submit_button("ค้นหา")
 
+# ==================== BLOOD COLUMN MAPPING ====================
+blood_columns_by_year = {
+    y: {
+        "FBS": f"FBS{y}",
+        "Uric": f"Uric Acid{y}",
+        "ALK": f"ALP{y}",
+        "SGOT": f"SGOT{y}",
+        "SGPT": f"SGPT{y}",
+        "Cholesterol": f"CHOL{y}",
+        "TG": f"TGL{y}",
+        "HDL": f"HDL{y}",
+        "LDL": f"LDL{y}",
+        "BUN": f"BUN{y}",
+        "Cr": f"Cr{y}",
+        "GFR": f"GFR{y}",
+    }
+    for y in years
+}
+
 if submitted:
     query = df.copy()
     if id_card.strip():
@@ -333,6 +352,15 @@ if "person" in st.session_state:
             return f"{val:.1f}"
         except:
             return "N/A"
+
+    # แยกค่าปกติของ Hb และ Hct ตามเพศ
+    sex = person.get("เพศ", "").strip()
+    if sex == "หญิง":
+        hb_low = 12
+        hct_low = 36
+    else:
+        hb_low = 13
+        hct_low = 39
     
     cbc_data = {
         "ชื่อการตรวจ": [
@@ -341,8 +369,8 @@ if "person" in st.session_state:
             "เบโซฟิล (Basophil)", "เกล็ดเลือด (Platelet)"
         ],
         "ผลตรวจ": [
-            flag_result(person.get(cbc_cols.get("hb")), low=13),
-            flag_result(person.get(cbc_cols.get("hct")), low=39),
+            flag_result(person.get(cbc_cols.get("hb")), low=hb_low),
+            flag_result(person.get(cbc_cols.get("hct")), low=hct_low),
             flag_result(person.get(cbc_cols.get("wbc")), low=4000, high=10000),
             flag_result(person.get(cbc_cols.get("ne")), low=43, high=70),
             flag_result(person.get(cbc_cols.get("ly")), low=20, high=44),

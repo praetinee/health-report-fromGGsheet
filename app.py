@@ -219,30 +219,30 @@ if submitted:
     else:
         st.session_state["person"] = query.iloc[0]
 
-    from collections import defaultdict
+from collections import defaultdict
 
-    cbc_columns_by_year = defaultdict(dict)
-    
-    for year in range(61, 69):
-        cbc_columns_by_year[year] = {
-            "hb": f"Hb(%)" + str(year),
-            "hct": f"HCT" + str(year),
-            "wbc": f"WBC (cumm)" + str(year),
-            "plt": f"Plt (/mm)" + str(year),
-        }
-    
-        if year == 68:
-            cbc_columns_by_year[year].update({
-                "ne": "Ne (%)68",
-                "ly": "Ly (%)68",
-                "eo": "Eo68",
-                "mo": "M68",
-                "ba": "BA68",
-                "rbc": "RBCmo68",
-                "mcv": "MCV68",
-                "mch": "MCH68",
-                "mchc": "MCHC",
-            })
+cbc_columns_by_year = defaultdict(dict)
+
+for year in range(61, 69):
+    cbc_columns_by_year[year] = {
+        "hb": f"Hb(%)" + str(year),
+        "hct": f"HCT" + str(year),
+        "wbc": f"WBC (cumm)" + str(year),
+        "plt": f"Plt (/mm)" + str(year),
+    }
+
+    if year == 68:
+        cbc_columns_by_year[year].update({
+            "ne": "Ne (%)68",
+            "ly": "Ly (%)68",
+            "eo": "Eo68",
+            "mo": "M68",
+            "ba": "BA68",
+            "rbc": "RBCmo68",
+            "mcv": "MCV68",
+            "mch": "MCH68",
+            "mchc": "MCHC",
+        })
 
 # ==================== DISPLAY ====================
 if "person" in st.session_state:

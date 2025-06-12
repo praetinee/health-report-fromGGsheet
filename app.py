@@ -318,6 +318,9 @@ if "person" in st.session_state:
     # ================== CBC / BLOOD TEST DISPLAY ==================
     st.markdown("### 🧪 รายงานผลตรวจเลือด")
     
+    # เตรียมข้อมูล CBC ตามปีที่เลือก
+    cbc_cols = cbc_columns_by_year[selected_year]
+    
     cbc_data = {
         "ชื่อการตรวจ": [
             "ฮีโมโกลบิน (Hb)", "ฮีมาโทคริต (Hct)", "เม็ดเลือดขาว (wbc)", "นิวโทรฟิล (Neutrophil)",
@@ -325,15 +328,15 @@ if "person" in st.session_state:
             "เบโซฟิล (Basophil)", "เกล็ดเลือด (Platelet)"
         ],
         "ผลตรวจ": [
-            person.get(cbc_cols["hb"]),
-            person.get(cbc_cols["hct"]),
-            person.get(cbc_cols["wbc"]),
-            person.get(cbc_cols["ne"], None),
-            person.get(cbc_cols["ly"], None),
-            person.get(cbc_cols["mo"], None),
-            person.get(cbc_cols["eo"], None),
-            person.get(cbc_cols["ba"], None),
-            person.get(cbc_cols["plt"])
+            person.get(cbc_cols.get("hb"), "-"),
+            person.get(cbc_cols.get("hct"), "-"),
+            person.get(cbc_cols.get("wbc"), "-"),
+            person.get(cbc_cols.get("ne"), "-"),
+            person.get(cbc_cols.get("ly"), "-"),
+            person.get(cbc_cols.get("mo"), "-"),
+            person.get(cbc_cols.get("eo"), "-"),
+            person.get(cbc_cols.get("ba"), "-"),
+            person.get(cbc_cols.get("plt"), "-")
         ],
         "ค่าปกติ": [
             "ชาย > 13, หญิง >12 g/dl", "ชาย > 39%, หญิง >36%", "4,000-10,000 /cu.mm", "45-70%",
@@ -346,9 +349,12 @@ if "person" in st.session_state:
             "น้ำตาลในเลือด (FBS)", "กรดยูริก (Uric acid)", "ALK.POS", "SGOT", "SGPT",
             "Cholesterol", "Triglyceride", "HDL", "LDL", "BUN", "Creatinine (Cr)", "GFR"
         ],
-        "ผลตรวจ": [person.get("FBS"), person.get("Uric"), person.get("ALK"), person.get("SGOT"),
-                  person.get("SGPT"), person.get("Cholesterol"), person.get("TG"), person.get("HDL"),
-                  person.get("LDL"), person.get("BUN"), person.get("Cr"), person.get("GFR")],
+        "ผลตรวจ": [
+            person.get("FBS", "-"), person.get("Uric", "-"), person.get("ALK", "-"),
+            person.get("SGOT", "-"), person.get("SGPT", "-"), person.get("Cholesterol", "-"),
+            person.get("TG", "-"), person.get("HDL", "-"), person.get("LDL", "-"),
+            person.get("BUN", "-"), person.get("Cr", "-"), person.get("GFR", "-")
+        ],
         "ค่าปกติ": [
             "75–106 mg/dl", "2.6–7.2 mg%", "30–120 U/L", "< 37 U/L", "< 45 U/L",
             "150–200 mg/dl", "35–150 mg/dl", "> 40 mg/dl", "0–130 mg/dl",
@@ -368,39 +374,10 @@ if "person" in st.session_state:
         df_bt = pd.DataFrame(blood_data)
         st.dataframe(df_bt, use_container_width=True)
     
-    # ================== CBC คำแนะนำ ==================
-    cbc_cols = cbc_columns_by_year[selected_year]
-    cbc_data = {
-        "ชื่อการตรวจ": [
-            "ฮีโมโกลบิน (Hb)", "ฮีมาโทคริต (Hct)", "เม็ดเลือดขาว (wbc)", "นิวโทรฟิล (Neutrophil)",
-            "ลิมโฟไซต์ (Lymphocyte)", "โมโนไซต์ (Monocyte)", "อีโอซิโนฟิล (Eosinophil)",
-            "เบโซฟิล (Basophil)", "เกล็ดเลือด (Platelet)"
-        ],
-        "ผลตรวจ": [
-            person.get(cbc_cols["hb"]),
-            person.get(cbc_cols["hct"]),
-            person.get(cbc_cols["wbc"]),
-            person.get(cbc_cols.get("ne")),
-            person.get(cbc_cols.get("ly")),
-            person.get(cbc_cols.get("mo")),
-            person.get(cbc_cols.get("eo")),
-            person.get(cbc_cols.get("ba")),
-            person.get(cbc_cols["plt"])
-        ],
-        "ค่าปกติ": [
-            "ชาย > 13, หญิง >12 g/dl", "ชาย > 39%, หญิง >36%", "4,000-10,000 /cu.mm", "45-70%",
-            "20-45%", "3-9%", "0-5%", "0-3%", "150,000-500,000 /cu.mm"
-        ]
-    }
-    
-    with col1:
-        st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)")
-        df_cbc = pd.DataFrame(cbc_data)
-        st.dataframe(df_cbc, use_container_width=True)
-    hb_result = person.get(cbc_cols["hb"], "")
-    wbc_result = person.get(cbc_cols["wbc"], "")
-    plt_result = person.get(cbc_cols["plt"], "")
-
+    # คำแนะนำ CBC
+    hb_result = person.get(cbc_cols.get("hb"), "")
+    wbc_result = person.get(cbc_cols.get("wbc"), "")
+    plt_result = person.get(cbc_cols.get("plt"), "")
     
     cbc_summary = cbc_advice(hb_result, wbc_result, plt_result)
     if cbc_summary and cbc_summary != "-":

@@ -283,97 +283,98 @@ if "person" in st.session_state:
     st.markdown(render_health_report(person, selected_cols), unsafe_allow_html=True)
 
     # ================== CBC / BLOOD TEST DISPLAY ==================
-    def generate_summary_advice(person, selected_year, cbc_cols, blood_cols, sex):
+    def generate_summary_advice(person, cbc_cols, blood_cols, sex):
         messages = []
     
         def abnormal(val, low=None, high=None, higher_is_better=False):
             try:
                 val = float(str(val).replace(",", "").strip())
-                if higher_is_better:
-                    if val < low:
-                        return "low"
-                else:
-                    if low is not None and val < low:
-                        return "low"
-                    if high is not None and val > high:
-                        return "high"
+                if higher_is_better and val < low:
+                    return "low"
+                if low is not None and val < low:
+                    return "low"
+                if high is not None and val > high:
+                    return "high"
             except:
                 return None
             return "normal"
     
+        def highlight(label, value, tooltip):
+            return f'<span title="{tooltip}">{label} ({value})</span>'
+    
         hb = person.get(cbc_cols.get("hb"))
         hb_limit = 12 if sex == "หญิง" else 13
         if abnormal(hb, low=hb_limit) == "low":
-            messages.append(f"🔸 Hb ต่ำ ({hb}) - แนะนำเพิ่มอาหารที่มีธาตุเหล็ก")
+            messages.append(f'🔸 {highlight("Hb ต่ำ", hb, "Hb ควร >12 สำหรับหญิง และ >13 สำหรับชาย")} - ทานอาหารที่มีธาตุเหล็ก')
     
         wbc = person.get(cbc_cols.get("wbc"))
         if abnormal(wbc, low=4000, high=10000):
-            messages.append(f"🔸 เม็ดเลือดขาวผิดปกติ ({wbc}) - ควรดูแลร่างกายให้แข็งแรง")
+            messages.append(f'🔸 {highlight("WBC ผิดปกติ", wbc, "ค่าปกติ 4,000 - 10,000")} - ดูแลร่างกายให้แข็งแรง')
     
         plt = person.get(cbc_cols.get("plt"))
         if abnormal(plt, low=150000, high=500000):
-            messages.append(f"🔸 เกล็ดเลือดผิดปกติ ({plt}) - เฝ้าระวังอาการผิดปกติ เช่น เลือดออกง่าย")
+            messages.append(f'🔸 {highlight("เกล็ดเลือดผิดปกติ", plt, "ค่าปกติ 150,000 - 500,000")} - เฝ้าระวังอาการเลือดออกง่าย')
     
         ne = person.get(cbc_cols.get("ne"))
-        if abnormal(ne, 43, 70):
-            messages.append(f"🔸 Neutrophil ผิดปกติ ({ne}) - อาจเกี่ยวข้องกับภูมิคุ้มกัน")
+        if abnormal(ne, low=43, high=70):
+            messages.append(f'🔸 {highlight("Neutrophil ผิดปกติ", ne, "ค่าปกติ 43 - 70%")} - อาจสัมพันธ์กับภูมิคุ้มกัน')
     
         ly = person.get(cbc_cols.get("ly"))
-        if abnormal(ly, 20, 44):
-            messages.append(f"🔸 Lymphocyte ผิดปกติ ({ly}) - อาจเกิดจากการติดเชื้อไวรัส")
+        if abnormal(ly, low=20, high=44):
+            messages.append(f'🔸 {highlight("Lymphocyte ผิดปกติ", ly, "ค่าปกติ 20 - 44%")} - อาจเกี่ยวข้องกับไวรัส')
     
         mo = person.get(cbc_cols.get("mo"))
-        if abnormal(mo, 3, 9):
-            messages.append(f"🔸 Monocyte ผิดปกติ ({mo}) - อาจเกี่ยวกับการอักเสบเรื้อรัง")
+        if abnormal(mo, low=3, high=9):
+            messages.append(f'🔸 {highlight("Monocyte ผิดปกติ", mo, "ค่าปกติ 3 - 9%")} - เฝ้าระวังภาวะอักเสบ')
     
         eo = person.get(cbc_cols.get("eo"))
-        if abnormal(eo, 0, 9):
-            messages.append(f"🔸 Eosinophil ผิดปกติ ({eo}) - อาจเกี่ยวกับภูมิแพ้หรือพยาธิ")
+        if abnormal(eo, low=0, high=9):
+            messages.append(f'🔸 {highlight("Eosinophil ผิดปกติ", eo, "ค่าปกติ 0 - 9%")} - อาจเกี่ยวข้องกับภูมิแพ้')
     
         ba = person.get(cbc_cols.get("ba"))
-        if abnormal(ba, 0, 3):
-            messages.append(f"🔸 Basophil ผิดปกติ ({ba}) - อาจเกี่ยวกับการแพ้")
+        if abnormal(ba, low=0, high=3):
+            messages.append(f'🔸 {highlight("Basophil ผิดปกติ", ba, "ค่าปกติ 0 - 3%")} - อาจสัมพันธ์กับภูมิแพ้')
     
         ldl = person.get(blood_cols.get("LDL"))
         if abnormal(ldl, high=160):
-            messages.append(f"🔸 LDL สูง ({ldl}) - ลดอาหารมันและไขมันอิ่มตัว")
+            messages.append(f'🔸 {highlight("LDL สูง", ldl, "ควรไม่เกิน 160")} - ลดของมันและไขมันอิ่มตัว')
     
         hdl = person.get(blood_cols.get("HDL"))
         if abnormal(hdl, low=40, higher_is_better=True):
-            messages.append(f"🔸 HDL ต่ำ ({hdl}) - เพิ่มการออกกำลังกาย")
+            messages.append(f'🔸 {highlight("HDL ต่ำ", hdl, "ควร > 40")} - เพิ่มกิจกรรมทางกาย')
     
         tg = person.get(blood_cols.get("TG"))
-        if abnormal(tg, 35, 150):
-            messages.append(f"🔸 Triglyceride ผิดปกติ ({tg}) - ลดน้ำตาลและของทอด")
+        if abnormal(tg, low=35, high=150):
+            messages.append(f'🔸 {highlight("Triglyceride ผิดปกติ", tg, "ควรอยู่ในช่วง 35 - 150")} - ลดของทอด หวาน')
     
         chol = person.get(blood_cols.get("Cholesterol"))
-        if abnormal(chol, 150, 200):
-            messages.append(f"🔸 Cholesterol สูง ({chol}) - คุมอาหารและออกกำลังกาย")
+        if abnormal(chol, low=150, high=200):
+            messages.append(f'🔸 {highlight("Cholesterol สูง", chol, "ควรอยู่ในช่วง 150 - 200")} - คุมอาหาร ออกกำลังกาย')
     
         gfr = person.get(blood_cols.get("GFR"))
         if abnormal(gfr, low=60, higher_is_better=True):
-            messages.append(f"🔸 GFR ต่ำ ({gfr}) - ลดเค็ม ดื่มน้ำมากขึ้น")
+            messages.append(f'🔸 {highlight("GFR ต่ำ", gfr, "ควร > 60")} - ดื่มน้ำเพียงพอ และลดเค็ม')
     
         cr = person.get(blood_cols.get("Cr"))
-        if abnormal(cr, 0.5, 1.17):
-            messages.append(f"🔸 Creatinine ผิดปกติ ({cr}) - เฝ้าระวังไต")
+        if abnormal(cr, low=0.5, high=1.17):
+            messages.append(f'🔸 {highlight("Creatinine ผิดปกติ", cr, "ควรอยู่ในช่วง 0.5 - 1.17")} - ติดตามการทำงานของไต')
     
         fbs = person.get(blood_cols.get("FBS"))
-        if abnormal(fbs, 74, 106):
-            messages.append(f"🔸 น้ำตาลในเลือดสูง ({fbs}) - ลดหวานและควบคุมน้ำหนัก")
+        if abnormal(fbs, low=74, high=106) == "high":
+            messages.append(f'🔸 {highlight("FBS สูง", fbs, "ควรอยู่ในช่วง 74 - 106")} - ลดหวาน ออกกำลังกาย')
     
         sgot = person.get(blood_cols.get("SGOT"))
         if abnormal(sgot, high=37):
-            messages.append(f"🔸 SGOT สูง ({sgot}) - หลีกเลี่ยงแอลกอฮอล์และของมัน")
+            messages.append(f'🔸 {highlight("SGOT สูง", sgot, "ควร < 37")} - พักผ่อนให้เพียงพอ')
     
         sgpt = person.get(blood_cols.get("SGPT"))
         if abnormal(sgpt, high=41):
-            messages.append(f"🔸 SGPT สูง ({sgpt}) - พักผ่อนและติดตามผลซ้ำ")
+            messages.append(f'🔸 {highlight("SGPT สูง", sgpt, "ควร < 41")} - หลีกเลี่ยงแอลกอฮอล์และของทอด')
     
         if not messages:
-            return "✅ ไม่พบค่าที่ผิดปกติ สุขภาพอยู่ในเกณฑ์ดี"
+            return """✅ <span title="ไม่มีค่าที่อยู่นอกเกณฑ์">ไม่พบค่าที่ผิดปกติ</span> สุขภาพอยู่ในเกณฑ์ดี ✅"""
     
-        return "🩺 ผลการประเมิน:\n\n" + "\n".join(messages) + "\n\n📌 หากมีอาการผิดปกติหรือกังวลใจ ควรปรึกษาแพทย์"
+        return "<br>".join(messages) + "<br><br>📌 หากมีอาการผิดปกติ ควรปรึกษาแพทย์"
 
     st.markdown("### 🧪 รายงานผลตรวจเลือด")
     

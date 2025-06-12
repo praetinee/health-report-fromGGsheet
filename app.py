@@ -336,45 +336,6 @@ if "person" in st.session_state:
 
     st.markdown(render_health_report(person, selected_cols), unsafe_allow_html=True)
 
-    # ==================== TABLE ====================
-    st.markdown("### 📊 น้ำหนัก / รอบเอว / ความดัน")
-    table_data = {
-        "ปี พ.ศ.": [],
-        "น้ำหนัก (กก.)": [],
-        "ส่วนสูง (ซม.)": [],
-        "รอบเอว (ซม.)": [],
-        "ความดัน (mmHg)": [],
-        "BMI (แปลผล)": [],
-    }
-
-    for y in years:
-        col = columns_by_year[y]
-        w, h, waist, sbp, dbp = [person.get(col[k], "") for k in ["weight", "height", "waist", "sbp", "dbp"]]
-
-        try:
-            bmi = round(float(w) / ((float(h) / 100) ** 2), 1)
-            bmi_str = f"{bmi}<br><span style='font-size: 13px; color: gray;'>{interpret_bmi(bmi)}</span>"
-        except (ValueError, TypeError, ZeroDivisionError):
-            bmi_str = "-"
-
-        try:
-            if sbp or dbp:
-                bp_str = f"{sbp}/{dbp}<br><span style='font-size: 13px; color: gray;'>{interpret_bp(sbp, dbp)}</span>"
-            else:
-                bp_str = "-"
-        except (ValueError, TypeError):
-            bp_str = "-"
-
-        table_data["ปี พ.ศ."].append(y + 2500)
-        table_data["น้ำหนัก (กก.)"].append(w or "-")
-        table_data["ส่วนสูง (ซม.)"].append(h or "-")
-        table_data["รอบเอว (ซม.)"].append(waist or "-")
-        table_data["ความดัน (mmHg)"].append(bp_str)
-        table_data["BMI (แปลผล)"].append(bmi_str)
-
-    html_table = pd.DataFrame(table_data).set_index("ปี พ.ศ.").T.to_html(escape=False)
-    st.markdown(html_table, unsafe_allow_html=True)
-
     # ================== CBC / BLOOD TEST DISPLAY ==================
     st.markdown("### 🧪 รายงานผลตรวจเลือด")
     

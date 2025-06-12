@@ -367,12 +367,12 @@ if "person" in st.session_state:
     with col1:
         st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)")
         df_cbc = pd.DataFrame(cbc_data)
-        st.dataframe(df_cbc, use_container_width=True)
+        st.table(df_cbc)
     
     with col2:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
         df_bt = pd.DataFrame(blood_data)
-        st.dataframe(df_bt, use_container_width=True)
+        st.table(df_bt)
     
     # คำแนะนำ CBC
     hb_result = person.get(cbc_cols.get("hb"), "")

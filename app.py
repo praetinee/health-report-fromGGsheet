@@ -349,113 +349,106 @@ if "person" in st.session_state:
     def flag_result(value, low=None, high=None, higher_is_better=False):
         try:
             if value in ["", "-", None]:
-                return "-", False
+                return "-", False, False
             val = float(str(value).replace(",", "").strip())
-            if higher_is_better and val < low:
-                return f"{val:.1f} ⬇", True
-            if low is not None and val < low:
-                return f"{val:.1f} ⬇", True
-            if high is not None and val > high:
-                return f"{val:.1f} ⬆", True
-            return f"{val:.1f}", False
+            low_flag = (low is not None and val < low)
+            high_flag = (high is not None and val > high)
+            better_flag = higher_is_better and low_flag
+            is_abnormal = low_flag or high_flag or better_flag
+            flag = " ⬇" if low_flag else " ⬆" if high_flag else ""
+            return f"{val:.1f}{flag}", is_abnormal, True
         except:
-            return "-", False
+            return "-", False, False
     
-    def styled_table(data):
-        html = """
+    def styled_table(headers, rows, abnormal_flags):
+        style = """
         <style>
-        .cbc-table td, .cbc-table th {
-            padding: 6px 12px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        .cbc-table tr:nth-child(even) { background-color: #f9f9f9; }
-        .cbc-table .abnormal { background-color: #ffe6e6; }
+            .styled-table td, .styled-table th {
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+            }
+            .styled-table tr:nth-child(even) { background-color: #f9f9f9; }
+            .styled-table .abnormal {
+                background-color: rgba(255, 0, 0, 0.2);
+                font-weight: bold;
+            }
         </style>
-        <table class='cbc-table'>
-            <thead>
-                <tr><th>ชื่อการตรวจ</th><th>ผลตรวจ</th><th>ค่าปกติ</th></tr>
-            </thead>
-            <tbody>
         """
-        for name, result, normal, abnormal in zip(*data):
-            row_class = "abnormal" if abnormal else ""
-            html += f"<tr class='{row_class}'><td>{name}</td><td>{result}</td><td>{normal}</td></tr>"
+        html = style + "<table class='styled-table'>"
+        html += "<thead><tr>" + "".join(f"<th>{col}</th>" for col in headers) + "</tr></thead><tbody>"
+        for row, abn in zip(rows, abnormal_flags):
+            tr_class = "abnormal" if abn else ""
+            html += f"<tr class='{tr_class}'>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
         html += "</tbody></table>"
         return html
     
-    # === CBC Data ===
-    cbc_names = [
-        "ฮีโมโกลบิน (Hb)", "ฮีมาโทคริต (Hct)", "เม็ดเลือดขาว (wbc)", "นิวโทรฟิล (Neutrophil)",
-        "ลิมโฟไซต์ (Lymphocyte)", "โมโนไซต์ (Monocyte)", "อีโอซิโนฟิล (Eosinophil)",
-        "เบโซฟิล (Basophil)", "เกล็ดเลือด (Platelet)"
-    ]
-    cbc_lows = [hb_low, hct_low, 4000, 43, 20, 3, 0, 0, 150000]
-    cbc_highs = [None, None, 10000, 70, 44, 9, 9, 3, 500000]
-    cbc_normals = [
-        "ชาย &gt; 13, หญิง &gt; 12 g/dl",
-        "ชาย &gt; 39%, หญิง &gt; 36%",
-        "4,000 - 10,000 /cu.mm",
-        "43 - 70%",
-        "20 - 44%",
-        "3 - 9%",
-        "0 - 9%",
-        "0 - 3%",
-        "150,000 - 500,000 /cu.mm"
+    # === CBC DATA ===
+    cbc_tests = [
+        ("ฮีโมโกลบิน (Hb)", "hb", hb_low, None, "ชาย &gt; 13, หญิง &gt; 12 g/dl"),
+        ("ฮีมาโทคริต (Hct)", "hct", hct_low, None, "ชาย &gt; 39%, หญิง &gt; 36%"),
+        ("เม็ดเลือดขาว (wbc)", "wbc", 4000, 10000, "4,000 - 10,000 /cu.mm"),
+        ("นิวโทรฟิล (Neutrophil)", "ne", 43, 70, "43 - 70%"),
+        ("ลิมโฟไซต์ (Lymphocyte)", "ly", 20, 44, "20 - 44%"),
+        ("โมโนไซต์ (Monocyte)", "mo", 3, 9, "3 - 9%"),
+        ("อีโอซิโนฟิล (Eosinophil)", "eo", 0, 9, "0 - 9%"),
+        ("เบโซฟิล (Basophil)", "ba", 0, 3, "0 - 3%"),
+        ("เกล็ดเลือด (Platelet)", "plt", 150000, 500000, "150,000 - 500,000 /cu.mm"),
     ]
     
-    cbc_results, cbc_abnormals = [], []
-    for key, low, high in zip(["hb", "hct", "wbc", "ne", "ly", "mo", "eo", "ba", "plt"], cbc_lows, cbc_highs):
-        res, abn = flag_result(person.get(cbc_cols.get(key)), low=low, high=high)
-        cbc_results.append(res)
-        cbc_abnormals.append(abn)
+    cbc_rows, cbc_flags = [], []
+    cbc_summary_check = {}
+    for label, key, low, high, normal in cbc_tests:
+        val = person.get(cbc_cols.get(key), "")
+        result, is_abnormal, has_data = flag_result(val, low, high)
+        cbc_rows.append((label, result, normal))
+        cbc_flags.append(is_abnormal)
+        cbc_summary_check[key] = result if has_data else "-"
     
-    # === Blood Test Data ===
-    blood_names = [
-        "น้ำตาลในเลือด (FBS)", "กรดยูริก (Uric Acid)", "ALK.POS", "SGOT", "SGPT",
-        "Cholesterol", "Triglyceride", "HDL", "LDL", "BUN", "Creatinine (Cr)", "GFR"
-    ]
-    blood_keys = ["FBS", "Uric", "ALK", "SGOT", "SGPT", "Cholesterol", "TG", "HDL", "LDL", "BUN", "Cr", "GFR"]
-    blood_lows = [74, 2.6, 30, None, None, 150, 35, 40, 0, 7.9, 0.5, 60]
-    blood_highs = [106, 7.2, 120, 37, 41, 200, 150, None, 160, 20, 1.17, None]
-    blood_better_high = [False]*7 + [True] + [False]*4
-    blood_normals = [
-        "74 - 106 mg/dl",
-        "2.6 - 7.2 mg%",
-        "30 - 120 U/L",
-        "&lt; 37 U/L",
-        "&lt; 41 U/L",
-        "150 - 200 mg/dl",
-        "35 - 150 mg/dl",
-        "&gt; 40 mg/dl",
-        "0 - 160 mg/dl",
-        "7.9 - 20 mg/dl",
-        "0.5 - 1.17 mg/dl",
-        "&gt; 60 mL/min"
+    # === BLOOD TEST DATA ===
+    blood_tests = [
+        ("น้ำตาลในเลือด (FBS)", "FBS", 74, 106, "74 - 106 mg/dl"),
+        ("กรดยูริก (Uric Acid)", "Uric", 2.6, 7.2, "2.6 - 7.2 mg%"),
+        ("ALK.POS", "ALK", 30, 120, "30 - 120 U/L"),
+        ("SGOT", "SGOT", None, 37, "&lt; 37 U/L"),
+        ("SGPT", "SGPT", None, 41, "&lt; 41 U/L"),
+        ("Cholesterol", "Cholesterol", 150, 200, "150 - 200 mg/dl"),
+        ("Triglyceride", "TG", 35, 150, "35 - 150 mg/dl"),
+        ("HDL", "HDL", 40, None, "&gt; 40 mg/dl", True),
+        ("LDL", "LDL", 0, 160, "0 - 160 mg/dl"),
+        ("BUN", "BUN", 7.9, 20, "7.9 - 20 mg/dl"),
+        ("Creatinine (Cr)", "Cr", 0.5, 1.17, "0.5 - 1.17 mg/dl"),
+        ("GFR", "GFR", 60, None, "&gt; 60 mL/min", True),
     ]
     
-    blood_results, blood_abnormals = [], []
-    for key, low, high, better_high in zip(blood_keys, blood_lows, blood_highs, blood_better_high):
-        res, abn = flag_result(person.get(blood_cols.get(key)), low=low, high=high, higher_is_better=better_high)
-        blood_results.append(res)
-        blood_abnormals.append(abn)
+    blood_rows, blood_flags = [], []
+    for item in blood_tests:
+        if len(item) == 6:
+            label, key, low, high, normal, better_high = item
+        else:
+            label, key, low, high, normal = item
+            better_high = False
+        val = person.get(blood_cols.get(key), "")
+        result, is_abnormal, _ = flag_result(val, low, high, higher_is_better=better_high)
+        blood_rows.append((label, result, normal))
+        blood_flags.append(is_abnormal)
     
     # === DISPLAY ===
     col1, col2 = st.columns(2)
-    
     with col1:
         st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)")
-        st.markdown(styled_table([cbc_names, cbc_results, cbc_normals, cbc_abnormals]), unsafe_allow_html=True)
+        st.markdown(styled_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows, cbc_flags), unsafe_allow_html=True)
     
     with col2:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
-        st.markdown(styled_table([blood_names, blood_results, blood_normals, blood_abnormals]), unsafe_allow_html=True)
+        st.markdown(styled_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows, blood_flags), unsafe_allow_html=True)
     
-    # ✅ คำแนะนำ CBC หากผิดปกติ
-    hb_result = person.get(cbc_cols.get("hb"), "")
-    wbc_result = person.get(cbc_cols.get("wbc"), "")
-    plt_result = person.get(cbc_cols.get("plt"), "")
+    # === คำแนะนำจากผล CBC (ใช้คอลัมน์ตามสูตร)
+    hb_result = cbc_summary_check.get("hb", "-")
+    wbc_result = cbc_summary_check.get("wbc", "-")
+    plt_result = cbc_summary_check.get("plt", "-")
     cbc_summary = cbc_advice(hb_result, wbc_result, plt_result)
+    
     if cbc_summary and cbc_summary != "-":
-        st.markdown(f"📌 <b>คำแนะนำจากผล CBC:</b> {cbc_summary}", unsafe_allow_html=True)
+        st.markdown(f"<div style='margin-top:12px; color:#f33; font-weight:bold;'>📌 คำแนะนำจากผล CBC: {cbc_summary}</div>", unsafe_allow_html=True)
+
 

@@ -360,7 +360,6 @@ if "person" in st.session_state:
             "150–200 mg/dl", "35–150 mg/dl", "> 40 mg/dl", "0–130 mg/dl",
             "7.5–20 mg/dl", "0.5–1.7 mg/dl", "> 60 mL/min"
         ]
-
     }
     
     col1, col2 = st.columns(2)
@@ -375,7 +374,7 @@ if "person" in st.session_state:
         df_bt = pd.DataFrame(blood_data)
         st.table(df_bt)
     
-    # คำแนะนำ CBC
+    # ================== CBC คำแนะนำ ==================
     hb_result = person.get(cbc_cols.get("hb"), "")
     wbc_result = person.get(cbc_cols.get("wbc"), "")
     plt_result = person.get(cbc_cols.get("plt"), "")

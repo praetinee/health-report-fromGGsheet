@@ -333,49 +333,38 @@ if "person" in st.session_state:
     st.markdown(render_health_report(person, selected_cols), unsafe_allow_html=True)
 
     # ================== CBC / BLOOD TEST DISPLAY ==================
-    st.markdown("### 🧪 รายงานผลตรวจเลือด")
+    cbc_cols = cbc_columns_by_year[selected_year]
+    hb_val = person.get(cbc_cols["hb"], "")
+    hct_val = person.get(cbc_cols["hct"], "")
+    wbc_val = person.get(cbc_cols["wbc"], "")
+    plt_val = person.get(cbc_cols["plt"], "")
     
     cbc_data = {
         "ชื่อการตรวจ": [
-            "ฮีโมโกลบิน (Hb)", "ฮีมาโทคริต (Hct)", "เม็ดเลือดขาว (wbc)", "นิวโทรฟิล (Neutrophil)",
-            "ลิมโฟไซต์ (Lymphocyte)", "โมโนไซต์ (Monocyte)", "อีโอซิโนฟิล (Eosinophil)",
-            "เบโซฟิล (Basophil)", "เกล็ดเลือด (Platelet)"
+            "ฮีโมโกลบิน (Hb)", "ฮีมาโทคริต (Hct)", "เม็ดเลือดขาว (WBC)", "เกล็ดเลือด (Platelet)"
         ],
-        "ผลตรวจ": [person.get("Hb"), person.get("Hct"), person.get("WBC"), person.get("Neutrophil"),
-                  person.get("Lymphocyte"), person.get("Monocyte"), person.get("Eosinophil"),
-                  person.get("Basophil"), person.get("Plt")],
+        "ผลตรวจ": [hb_val, hct_val, wbc_val, plt_val],
         "ค่าปกติ": [
-            "ชาย > 13, หญิง >12 g/dl", "ชาย > 39%, หญิง >36%", "4,000-10,000 /cu.mm", "45-70%",
-            "20-45%", "3-9%", "0-5%", "0-3%", "150,000-500,000 /cu.mm"
+            "ชาย > 13, หญิง >12 g/dl",
+            "ชาย > 39%, หญิง >36%",
+            "4,000-10,000 /cu.mm",
+            "150,000-500,000 /cu.mm"
         ]
     }
     
-    blood_data = {
-        "ชื่อการตรวจ": [
-            "น้ำตาลในเลือด (FBS)", "กรดยูริก (Uric acid)", "ALK.POS", "SGOT", "SGPT",
-            "Cholesterol", "Triglyceride", "HDL", "LDL", "BUN", "Creatinine (Cr)", "GFR"
-        ],
-        "ผลตรวจ": [person.get("FBS"), person.get("Uric"), person.get("ALK"), person.get("SGOT"),
-                  person.get("SGPT"), person.get("Cholesterol"), person.get("TG"), person.get("HDL"),
-                  person.get("LDL"), person.get("BUN"), person.get("Cr"), person.get("GFR")],
-        "ค่าปกติ": [
-            "75–106 mg/dl", "2.6–7.2 mg%", "30–120 U/L", "< 37 U/L", "< 45 U/L",
-            "150–200 mg/dl", "35–150 mg/dl", "> 40 mg/dl", "0–130 mg/dl",
-            "7.5–20 mg/dl", "0.5–1.7 mg/dl", "> 60 mL/min"
-        ]
-    }
-    
-    col1, col2 = st.columns(2)
-    
+    cbc_summary = cbc_advice(
+        person.get(cbc_cols["hb"], ""),
+        person.get(cbc_cols["wbc"], ""),
+        person.get(cbc_cols["plt"], "")
+    )
+
     with col1:
-        st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)")
+        st.markdown(f"#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด ปี {selected_year + 2500}")
         df_cbc = pd.DataFrame(cbc_data)
         st.dataframe(df_cbc, use_container_width=True)
     
-    with col2:
-        st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
-        df_bt = pd.DataFrame(blood_data)
-        st.dataframe(df_bt, use_container_width=True)
+    if cbc_summary and cbc_summary != "-":
+        st.markdown(f"**📌 คำแนะนำจากผล CBC:** {cbc_summary}")
     
     # ================== CBC คำแนะนำ ==================
     cbc_cols = cbc_columns_by_year[selected_year]

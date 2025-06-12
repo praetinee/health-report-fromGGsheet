@@ -283,47 +283,6 @@ if "person" in st.session_state:
     st.markdown(render_health_report(person, selected_cols), unsafe_allow_html=True)
 
     # ================== CBC / BLOOD TEST DISPLAY ==================
-    def generate_summary_advice(person, cbc_cols, blood_cols, sex):
-        messages = []
-    
-        def abnormal(val, low=None, high=None, higher_is_better=False):
-            try:
-                val = float(str(val).replace(",", "").strip())
-                if higher_is_better:
-                    return "low" if val < low else "normal"
-                if low is not None and val < low:
-                    return "low"
-                if high is not None and val > high:
-                    return "high"
-                return "normal"
-            except:
-                return None
-    
-        def highlight(label, value, tooltip):
-            return f'<span title="{tooltip}">{label} ({value})</span>'
-    
-        def add(msg, crit=False):
-            icon = "🚩" if crit else "🔸"
-            messages.append(f"{icon} {msg}")
-    
-        # CBC — ค่าหลัก
-        hb = person.get(cbc_cols.get("hb"))
-        wbc = person.get(cbc_cols.get("wbc"))
-        plt = person.get(cbc_cols.get("plt"))
-    
-        hb_limit = 12 if sex == "หญิง" else 13
-        if abnormal(hb, low=hb_limit) == "low":
-            add(f'{highlight("Hb ต่ำ", hb, "ควร >12 หญิง, >13 ชาย")} - เสี่ยงซีด ควรเพิ่มอาหารธาตุเหล็ก', crit=True)
-        if abnormal(wbc, low=4000, high=10000) != "normal":
-            add(f'{highlight("WBC ผิดปกติ", wbc, "4,000 - 10,000")} - สังเกตอาการไข้หรืออักเสบ')
-        if abnormal(plt, low=150000, high=500000) != "normal":
-            add(f'{highlight("เกล็ดเลือดผิดปกติ", plt, "150,000 - 500,000")} - เฝ้าระวังเลือดออกง่าย')
-    
-        # 🧾 รวม
-        if not messages:
-            return "✅ สุขภาพอยู่ในเกณฑ์ดี ไม่มีค่าผิดปกติ"
-        return "<br>".join(messages)
-
     st.markdown("### 🧪 รายงานผลตรวจเลือด")
     
     cbc_cols = cbc_columns_by_year[selected_year]
@@ -428,12 +387,3 @@ if "person" in st.session_state:
     with col2:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
-
-    # ✅ แสดงคำแนะนำใหม่แบบสรุปอ่อนโยน
-    summary = generate_summary_advice(person, cbc_cols, blood_cols, sex)
-    st.markdown(f"""
-    <div style='background-color:#2e0e0e33; padding:20px; border-left:6px solid #ff4d4d; border-radius:8px; margin-top:24px;'>
-        <h4>📌 คำแนะนำโดยรวมจากผลตรวจ:</h4>
-        {summary}
-    </div>
-    """, unsafe_allow_html=True)

@@ -399,7 +399,8 @@ if "person" in st.session_state:
         seen_prefixes = {}
     
         for msg in messages:
-            prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา[^,และ]*)", msg)
+            # ✅ pattern ครอบคลุมทั้ง "ตรวจหา", "ตรวจหาสาเหตุ", และ "ตรวจหาและติดตาม"
+            prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา(?:และติดตาม)?(?:[^,และ]*)?)", msg)
             if prefix:
                 key = prefix.group(1)
                 if key in seen_prefixes:

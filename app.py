@@ -399,22 +399,27 @@ if "person" in st.session_state:
         seen_prefixes = {}
     
         for msg in messages:
-            # ✅ pattern ยืดหยุ่นมากขึ้น
             prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา(?:และติดตาม)?(?:[^,]*)?)", msg)
             if prefix:
-                key = "ควรพบแพทย์เพื่อตรวจหา"  # 🔑 ใช้คีย์รวมเดียว
+                key = "ควรพบแพทย์เพื่อตรวจหา"
                 detail = msg[len(prefix.group(1)):].lstrip(" ,และ")
+                phrase = prefix.group(1)[len(key):].strip()
+                full_detail = phrase + " " + detail if phrase else detail
                 if key in seen_prefixes:
-                    seen_prefixes[key].append(prefix.group(1)[len(key):].strip() + " " + detail)
+                    seen_prefixes[key].append(full_detail.strip())
                 else:
-                    seen_prefixes[key] = [prefix.group(1)[len(key):].strip() + " " + detail]
+                    seen_prefixes[key] = [full_detail.strip()]
             else:
                 merged.append(msg)
     
         for key, endings in seen_prefixes.items():
             endings = [e.strip() for e in endings if e]
             if endings:
-                merged.append(f"{key} {', และ '.join(endings)}")
+                if len(endings) == 1:
+                    merged.append(f"{key} {endings[0]}")
+                else:
+                    body = " ".join(endings[:-1]) + " และ " + endings[-1]
+                    merged.append(f"{key} {body}")
             else:
                 merged.append(key)
     

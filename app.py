@@ -402,18 +402,18 @@ if "person" in st.session_state:
             prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา(?:และติดตาม)?(?:[^,]*)?)", msg)
             if prefix:
                 key = "ควรพบแพทย์เพื่อตรวจหา"
-                detail = msg[len(prefix.group(1)):].lstrip(" ,และ")
-                phrase = prefix.group(1)[len(key):].strip()
-                full_detail = phrase + " " + detail if phrase else detail
+                rest = msg[len(prefix.group(1)):].strip(" ,และ")
+                phrase = prefix.group(1)[len(key):].strip(" ,และ")
+                full_detail = f"{phrase} {rest}".strip()
                 if key in seen_prefixes:
-                    seen_prefixes[key].append(full_detail.strip())
+                    seen_prefixes[key].append(full_detail)
                 else:
-                    seen_prefixes[key] = [full_detail.strip()]
+                    seen_prefixes[key] = [full_detail]
             else:
                 merged.append(msg)
     
         for key, endings in seen_prefixes.items():
-            endings = [e.strip() for e in endings if e]
+            endings = [e for e in endings if e]
             if endings:
                 if len(endings) == 1:
                     merged.append(f"{key} {endings[0]}")

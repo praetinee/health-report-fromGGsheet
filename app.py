@@ -156,18 +156,18 @@ with st.form("search_form"):
 # ==================== BLOOD COLUMN MAPPING ====================
 blood_columns_by_year = {
     y: {
-        "FBS": f"FBS{y}",
-        "Uric": f"Uric Acid{y}",
-        "ALK": f"ALP{y}",
-        "SGOT": f"SGOT{y}",
-        "SGPT": f"SGPT{y}",
-        "Cholesterol": f"CHOL{y}",
-        "TG": f"TGL{y}",
-        "HDL": f"HDL{y}",
-        "LDL": f"LDL{y}",
-        "BUN": f"BUN{y}",
-        "Cr": f"Cr{y}",
-        "GFR": f"GFR{y}",
+        "น้ำตาลในเลือด (FBS)": f"FBS{y}",
+        "กรดยูริคสาเหตุโรคเก๊าท์ (Uric acid)": f"Uric Acid{y}",
+        "การทำงานของเอนไซม์ตับ ALK.POS": f"ALP{y}",
+        "การทำงานของเอนไซม์ตับ SGOT": f"SGOT{y}",
+        "การทำงานของเอนไซม์ตับ SGPT": f"SGPT{y}",
+        "คลอเรสเตอรอล (Cholesterol)": f"CHOL{y}",
+        "ไตรกลีเซอไรด์ (Triglyceride)": f"TGL{y}",
+        "ไขมันดี (HDL)": f"HDL{y}",
+        "ไขมันเลว (LDL)": f"LDL{y}",
+        "การทำงานของไต (BUN)": f"BUN{y}",
+        "การทำงานของไต (Cr)": f"Cr{y}",
+        "ประสิทธิภาพการกรองของไต (GFR)": f"GFR{y}",
     }
     for y in years
 }

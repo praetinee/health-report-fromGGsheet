@@ -388,6 +388,35 @@ if "person" in st.session_state:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
 
+    import re
+    
+    # 📌 ฟังก์ชันรวมคำแนะนำแบบไม่ซ้ำซ้อน
+    def merge_similar_sentences(messages):
+        if len(messages) == 1:
+            return messages[0]
+    
+        merged = []
+        seen_prefixes = {}
+    
+        for msg in messages:
+            prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา[^,และ]*)", msg)
+            if prefix:
+                key = prefix.group(1)
+                if key in seen_prefixes:
+                    seen_prefixes[key].append(msg[len(key):].lstrip(" ,และ"))
+                else:
+                    seen_prefixes[key] = [msg[len(key):].lstrip(" ,และ")]
+            else:
+                merged.append(msg)
+    
+        for key, endings in seen_prefixes.items():
+            if endings:
+                merged.append(f"{key} {', และ '.join(endings)}")
+            else:
+                merged.append(key)
+    
+        return "<br>".join(merged)
+    
     cbc_messages = {
         2:  "ดูแลสุขภาพ ออกกำลังกาย ทานอาหารมีประโยชน์ ติดตามผลเลือดสม่ำเสมอ",
         4:  "ควรพบแพทย์เพื่อตรวจหาสาเหตุเกล็ดเลือดต่ำ และเฝ้าระวังอาการผิดปกติ",
@@ -524,36 +553,4 @@ if "person" in st.session_state:
         </div>
         """, unsafe_allow_html=True)
 
-    import re
-    
-    def merge_similar_sentences(messages):
-        """
-        รวมข้อความคำแนะนำที่มีส่วนต้นซ้ำกัน เช่น
-        "ควรพบแพทย์เพื่อตรวจหา..." หลายประโยค → รวมให้เหลือ 1 ประโยคกระชับ
-        """
-        if len(messages) == 1:
-            return messages[0]
-    
-        # จัดกลุ่มข้อความที่ขึ้นต้นเหมือนกัน
-        merged = []
-        seen_prefixes = {}
-    
-        for msg in messages:
-            prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา[^,และ]*)", msg)
-            if prefix:
-                key = prefix.group(1)
-                if key in seen_prefixes:
-                    seen_prefixes[key].append(msg[len(key):].lstrip(" ,และ"))
-                else:
-                    seen_prefixes[key] = [msg[len(key):].lstrip(" ,และ")]
-            else:
-                merged.append(msg)
-    
-        for key, endings in seen_prefixes.items():
-            if endings:
-                merged.append(f"{key} {', และ '.join(endings)}")
-            else:
-                merged.append(key)
-    
-        return "<br>".join(merged)
     

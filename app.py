@@ -640,3 +640,30 @@ if "person" in st.session_state:
             <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_uric}</div>
         </div>
         """, unsafe_allow_html=True)
+
+    def kidney_function_advice(bun_raw, cr_raw, gfr_raw):
+        issues = []
+        try:
+            bun = float(bun_raw)
+            if bun < 5 or bun > 20:
+                issues.append("ค่า BUN ผิดปกติ")
+        except:
+            pass
+    
+        try:
+            cr = float(cr_raw)
+            if cr < 0.6 or cr > 1.2:
+                issues.append("ค่า Creatinine ผิดปกติ")
+        except:
+            pass
+    
+        try:
+            gfr = float(gfr_raw)
+            if gfr < 60:
+                issues.append("ค่าการกรองของไต (GFR) ต่ำกว่าเกณฑ์")
+        except:
+            pass
+    
+        if not issues:
+            return ""
+        return "⚠️ " + " และ ".join(issues) + " ควรพบแพทย์เพื่อตรวจประเมินการทำงานของไตเพิ่มเติม"

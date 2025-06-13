@@ -605,7 +605,7 @@ if "person" in st.session_state:
             color: white;
             margin-top: 1rem;
         '>
-            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจตับ ปี {y}</div>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจตับ ปี {2500 + selected_year}</div>
             <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_liver}</div>
         </div>
         """, unsafe_allow_html=True)
@@ -636,7 +636,7 @@ if "person" in st.session_state:
             color: white;
             margin-top: 1rem;
         '>
-            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำกรดยูริคในเลือด ปี {y}</div>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำกรดยูริคในเลือด ปี {2500 + selected_year}</div>
             <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_uric}</div>
         </div>
         """, unsafe_allow_html=True)

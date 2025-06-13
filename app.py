@@ -489,7 +489,8 @@ if "person" in st.session_state:
             return "ควรพบแพทย์เพื่อตรวจเพิ่มเติม"
     
         # รวมข้อความจากหลาย id
-        return "<br>".join(cbc_messages[i] for i in sorted(set(message_ids)))
+        raw_msgs = [cbc_messages[i] for i in sorted(set(message_ids))]
+        return merge_similar_sentences(raw_msgs)
     
     # 🔧 ยึดปีจาก selectbox
     suffix = str(selected_year)
@@ -522,3 +523,37 @@ if "person" in st.session_state:
             <div style='font-size: 16px; margin-top: 0.3rem;'>{recommendation}</div>
         </div>
         """, unsafe_allow_html=True)
+
+    import re
+    
+    def merge_similar_sentences(messages):
+        """
+        รวมข้อความคำแนะนำที่มีส่วนต้นซ้ำกัน เช่น
+        "ควรพบแพทย์เพื่อตรวจหา..." หลายประโยค → รวมให้เหลือ 1 ประโยคกระชับ
+        """
+        if len(messages) == 1:
+            return messages[0]
+    
+        # จัดกลุ่มข้อความที่ขึ้นต้นเหมือนกัน
+        merged = []
+        seen_prefixes = {}
+    
+        for msg in messages:
+            prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา[^,และ]*)", msg)
+            if prefix:
+                key = prefix.group(1)
+                if key in seen_prefixes:
+                    seen_prefixes[key].append(msg[len(key):].lstrip(" ,และ"))
+                else:
+                    seen_prefixes[key] = [msg[len(key):].lstrip(" ,และ")]
+            else:
+                merged.append(msg)
+    
+        for key, endings in seen_prefixes.items():
+            if endings:
+                merged.append(f"{key} {', และ '.join(endings)}")
+            else:
+                merged.append(key)
+    
+        return "<br>".join(merged)
+    

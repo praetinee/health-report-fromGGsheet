@@ -478,32 +478,34 @@ if "person" in st.session_state:
             return cbc_messages[13]
         return "ควรพบแพทย์เพื่อตรวจเพิ่มเติม"
     
-    # 🔍 ปีที่รองรับ (เช่น 68, 67, 65, 64)
-    cbc_years = [68, 67, 65, 64]
+    # 🔧 ยึดปีจาก selectbox
+    suffix = "" if selected_year == 68 else str(selected_year)
     sex = person.get("เพศ", "").strip()
     
-    for y in cbc_years:
-        suffix = "" if y == 68 else str(y)  # ปี 68 ไม่มี suffix
-        hb_raw = str(person.get(f"Hb(%)" + suffix, "")).strip()
-        wbc_raw = str(person.get(f"WBC (cumm)" + suffix, "")).strip()
-        plt_raw = str(person.get(f"Plt (/mm)" + suffix, "")).strip()
+    # 🔍 ดึงค่าตามปีที่เลือก
+    hb_raw = str(person.get(f"Hb(%)" + suffix, "")).strip()
+    wbc_raw = str(person.get(f"WBC (cumm)" + suffix, "")).strip()
+    plt_raw = str(person.get(f"Plt (/mm)" + suffix, "")).strip()
     
-        hb_result = interpret_hb(hb_raw, sex)
-        wbc_result = interpret_wbc(wbc_raw)
-        plt_result = interpret_plt(plt_raw)
+    # 🧠 แปลผล
+    hb_result = interpret_hb(hb_raw, sex)
+    wbc_result = interpret_wbc(wbc_raw)
+    plt_result = interpret_plt(plt_raw)
     
-        recommendation = cbc_advice(hb_result, wbc_result, plt_result)
+    # 🩺 คำแนะนำ
+    recommendation = cbc_advice(hb_result, wbc_result, plt_result)
     
-        if recommendation and not all(x == "-" for x in [hb_result, wbc_result, plt_result]):
-            st.markdown(f"""
-            <div style='
-                background-color: rgba(255, 105, 135, 0.15);
-                padding: 1rem;
-                border-radius: 6px;
-                color: white;
-                margin-bottom: 1.5rem;
-            '>
-                <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจเลือด (CBC) ปี {2500 + y}</div>
-                <div style='font-size: 16px; margin-top: 0.3rem;'>{recommendation}</div>
-            </div>
-            """, unsafe_allow_html=True)
+    # ✅ แสดงเฉพาะปีที่เลือก
+    if recommendation and not all(x == "-" for x in [hb_result, wbc_result, plt_result]):
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(255, 105, 135, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจเลือด (CBC) ปี {2500 + selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{recommendation}</div>
+        </div>
+        """, unsafe_allow_html=True)

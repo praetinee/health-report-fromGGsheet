@@ -325,18 +325,18 @@ if "person" in st.session_state:
     
     # ✅ BLOOD config
     blood_config = [
-        ("น้ำตาลในเลือด (FBS)", blood_cols["FBS"], "74 - 106 mg/dl", 74, 106),
-        ("กรดยูริก (Uric Acid)", blood_cols["Uric"], "2.6 - 7.2 mg%", 2.6, 7.2),
-        ("ALK.POS", blood_cols["ALK"], "30 - 120 U/L", 30, 120),
-        ("SGOT", blood_cols["SGOT"], "&lt; 37 U/L", None, 37),
-        ("SGPT", blood_cols["SGPT"], "&lt; 41 U/L", None, 41),
-        ("Cholesterol", blood_cols["Cholesterol"], "150 - 200 mg/dl", 150, 200),
-        ("Triglyceride", blood_cols["TG"], "35 - 150 mg/dl", 35, 150),
-        ("HDL", blood_cols["HDL"], "&gt; 40 mg/dl", 40, None, True),
-        ("LDL", blood_cols["LDL"], "0 - 160 mg/dl", 0, 160),
-        ("BUN", blood_cols["BUN"], "7.9 - 20 mg/dl", 7.9, 20),
-        ("Creatinine (Cr)", blood_cols["Cr"], "0.5 - 1.17 mg/dl", 0.5, 1.17),
-        ("GFR", blood_cols["GFR"], "&gt; 60 mL/min", 60, None, True),
+        ("น้ำตาลในเลือด (FBS)", blood_cols["น้ำตาลในเลือด (FBS)"], "74 - 106 mg/dl", 74, 106),
+        ("กรดยูริก (Uric Acid)", blood_cols["กรดยูริคสาเหตุโรคเก๊าท์ (Uric acid)"], "2.6 - 7.2 mg%", 2.6, 7.2),
+        ("ALK.POS", blood_cols["การทำงานของเอนไซม์ตับ ALK.POS"], "30 - 120 U/L", 30, 120),
+        ("SGOT", blood_cols["การทำงานของเอนไซม์ตับ SGOT"], "&lt; 37 U/L", None, 37),
+        ("SGPT", blood_cols["การทำงานของเอนไซม์ตับ SGPT"], "&lt; 41 U/L", None, 41),
+        ("Cholesterol", blood_cols["คลอเรสเตอรอล (Cholesterol)"], "150 - 200 mg/dl", 150, 200),
+        ("Triglyceride", blood_cols["ไตรกลีเซอไรด์ (Triglyceride)"], "35 - 150 mg/dl", 35, 150),
+        ("HDL", blood_cols["ไขมันดี (HDL)"], "&gt; 40 mg/dl", 40, None, True),
+        ("LDL", blood_cols["ไขมันเลว (LDL)"], "0 - 160 mg/dl", 0, 160),
+        ("BUN", blood_cols["การทำงานของไต (BUN)"], "7.9 - 20 mg/dl", 7.9, 20),
+        ("Creatinine (Cr)", blood_cols["การทำงานของไต (Cr)"], "0.5 - 1.17 mg/dl", 0.5, 1.17),
+        ("GFR", blood_cols["ประสิทธิภาพการกรองของไต (GFR)"], "&gt; 60 mL/min", 60, None, True),
     ]
     
     blood_rows = []

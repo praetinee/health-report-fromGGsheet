@@ -399,14 +399,16 @@ if "person" in st.session_state:
         seen_prefixes = {}
     
         for msg in messages:
-            # ตรวจ prefix ที่ขึ้นต้นด้วย "ควรพบแพทย์เพื่อตรวจหา..."
             prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา(?:และติดตาม)?(?:[^,]*)?)", msg)
             if prefix:
                 key = "ควรพบแพทย์เพื่อตรวจหา"
-                rest = msg[len(prefix.group(1)):].strip(" ,และ")
-                phrase = prefix.group(1)[len(key):].strip(" ,และ")
-                full_detail = f"{phrase} {rest}".strip(" ,และ")
-                full_detail = re.sub(r"^และ\s+", "", full_detail)  # ลบ "และ" ที่ขึ้นต้น detail
+                rest = msg[len(prefix.group(1)):].strip()
+                phrase = prefix.group(1)[len(key):].strip()
+    
+                # 🔧 รวม phrase และ rest → แล้วลบ "และ" ที่ขึ้นต้น
+                full_detail = f"{phrase} {rest}".strip()
+                full_detail = re.sub(r"^และ\s+", "", full_detail)
+    
                 if key in seen_prefixes:
                     seen_prefixes[key].append(full_detail)
                 else:
@@ -415,7 +417,7 @@ if "person" in st.session_state:
                 merged.append(msg)
     
         for key, endings in seen_prefixes.items():
-            endings = [e for e in endings if e]
+            endings = [e.strip() for e in endings if e]
             if endings:
                 if len(endings) == 1:
                     merged.append(f"{key} {endings[0]}")

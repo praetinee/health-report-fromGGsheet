@@ -399,13 +399,14 @@ if "person" in st.session_state:
         seen_prefixes = {}
     
         for msg in messages:
-            # ✅ จับ prefix ที่ขึ้นต้นด้วย "ควรพบแพทย์เพื่อตรวจหา..." หรือ "ควรพบแพทย์เพื่อตรวจหาและติดตาม..."
+            # ตรวจ prefix ที่ขึ้นต้นด้วย "ควรพบแพทย์เพื่อตรวจหา..."
             prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา(?:และติดตาม)?(?:[^,]*)?)", msg)
             if prefix:
                 key = "ควรพบแพทย์เพื่อตรวจหา"
                 rest = msg[len(prefix.group(1)):].strip(" ,และ")
                 phrase = prefix.group(1)[len(key):].strip(" ,และ")
-                full_detail = f"{phrase} {rest}".strip()
+                full_detail = f"{phrase} {rest}".strip(" ,และ")
+                full_detail = re.sub(r"^และ\s+", "", full_detail)  # ลบ "และ" ที่ขึ้นต้น detail
                 if key in seen_prefixes:
                     seen_prefixes[key].append(full_detail)
                 else:
@@ -419,9 +420,8 @@ if "person" in st.session_state:
                 if len(endings) == 1:
                     merged.append(f"{key} {endings[0]}")
                 else:
-                    # ✅ รวมแบบภาษาไทย: ไม่ใช้ comma, "และ" แค่ตัวสุดท้าย
-                    joined = " ".join(endings[:-1]) + " และ " + endings[-1]
-                    merged.append(f"{key} {joined}")
+                    body = " ".join(endings[:-1]) + " และ " + endings[-1]
+                    merged.append(f"{key} {body}")
             else:
                 merged.append(key)
     

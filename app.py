@@ -326,7 +326,7 @@ if "person" in st.session_state:
     # ✅ BLOOD config
     blood_config = [
         ("น้ำตาลในเลือด (FBS)", blood_cols["FBS"], "74 - 106 mg/dl", 74, 106),
-        ("กรดยูริก (Uric Acid)", blood_cols["Uric"], "2.6 - 7.2 mg%", 2.6, 7.2),
+        ("กรดยูริคสาเหตุโรคเก๊าท์ (Uric acid)", blood_cols["Uric"], "2.6 - 7.2 mg%", 2.6, 7.2),
         ("ALK.POS", blood_cols["ALK"], "30 - 120 U/L", 30, 120),
         ("SGOT", blood_cols["SGOT"], "&lt; 37 U/L", None, 37),
         ("SGPT", blood_cols["SGPT"], "&lt; 41 U/L", None, 41),

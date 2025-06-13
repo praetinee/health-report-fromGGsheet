@@ -609,3 +609,34 @@ if "person" in st.session_state:
             <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_liver}</div>
         </div>
         """, unsafe_allow_html=True)
+
+    def uric_acid_advice(value_raw):
+        try:
+            value = float(value_raw)
+            if value > 7.2:
+                return "ควรลดอาหารที่มีพิวรีนสูง เช่น เครื่องในสัตว์ อาหารทะเล และพบแพทย์หากมีอาการปวดข้อ"
+            return ""
+        except:
+            return "-"
+    
+    # ✅ ปีที่เลือกจาก dropdown
+    y = selected_year
+    y_label = "" if y == 2568 else str(y % 100)
+    col_name = f"Uric Acid{y_label}"
+    
+    raw_value = str(person.get(col_name, "") or "").strip()
+    advice_uric = uric_acid_advice(raw_value)
+    
+    if advice_uric and advice_uric != "-":
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(245, 124, 0, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำกรดยูริคในเลือด ปี {y}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_uric}</div>
+        </div>
+        """, unsafe_allow_html=True)

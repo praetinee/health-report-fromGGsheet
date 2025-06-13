@@ -387,10 +387,47 @@ if "person" in st.session_state:
     with col2:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
-    
-    # 📌 รวมคำแนะนำทั้งหมด (CBC, ตับ, ไต, น้ำตาล, ไขมัน) ปีที่เลือก
-    
+
     import re
+    
+    # 📌 ฟังก์ชันรวมคำแนะนำแบบไม่ซ้ำซ้อน
+    def merge_similar_sentences(messages):
+        if len(messages) == 1:
+            return messages[0]
+    
+        merged = []
+        seen_prefixes = {}
+    
+        for msg in messages:
+            prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา(?:และติดตาม)?(?:[^,]*)?)", msg)
+            if prefix:
+                key = "ควรพบแพทย์เพื่อตรวจหา"
+                rest = msg[len(prefix.group(1)):].strip()
+                phrase = prefix.group(1)[len(key):].strip()
+    
+                # 🔧 รวม phrase และ rest → แล้วลบ "และ" ที่ขึ้นต้น
+                full_detail = f"{phrase} {rest}".strip()
+                full_detail = re.sub(r"^และ\s+", "", full_detail)
+    
+                if key in seen_prefixes:
+                    seen_prefixes[key].append(full_detail)
+                else:
+                    seen_prefixes[key] = [full_detail]
+            else:
+                merged.append(msg)
+    
+        for key, endings in seen_prefixes.items():
+            endings = [e.strip() for e in endings if e]
+            if endings:
+                if len(endings) == 1:
+                    merged.append(f"{key} {endings[0]}")
+                else:
+                    body = " ".join(endings[:-1]) + " และ " + endings[-1]
+                    merged.append(f"{key} {body}")
+            else:
+                merged.append(key)
+    
+        return "<br>".join(merged)
     
     cbc_messages = {
         2:  "ดูแลสุขภาพ ออกกำลังกาย ทานอาหารมีประโยชน์ ติดตามผลเลือดสม่ำเสมอ",
@@ -401,6 +438,25 @@ if "person" in st.session_state:
         10: "ควรพบแพทย์เพื่อตรวจหาสาเหตุเกล็ดเลือดสูง เพื่อพิจารณาการรักษา",
         13: "ควรดูแลสุขภาพ ติดตามภาวะโลหิตจางและเม็ดเลือดขาวผิดปกติอย่างใกล้ชิด",
     }
+    
+    def interpret_wbc(wbc):
+        try:
+            wbc = float(wbc)
+            if wbc == 0:
+                return "-"
+            elif 4000 <= wbc <= 10000:
+                return "ปกติ"
+            elif 10000 < wbc < 13000:
+                return "สูงกว่าเกณฑ์เล็กน้อย"
+            elif wbc >= 13000:
+                return "สูงกว่าเกณฑ์"
+            elif 3000 < wbc < 4000:
+                return "ต่ำกว่าเกณฑ์เล็กน้อย"
+            elif wbc <= 3000:
+                return "ต่ำกว่าเกณฑ์"
+        except:
+            return "-"
+        return "-"
     
     def interpret_hb(hb, sex):
         try:
@@ -419,25 +475,6 @@ if "person" in st.session_state:
                     return "พบภาวะโลหิตจางเล็กน้อย"
                 else:
                     return "ปกติ"
-        except:
-            return "-"
-        return "-"
-    
-    def interpret_wbc(wbc):
-        try:
-            wbc = float(wbc)
-            if wbc == 0:
-                return "-"
-            elif 4000 <= wbc <= 10000:
-                return "ปกติ"
-            elif 10000 < wbc < 13000:
-                return "สูงกว่าเกณฑ์เล็กน้อย"
-            elif wbc >= 13000:
-                return "สูงกว่าเกณฑ์"
-            elif 3000 < wbc < 4000:
-                return "ต่ำกว่าเกณฑ์เล็กน้อย"
-            elif wbc <= 3000:
-                return "ต่ำกว่าเกณฑ์"
         except:
             return "-"
         return "-"
@@ -463,8 +500,10 @@ if "person" in st.session_state:
     
     def cbc_advice(hb_result, wbc_result, plt_result):
         message_ids = []
+    
         if all(x in ["", "-", None] for x in [hb_result, wbc_result, plt_result]):
             return "-"
+    
         if hb_result == "พบภาวะโลหิตจาง":
             if wbc_result == "ปกติ" and plt_result == "ปกติ":
                 message_ids.append(8)
@@ -475,46 +514,53 @@ if "person" in st.session_state:
                 message_ids.append(2)
             elif wbc_result in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์"]:
                 message_ids.append(13)
+    
         if wbc_result in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์"] and hb_result == "ปกติ":
             message_ids.append(6)
+    
         if plt_result == "สูงกว่าเกณฑ์":
             message_ids.append(10)
         elif plt_result in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย"]:
             message_ids.append(4)
+    
         if not message_ids and hb_result == "ปกติ" and wbc_result == "ปกติ" and plt_result == "ปกติ":
             return ""
+    
         if not message_ids:
             return "ควรพบแพทย์เพื่อตรวจเพิ่มเติม"
+    
+        # รวมข้อความจากหลาย id
         raw_msgs = [cbc_messages[i] for i in sorted(set(message_ids))]
         return merge_similar_sentences(raw_msgs)
     
-    def merge_similar_sentences(messages):
-        if len(messages) == 1:
-            return "• " + messages[0]
-        merged = []
-        seen_prefixes = {}
-        for msg in messages:
-            prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา(?:และติดตาม)?(?:[^,]*)?)", msg)
-            if prefix:
-                key = "ควรพบแพทย์เพื่อตรวจหา"
-                rest = msg[len(prefix.group(1)):].strip()
-                phrase = prefix.group(1)[len(key):].strip()
-                full_detail = f"{phrase} {rest}".strip()
-                full_detail = re.sub(r"^และ\\s+", "", full_detail)
-                if key in seen_prefixes:
-                    seen_prefixes[key].append(full_detail)
-                else:
-                    seen_prefixes[key] = [full_detail]
-            else:
-                merged.append(msg)
-        for key, endings in seen_prefixes.items():
-            endings = [e.strip() for e in endings if e]
-            if endings:
-                if len(endings) == 1:
-                    merged.append(f"{key} {endings[0]}")
-                else:
-                    body = " ".join(endings[:-1]) + " และ " + endings[-1]
-                    merged.append(f"{key} {body}")
-            else:
-                merged.append(key)
-        return "<br>• " + "<br>• ".join(merged)
+    # 🔧 ยึดปีจาก selectbox
+    suffix = str(selected_year)
+    sex = person.get("เพศ", "").strip()
+    
+    # 🔍 ดึงค่าตามปีที่เลือก
+    hb_raw = str(person.get(f"Hb(%)" + suffix, "")).strip()
+    wbc_raw = str(person.get(f"WBC (cumm)" + suffix, "")).strip()
+    plt_raw = str(person.get(f"Plt (/mm)" + suffix, "")).strip()
+    
+    # 🧠 แปลผล
+    hb_result = interpret_hb(hb_raw, sex)
+    wbc_result = interpret_wbc(wbc_raw)
+    plt_result = interpret_plt(plt_raw)
+    
+    # 🩺 คำแนะนำ
+    recommendation = cbc_advice(hb_result, wbc_result, plt_result)
+    
+    # ✅ แสดงเฉพาะปีที่เลือก
+    if recommendation and not all(x == "-" for x in [hb_result, wbc_result, plt_result]):
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(255, 105, 135, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจเลือด (CBC) ปี {2500 + selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{recommendation}</div>
+        </div>
+        """, unsafe_allow_html=True)

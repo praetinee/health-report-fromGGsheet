@@ -327,16 +327,16 @@ if "person" in st.session_state:
     blood_config = [
         ("น้ำตาลในเลือด (FBS)", blood_cols["FBS"], "74 - 106 mg/dl", 74, 106),
         ("กรดยูริคสาเหตุโรคเก๊าท์ (Uric acid)", blood_cols["Uric"], "2.6 - 7.2 mg%", 2.6, 7.2),
-        ("ALK.POS", blood_cols["ALK"], "30 - 120 U/L", 30, 120),
-        ("SGOT", blood_cols["SGOT"], "&lt; 37 U/L", None, 37),
-        ("SGPT", blood_cols["SGPT"], "&lt; 41 U/L", None, 41),
-        ("Cholesterol", blood_cols["Cholesterol"], "150 - 200 mg/dl", 150, 200),
-        ("Triglyceride", blood_cols["TG"], "35 - 150 mg/dl", 35, 150),
-        ("HDL", blood_cols["HDL"], "&gt; 40 mg/dl", 40, None, True),
-        ("LDL", blood_cols["LDL"], "0 - 160 mg/dl", 0, 160),
-        ("BUN", blood_cols["BUN"], "7.9 - 20 mg/dl", 7.9, 20),
-        ("Creatinine (Cr)", blood_cols["Cr"], "0.5 - 1.17 mg/dl", 0.5, 1.17),
-        ("GFR", blood_cols["GFR"], "&gt; 60 mL/min", 60, None, True),
+        ("การทำงานของเอนไซม์ตับ ALK.POS", blood_cols["ALK"], "30 - 120 U/L", 30, 120),
+        ("การทำงานของเอนไซม์ตับ SGOT", blood_cols["SGOT"], "&lt; 37 U/L", None, 37),
+        ("การทำงานของเอนไซม์ตับ SGPT", blood_cols["SGPT"], "&lt; 41 U/L", None, 41),
+        ("คลอเรสเตอรอล (Cholesterol)", blood_cols["Cholesterol"], "150 - 200 mg/dl", 150, 200),
+        ("ไตรกลีเซอไรด์ (Triglyceride)", blood_cols["TG"], "35 - 150 mg/dl", 35, 150),
+        ("ไขมันดี (HDL)", blood_cols["HDL"], "&gt; 40 mg/dl", 40, None, True),
+        ("ไขมันเลว (LDL)", blood_cols["LDL"], "0 - 160 mg/dl", 0, 160),
+        ("การทำงานของไต (BUN)", blood_cols["BUN"], "7.9 - 20 mg/dl", 7.9, 20),
+        ("การทำงานของไต (Cr)", blood_cols["Cr"], "0.5 - 1.17 mg/dl", 0.5, 1.17),
+        ("ประสิทธิภาพการกรองของไต (GFR)", blood_cols["GFR"], "&gt; 60 mL/min", 60, None, True),
     ]
     
     blood_rows = []

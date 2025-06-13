@@ -565,4 +565,177 @@ if "person" in st.session_state:
         </div>
         """, unsafe_allow_html=True)
 
+    # ===============================
+    # 📌 HEALTH SUMMARY & ADVICE DISPLAY
+    # ===============================
+    
+    import streamlit as st
+    import pandas as pd
+    import re
+    
+    # ===== ปีที่เลือกจาก dropdown (ต้องมีอยู่ใน app.py) =====
+    # selected_year = st.selectbox(...)
+    
+    y = selected_year
+    y_label = "" if y == 2568 else str(y % 100)
+    
+    # -------------------------------
+    # 🧠 Merge Similar Sentence Helper
+    # -------------------------------
+    def merge_similar_sentences(messages):
+        if len(messages) == 1:
+            return "• " + messages[0]
+    
+        merged = []
+        seen_prefixes = {}
+    
+        for msg in messages:
+            prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา(?:และติดตาม)?(?:[^,]*)?)", msg)
+            if prefix:
+                key = "ควรพบแพทย์เพื่อตรวจหา"
+                rest = msg[len(prefix.group(1)):].strip()
+                phrase = prefix.group(1)[len(key):].strip()
+                full_detail = f"{phrase} {rest}".strip()
+                full_detail = re.sub(r"^และ\s+", "", full_detail)
+    
+                if key in seen_prefixes:
+                    seen_prefixes[key].append(full_detail)
+                else:
+                    seen_prefixes[key] = [full_detail]
+            else:
+                merged.append(msg)
+    
+        for key, endings in seen_prefixes.items():
+            endings = [e.strip() for e in endings if e]
+            if endings:
+                if len(endings) == 1:
+                    merged.append(f"{key} {endings[0]}")
+                else:
+                    body = " ".join(endings[:-1]) + " และ " + endings[-1]
+                    merged.append(f"{key} {body}")
+            else:
+                merged.append(key)
+    
+        return "<br>• " + "<br>• ".join(merged)
+    
+    # -------------------------------
+    # 🩸 CBC Summary (สมมุติว่าคุณมี cbc_result แล้ว)
+    # -------------------------------
+    advice_messages = []
+    if cbc_result:
+        advice_messages.append(cbc_result)
+    
+    # -------------------------------
+    # 🧪 Liver Function
+    # -------------------------------
+    def summarize_liver(alp_val, sgot_val, sgpt_val):
+        try:
+            alp = float(alp_val)
+            sgot = float(sgot_val)
+            sgpt = float(sgpt_val)
+            if alp == 0 or sgot == 0 or sgpt == 0:
+                return "-"
+            if alp > 120 or sgot > 36 or sgpt > 40:
+                return "ควรลดอาหารไขมันสูงและตรวจติดตามการทำงานของตับซ้ำ"
+            return ""
+        except:
+            return "-"
+    
+    alp_raw = str(person.get(f"ALP{y_label}", "") or "").strip()
+    sgot_raw = str(person.get(f"SGOT{y_label}", "") or "").strip()
+    sgpt_raw = str(person.get(f"SGPT{y_label}", "") or "").strip()
+    
+    liver_advice = summarize_liver(alp_raw, sgot_raw, sgpt_raw)
+    if liver_advice and liver_advice != "-":
+        advice_messages.append(liver_advice)
+    
+    # -------------------------------
+    # 🧬 Kidney Function
+    # -------------------------------
+    def summarize_kidney(bun, cr, gfr):
+        try:
+            bun = float(bun)
+            cr = float(cr)
+            gfr = float(gfr)
+            if bun < 5 or bun > 20 or cr < 0.6 or cr > 1.2 or gfr < 60:
+                return "ควรพบแพทย์เพื่อตรวจหาความผิดปกติของไตและติดตามค่าการทำงานของไต"
+            return ""
+        except:
+            return "-"
+    
+    bun_raw = str(person.get(f"BUN{y_label}", "") or "").strip()
+    cr_raw = str(person.get(f"Cr{y_label}", "") or "").strip()
+    gfr_raw = str(person.get(f"GFR{y_label}", "") or "").strip()
+    
+    kidney_advice = summarize_kidney(bun_raw, cr_raw, gfr_raw)
+    if kidney_advice and kidney_advice != "-":
+        advice_messages.append(kidney_advice)
+    
+    # -------------------------------
+    # 🍬 FBS (น้ำตาลในเลือด)
+    # -------------------------------
+    def summarize_fbs(fbs_raw):
+        try:
+            val = float(fbs_raw)
+            if 100 <= val < 106:
+                return "ควรเริ่มควบคุมน้ำตาลและลดอาหารหวาน"
+            elif 106 <= val < 126:
+                return "ควรลดอาหารหวานและติดตามระดับน้ำตาลซ้ำ"
+            elif val >= 126:
+                return "ควรพบแพทย์เพื่อตรวจยืนยันเบาหวานและวางแผนการรักษา"
+            else:
+                return ""
+        except:
+            return "-"
+    
+    fbs_raw = str(person.get("FBS" if y == 2568 else f"FBS{y_label}", "") or "").strip()
+    fbs_advice = summarize_fbs(fbs_raw)
+    if fbs_advice and fbs_advice != "-":
+        advice_messages.append(fbs_advice)
+    
+    # -------------------------------
+    # 🧪 Blood Lipids
+    # -------------------------------
+    def summarize_lipids(chol_raw, tgl_raw, ldl_raw):
+        try:
+            chol = float(chol_raw)
+            tgl = float(tgl_raw)
+            ldl = float(ldl_raw)
+            if chol == 0 and tgl == 0:
+                return "-"
+            if chol >= 250 or tgl >= 250 or ldl >= 180:
+                return "ควรลดอาหารไขมันสูงและตรวจติดตามระดับไขมันในเลือด"
+            elif chol <= 200 and tgl <= 150:
+                return ""
+            else:
+                return "ควรควบคุมอาหารและออกกำลังกายสม่ำเสมอเพื่อลดระดับไขมันในเลือด"
+        except:
+            return "-"
+    
+    chol_raw = str(person.get(f"CHOL{y_label}", "") or "").strip()
+    tgl_raw = str(person.get(f"TGL{y_label}", "") or "").strip()
+    ldl_raw = str(person.get(f"LDL{y_label}", "") or "").strip()
+    
+    lipid_advice = summarize_lipids(chol_raw, tgl_raw, ldl_raw)
+    if lipid_advice and lipid_advice != "-":
+        advice_messages.append(lipid_advice)
+    
+    # -------------------------------
+    # ✅ SHOW COMBINED ADVICE
+    # -------------------------------
+    final_advice = merge_similar_sentences(advice_messages)
+    
+    if final_advice.strip() and final_advice.strip() != "-":
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(255, 105, 135, 0.15);
+            padding: 1.5rem;
+            border-radius: 8px;
+            color: white;
+            margin-top: 2rem;
+        '>
+            <div style='font-size: 20px; font-weight: bold;'>📌 คำแนะนำผลตรวจสุขภาพ ปี {selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.8rem;'>{final_advice}</div>
+        </div>
+        """, unsafe_allow_html=True)
     

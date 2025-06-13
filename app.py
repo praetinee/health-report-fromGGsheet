@@ -564,3 +564,48 @@ if "person" in st.session_state:
             <div style='font-size: 16px; margin-top: 0.3rem;'>{recommendation}</div>
         </div>
         """, unsafe_allow_html=True)
+
+    def summarize_liver(alp_val, sgot_val, sgpt_val):
+        try:
+            alp = float(alp_val)
+            sgot = float(sgot_val)
+            sgpt = float(sgpt_val)
+            if alp == 0 or sgot == 0 or sgpt == 0:
+                return "-"
+            if alp > 120 or sgot > 36 or sgpt > 40:
+                return "การทำงานของตับสูงกว่าเกณฑ์ปกติเล็กน้อย"
+            return "ปกติ"
+        except:
+            return "-"
+    
+    def liver_advice(summary_text):
+        if summary_text == "การทำงานของตับสูงกว่าเกณฑ์ปกติเล็กน้อย":
+            return "ควรลดอาหารไขมันสูงและตรวจติดตามการทำงานของตับซ้ำ"
+        elif summary_text == "ปกติ":
+            return ""
+        return "-"
+    
+    # ✅ ใช้ปีที่เลือกจาก dropdown
+    y = selected_year
+    y_label = "" if y == 2568 else str(y % 100)
+    
+    alp_raw = str(person.get(f"ALP{y_label}", "") or "").strip()
+    sgot_raw = str(person.get(f"SGOT{y_label}", "") or "").strip()
+    sgpt_raw = str(person.get(f"SGPT{y_label}", "") or "").strip()
+    
+    summary = summarize_liver(alp_raw, sgot_raw, sgpt_raw)
+    advice_liver = liver_advice(summary)
+    
+    if advice_liver and advice_liver != "-" and summary != "-":
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(100, 221, 23, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจตับ ปี {y}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_liver}</div>
+        </div>
+        """, unsafe_allow_html=True)

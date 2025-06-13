@@ -378,7 +378,7 @@ if "person" in st.session_state:
         return html
     
     # ✅ Render ทั้งสองตาราง
-    col1, col2 = st.columns(2)
+    left_spacer, col1, col2, right_spacer = st.columns([1, 3, 3, 1])
     
     with col1:
         st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (CBC)")

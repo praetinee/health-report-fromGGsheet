@@ -388,200 +388,10 @@ if "person" in st.session_state:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
 
+    # 📌 รวมคำแนะนำทั้งหมด (CBC, ตับ, ไต, น้ำตาล, ไขมัน) ปีที่เลือก
+    
     import re
     
-    # 📌 ฟังก์ชันรวมคำแนะนำแบบไม่ซ้ำซ้อน
-    def merge_similar_sentences(messages):
-        if len(messages) == 1:
-            return messages[0]
-    
-        merged = []
-        seen_prefixes = {}
-    
-        for msg in messages:
-            prefix = re.match(r"^(ควรพบแพทย์เพื่อตรวจหา(?:และติดตาม)?(?:[^,]*)?)", msg)
-            if prefix:
-                key = "ควรพบแพทย์เพื่อตรวจหา"
-                rest = msg[len(prefix.group(1)):].strip()
-                phrase = prefix.group(1)[len(key):].strip()
-    
-                # 🔧 รวม phrase และ rest → แล้วลบ "และ" ที่ขึ้นต้น
-                full_detail = f"{phrase} {rest}".strip()
-                full_detail = re.sub(r"^และ\s+", "", full_detail)
-    
-                if key in seen_prefixes:
-                    seen_prefixes[key].append(full_detail)
-                else:
-                    seen_prefixes[key] = [full_detail]
-            else:
-                merged.append(msg)
-    
-        for key, endings in seen_prefixes.items():
-            endings = [e.strip() for e in endings if e]
-            if endings:
-                if len(endings) == 1:
-                    merged.append(f"{key} {endings[0]}")
-                else:
-                    body = " ".join(endings[:-1]) + " และ " + endings[-1]
-                    merged.append(f"{key} {body}")
-            else:
-                merged.append(key)
-    
-        return "<br>".join(merged)
-    
-    cbc_messages = {
-        2:  "ดูแลสุขภาพ ออกกำลังกาย ทานอาหารมีประโยชน์ ติดตามผลเลือดสม่ำเสมอ",
-        4:  "ควรพบแพทย์เพื่อตรวจหาสาเหตุเกล็ดเลือดต่ำ เพื่อเฝ้าระวังอาการผิดปกติ",
-        6:  "ควรตรวจซ้ำเพื่อติดตามเม็ดเลือดขาว และดูแลสุขภาพร่างกายให้แข็งแรง",
-        8:  "ควรพบแพทย์เพื่อตรวจหาสาเหตุภาวะโลหิตจาง เพื่อรักษาตามนัด",
-        9:  "ควรพบแพทย์เพื่อตรวจหาและติดตามภาวะโลหิตจางร่วมกับเม็ดเลือดขาวผิดปกติ",
-        10: "ควรพบแพทย์เพื่อตรวจหาสาเหตุเกล็ดเลือดสูง เพื่อพิจารณาการรักษา",
-        13: "ควรดูแลสุขภาพ ติดตามภาวะโลหิตจางและเม็ดเลือดขาวผิดปกติอย่างใกล้ชิด",
-    }
-    
-    def interpret_wbc(wbc):
-        try:
-            wbc = float(wbc)
-            if wbc == 0:
-                return "-"
-            elif 4000 <= wbc <= 10000:
-                return "ปกติ"
-            elif 10000 < wbc < 13000:
-                return "สูงกว่าเกณฑ์เล็กน้อย"
-            elif wbc >= 13000:
-                return "สูงกว่าเกณฑ์"
-            elif 3000 < wbc < 4000:
-                return "ต่ำกว่าเกณฑ์เล็กน้อย"
-            elif wbc <= 3000:
-                return "ต่ำกว่าเกณฑ์"
-        except:
-            return "-"
-        return "-"
-    
-    def interpret_hb(hb, sex):
-        try:
-            hb = float(hb)
-            if sex == "ชาย":
-                if hb < 12:
-                    return "พบภาวะโลหิตจาง"
-                elif 12 <= hb < 13:
-                    return "พบภาวะโลหิตจางเล็กน้อย"
-                else:
-                    return "ปกติ"
-            elif sex == "หญิง":
-                if hb < 11:
-                    return "พบภาวะโลหิตจาง"
-                elif 11 <= hb < 12:
-                    return "พบภาวะโลหิตจางเล็กน้อย"
-                else:
-                    return "ปกติ"
-        except:
-            return "-"
-        return "-"
-    
-    def interpret_plt(plt):
-        try:
-            plt = float(plt)
-            if plt == 0:
-                return "-"
-            elif 150000 <= plt <= 500000:
-                return "ปกติ"
-            elif 500000 < plt < 600000:
-                return "สูงกว่าเกณฑ์เล็กน้อย"
-            elif plt >= 600000:
-                return "สูงกว่าเกณฑ์"
-            elif 100000 <= plt < 150000:
-                return "ต่ำกว่าเกณฑ์เล็กน้อย"
-            elif plt < 100000:
-                return "ต่ำกว่าเกณฑ์"
-        except:
-            return "-"
-        return "-"
-    
-    def cbc_advice(hb_result, wbc_result, plt_result):
-        message_ids = []
-    
-        if all(x in ["", "-", None] for x in [hb_result, wbc_result, plt_result]):
-            return "-"
-    
-        if hb_result == "พบภาวะโลหิตจาง":
-            if wbc_result == "ปกติ" and plt_result == "ปกติ":
-                message_ids.append(8)
-            elif wbc_result in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์"]:
-                message_ids.append(9)
-        elif hb_result == "พบภาวะโลหิตจางเล็กน้อย":
-            if wbc_result == "ปกติ" and plt_result == "ปกติ":
-                message_ids.append(2)
-            elif wbc_result in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์"]:
-                message_ids.append(13)
-    
-        if wbc_result in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์เล็กน้อย", "สูงกว่าเกณฑ์"] and hb_result == "ปกติ":
-            message_ids.append(6)
-    
-        if plt_result == "สูงกว่าเกณฑ์":
-            message_ids.append(10)
-        elif plt_result in ["ต่ำกว่าเกณฑ์", "ต่ำกว่าเกณฑ์เล็กน้อย"]:
-            message_ids.append(4)
-    
-        if not message_ids and hb_result == "ปกติ" and wbc_result == "ปกติ" and plt_result == "ปกติ":
-            return ""
-    
-        if not message_ids:
-            return "ควรพบแพทย์เพื่อตรวจเพิ่มเติม"
-    
-        # รวมข้อความจากหลาย id
-        raw_msgs = [cbc_messages[i] for i in sorted(set(message_ids))]
-        return merge_similar_sentences(raw_msgs)
-    
-    # 🔧 ยึดปีจาก selectbox
-    suffix = str(selected_year)
-    sex = person.get("เพศ", "").strip()
-    
-    # 🔍 ดึงค่าตามปีที่เลือก
-    hb_raw = str(person.get(f"Hb(%)" + suffix, "")).strip()
-    wbc_raw = str(person.get(f"WBC (cumm)" + suffix, "")).strip()
-    plt_raw = str(person.get(f"Plt (/mm)" + suffix, "")).strip()
-    
-    # 🧠 แปลผล
-    hb_result = interpret_hb(hb_raw, sex)
-    wbc_result = interpret_wbc(wbc_raw)
-    plt_result = interpret_plt(plt_raw)
-    
-    # 🩺 คำแนะนำ
-    recommendation = cbc_advice(hb_result, wbc_result, plt_result)
-    
-    # ✅ แสดงเฉพาะปีที่เลือก
-    if recommendation and not all(x == "-" for x in [hb_result, wbc_result, plt_result]):
-        st.markdown(f"""
-        <div style='
-            background-color: rgba(255, 105, 135, 0.15);
-            padding: 1rem;
-            border-radius: 6px;
-            color: white;
-            margin-top: 1rem;
-        '>
-            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจเลือด (CBC) ปี {2500 + selected_year}</div>
-            <div style='font-size: 16px; margin-top: 0.3rem;'>{recommendation}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # ===============================
-    # 📌 HEALTH SUMMARY & ADVICE DISPLAY
-    # ===============================
-    
-    import streamlit as st
-    import pandas as pd
-    import re
-    
-    # ===== ปีที่เลือกจาก dropdown (ต้องมีอยู่ใน app.py) =====
-    # selected_year = st.selectbox(...)
-    
-    y = selected_year
-    y_label = "" if y == 2568 else str(y % 100)
-    
-    # -------------------------------
-    # 🧠 Merge Similar Sentence Helper
-    # -------------------------------
     def merge_similar_sentences(messages):
         if len(messages) == 1:
             return "• " + messages[0]
@@ -596,7 +406,7 @@ if "person" in st.session_state:
                 rest = msg[len(prefix.group(1)):].strip()
                 phrase = prefix.group(1)[len(key):].strip()
                 full_detail = f"{phrase} {rest}".strip()
-                full_detail = re.sub(r"^และ\s+", "", full_detail)
+                full_detail = re.sub(r"^และ\\s+", "", full_detail)
     
                 if key in seen_prefixes:
                     seen_prefixes[key].append(full_detail)
@@ -618,16 +428,47 @@ if "person" in st.session_state:
     
         return "<br>• " + "<br>• ".join(merged)
     
-    # -------------------------------
-    # 🩸 CBC Summary (สมมุติว่าคุณมี cbc_result แล้ว)
-    # -------------------------------
-    advice_messages = []
-    if cbc_result:
-        advice_messages.append(cbc_result)
     
-    # -------------------------------
-    # 🧪 Liver Function
-    # -------------------------------
+    # =============================
+    # 🔍 ดึงค่าตามปีที่เลือก
+    # =============================
+    suffix = str(selected_year)
+    y_label = "" if selected_year == 2568 else str(selected_year % 100)
+    sex = person.get("เพศ", "").strip()
+    
+    hb_raw = str(person.get(f"Hb(%)" + suffix, "")).strip()
+    wbc_raw = str(person.get(f"WBC (cumm)" + suffix, "")).strip()
+    plt_raw = str(person.get(f"Plt (/mm)" + suffix, "")).strip()
+    
+    alp_raw = str(person.get(f"ALP{y_label}", "") or "").strip()
+    sgot_raw = str(person.get(f"SGOT{y_label}", "") or "").strip()
+    sgpt_raw = str(person.get(f"SGPT{y_label}", "") or "").strip()
+    
+    bun_raw = str(person.get(f"BUN{y_label}", "") or "").strip()
+    cr_raw = str(person.get(f"Cr{y_label}", "") or "").strip()
+    gfr_raw = str(person.get(f"GFR{y_label}", "") or "").strip()
+    
+    fbs_raw = str(person.get("FBS" if selected_year == 2568 else f"FBS{y_label}", "") or "").strip()
+    
+    chol_raw = str(person.get(f"CHOL{y_label}", "") or "").strip()
+    tgl_raw = str(person.get(f"TGL{y_label}", "") or "").strip()
+    ldl_raw = str(person.get(f"LDL{y_label}", "") or "").strip()
+    
+    
+    # =============================
+    # 📌 คำแนะนำแต่ละส่วน
+    # =============================
+    advice_messages = []
+    
+    # ✅ CBC
+    hb_result = interpret_hb(hb_raw, sex)
+    wbc_result = interpret_wbc(wbc_raw)
+    plt_result = interpret_plt(plt_raw)
+    cbc_msg = cbc_advice(hb_result, wbc_result, plt_result)
+    if cbc_msg and cbc_msg != "-":
+        advice_messages.append(cbc_msg)
+    
+    # ✅ LIVER
     def summarize_liver(alp_val, sgot_val, sgpt_val):
         try:
             alp = float(alp_val)
@@ -641,17 +482,11 @@ if "person" in st.session_state:
         except:
             return "-"
     
-    alp_raw = str(person.get(f"ALP{y_label}", "") or "").strip()
-    sgot_raw = str(person.get(f"SGOT{y_label}", "") or "").strip()
-    sgpt_raw = str(person.get(f"SGPT{y_label}", "") or "").strip()
+    liver_msg = summarize_liver(alp_raw, sgot_raw, sgpt_raw)
+    if liver_msg and liver_msg != "-":
+        advice_messages.append(liver_msg)
     
-    liver_advice = summarize_liver(alp_raw, sgot_raw, sgpt_raw)
-    if liver_advice and liver_advice != "-":
-        advice_messages.append(liver_advice)
-    
-    # -------------------------------
-    # 🧬 Kidney Function
-    # -------------------------------
+    # ✅ KIDNEY
     def summarize_kidney(bun, cr, gfr):
         try:
             bun = float(bun)
@@ -663,17 +498,11 @@ if "person" in st.session_state:
         except:
             return "-"
     
-    bun_raw = str(person.get(f"BUN{y_label}", "") or "").strip()
-    cr_raw = str(person.get(f"Cr{y_label}", "") or "").strip()
-    gfr_raw = str(person.get(f"GFR{y_label}", "") or "").strip()
+    kidney_msg = summarize_kidney(bun_raw, cr_raw, gfr_raw)
+    if kidney_msg and kidney_msg != "-":
+        advice_messages.append(kidney_msg)
     
-    kidney_advice = summarize_kidney(bun_raw, cr_raw, gfr_raw)
-    if kidney_advice and kidney_advice != "-":
-        advice_messages.append(kidney_advice)
-    
-    # -------------------------------
-    # 🍬 FBS (น้ำตาลในเลือด)
-    # -------------------------------
+    # ✅ FBS
     def summarize_fbs(fbs_raw):
         try:
             val = float(fbs_raw)
@@ -683,19 +512,15 @@ if "person" in st.session_state:
                 return "ควรลดอาหารหวานและติดตามระดับน้ำตาลซ้ำ"
             elif val >= 126:
                 return "ควรพบแพทย์เพื่อตรวจยืนยันเบาหวานและวางแผนการรักษา"
-            else:
-                return ""
+            return ""
         except:
             return "-"
     
-    fbs_raw = str(person.get("FBS" if y == 2568 else f"FBS{y_label}", "") or "").strip()
-    fbs_advice = summarize_fbs(fbs_raw)
-    if fbs_advice and fbs_advice != "-":
-        advice_messages.append(fbs_advice)
+    fbs_msg = summarize_fbs(fbs_raw)
+    if fbs_msg and fbs_msg != "-":
+        advice_messages.append(fbs_msg)
     
-    # -------------------------------
-    # 🧪 Blood Lipids
-    # -------------------------------
+    # ✅ LIPIDS
     def summarize_lipids(chol_raw, tgl_raw, ldl_raw):
         try:
             chol = float(chol_raw)
@@ -712,17 +537,13 @@ if "person" in st.session_state:
         except:
             return "-"
     
-    chol_raw = str(person.get(f"CHOL{y_label}", "") or "").strip()
-    tgl_raw = str(person.get(f"TGL{y_label}", "") or "").strip()
-    ldl_raw = str(person.get(f"LDL{y_label}", "") or "").strip()
+    lipid_msg = summarize_lipids(chol_raw, tgl_raw, ldl_raw)
+    if lipid_msg and lipid_msg != "-":
+        advice_messages.append(lipid_msg)
     
-    lipid_advice = summarize_lipids(chol_raw, tgl_raw, ldl_raw)
-    if lipid_advice and lipid_advice != "-":
-        advice_messages.append(lipid_advice)
-    
-    # -------------------------------
-    # ✅ SHOW COMBINED ADVICE
-    # -------------------------------
+    # =============================
+    # 🎯 แสดงคำแนะนำรวม
+    # =============================
     final_advice = merge_similar_sentences(advice_messages)
     
     if final_advice.strip() and final_advice.strip() != "-":
@@ -738,4 +559,3 @@ if "person" in st.session_state:
             <div style='font-size: 16px; margin-top: 0.8rem;'>{final_advice}</div>
         </div>
         """, unsafe_allow_html=True)
-    

@@ -403,9 +403,15 @@ if "person" in st.session_state:
                 return val_str, True
         if "cell/HPF" in normal_range:
             try:
-                num = float(val_str.split()[0])
-                high = int(normal_range.split("-")[-1].split()[0])
-                return val_str, num > high
+                # ดึง upper จากช่วงค่าปกติ เช่น "0 - 5 cell/HPF"
+                upper = int(normal_range.split("-")[1].split()[0])
+                # ถ้า value เป็นช่วง เช่น "2-3"
+                if "-" in val_str:
+                    left, right = map(int, val_str.split("-"))
+                    return val_str, right > upper
+                else:
+                    num = int(val_str)
+                    return val_str, num > upper
             except:
                 return val_str, True
     

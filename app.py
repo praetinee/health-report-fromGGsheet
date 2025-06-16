@@ -791,26 +791,41 @@ if "person" in st.session_state:
     # ==============================
     # 🚻 ผลตรวจปัสสาวะ (Urinalysis)
     # ==============================
+
+    if selected_year == 68:
+        urine_config_68 = [
+            ("สี (Colour)", person.get("Color68", "N/A"), "Yellow, Pale Yellow"),
+            ("น้ำตาล (Sugar)", person.get("sugar68", "N/A"), "Negative"),
+            ("โปรตีน (Albumin)", person.get("Alb68", "N/A"), "Negative, trace"),
+            ("กรด-ด่าง (pH)", person.get("pH68", "N/A"), "5.0 - 8.0"),
+            ("ความถ่วงจำเพาะ (Sp.gr)", person.get("Spgr68", "N/A"), "1.003 - 1.030"),
+            ("เม็ดเลือดแดง (RBC)", person.get("RBC168", "N/A"), "0 - 2 cell/HPF"),
+            ("เม็ดเลือดขาว (WBC)", person.get("WBC168", "N/A"), "0 - 5 cell/HPF"),
+            ("เซลล์เยื่อบุผิว (Squam.epit.)", person.get("SQ-epi68", "N/A"), "0 - 10 cell/HPF"),
+            ("อื่นๆ", person.get("ORTER68", "N/A"), "-"),
+        ]
     
-    urine_fields = [
-        ("สี (Colour)", "สี (Colour)", "Yellow, Pale Yellow"),
-        ("น้ำตาล (sugar)", "น้ำตาล (sugar)", "Negative"),
-        ("เม็ดเลือดขาว (Wbc/HPF)", "เม็ดเลือดขาว (Wbc/HPF)", "0 - 5 cell/HPF"),
-        ("เม็ดเลือดแดง (Rbc/HPF)", "เม็ดเลือดแดง (Rbc/HPF)", "0 - 2 cell/HPF"),
-        ("กรด-ด่าง (pH)", "กรด-ด่าง (pH)", "5.0 - 8.0"),
-        ("โปรตีน (albumin)", "โปรตีน (albumin)", "Negative, trace"),
-        ("ความถ่วงจำเพาะ (Sp.gr)", "ความถ่วงจำเพาะ (Sp.gr)", "1.003 - 1.030"),
-        ("เซลล์เยื่อบุผิว (Squam.epit.)", "เซลล์เยื่อบุผิว (Squam.epit.)", "0 - 10 cell/HPF"),
-    ]
+        urine_rows = [[(name, False), (value, False), (normal, False)] for name, value, normal in urine_config_68]
     
-    urine_rows = []
+        st.markdown("### 🚻 ผลการตรวจปัสสาวะ (Urinalysis)")
+        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urine_rows), unsafe_allow_html=True)
     
-    for label, col_key, normal in urine_fields:
-        raw = str(person.get(col_key, "N/A")).strip()
-        urine_rows.append([(label, False), (raw, False), (normal, False)])
+    # ✅ สำหรับปีก่อน 68 → แสดงข้อความรวมในบรรทัดเดียว
+    else:
+        field_name = f"ผลปัสสาวะ{selected_year}"
+        urine_text = person.get(field_name, "").strip()
     
-    st.markdown("#### 🚻 ผลการตรวจปัสสาวะ (Urinalysis)")
-    st.markdown(
-        styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urine_rows),
-        unsafe_allow_html=True
-    )
+        if urine_text:
+            st.markdown("### 🚻 ผลการตรวจปัสสาวะ (Urinalysis)")
+            st.markdown(f"""
+            <div style='
+                margin-top: 1rem;
+                padding: 1rem;
+                border-left: 5px solid #4CAF50;
+                background-color: #f5f5f5;
+                font-size: 16px;
+                line-height: 1.7;
+            '>
+                {urine_text}
+            </div>
+            """, unsafe_allow_html=True)

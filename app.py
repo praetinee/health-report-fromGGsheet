@@ -995,3 +995,25 @@ if "person" in st.session_state:
             <div style='margin-top: 0.5rem;'>{urine_advice}</div>
         </div>
         """, unsafe_allow_html=True)
+
+    # ======================
+    # ผลอุจจาระ
+    # ======================
+
+    def interpret_stool_exam(value):
+        if not value or value.strip() == "":
+            return "-"
+        if "ปกติ" in value:
+            return "ปกติ"
+        elif "เม็ดเลือดแดง" in value:
+            return "พบเม็ดเลือดแดงในอุจจาระ นัดตรวจซ้ำ"
+        elif "เม็ดเลือดขาว" in value:
+            return "พบเม็ดเลือดขาวในอุจจาระ นัดตรวจซ้ำ"
+        return value.strip()
+    
+    def interpret_stool_cs(value):
+        if not value or value.strip() == "":
+            return "-"
+        if "ไม่พบ" in value or "ปกติ" in value:
+            return "ไม่พบการติดเชื้อ"
+        return "พบการติดเชื้อในอุจจาระ ให้พบแพทย์เพื่อตรวจรักษาเพิ่มเติม"

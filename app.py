@@ -550,21 +550,6 @@ if "person" in st.session_state:
     # 🩺 คำแนะนำ
     recommendation = cbc_advice(hb_result, wbc_result, plt_result)
     
-    # ✅ แสดงเฉพาะปีที่เลือก
-    if recommendation and not all(x == "-" for x in [hb_result, wbc_result, plt_result]):
-        st.markdown(f"""
-        <div style='
-            background-color: rgba(255, 105, 135, 0.15);
-            padding: 1rem;
-            border-radius: 6px;
-            color: white;
-            margin-top: 1rem;
-        '>
-            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจเลือด (CBC) ปี {2500 + selected_year}</div>
-            <div style='font-size: 16px; margin-top: 0.3rem;'>{recommendation}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
     def summarize_liver(alp_val, sgot_val, sgpt_val):
         try:
             alp = float(alp_val)
@@ -596,20 +581,6 @@ if "person" in st.session_state:
     summary = summarize_liver(alp_raw, sgot_raw, sgpt_raw)
     advice_liver = liver_advice(summary)
     
-    if advice_liver and advice_liver != "-" and summary != "-":
-        st.markdown(f"""
-        <div style='
-            background-color: rgba(100, 221, 23, 0.15);
-            padding: 1rem;
-            border-radius: 6px;
-            color: white;
-            margin-top: 1rem;
-        '>
-            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจตับ ปี {2500 + selected_year}</div>
-            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_liver}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
     def uric_acid_advice(value_raw):
         try:
             value = float(value_raw)
@@ -627,20 +598,6 @@ if "person" in st.session_state:
     raw_value = str(person.get(col_name, "") or "").strip()
     advice_uric = uric_acid_advice(raw_value)
     
-    if advice_uric and advice_uric != "-":
-        st.markdown(f"""
-        <div style='
-            background-color: rgba(245, 124, 0, 0.15);
-            padding: 1rem;
-            border-radius: 6px;
-            color: white;
-            margin-top: 1rem;
-        '>
-            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำกรดยูริคในเลือด ปี {2500 + selected_year}</div>
-            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_uric}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
     # 🧪 แปลผลการทำงานของไตจาก GFR
     def kidney_summary_gfr_only(gfr_raw):
         try:
@@ -670,21 +627,6 @@ if "person" in st.session_state:
     kidney_summary = kidney_summary_gfr_only(gfr_raw)
     advice_kidney = kidney_advice_from_summary(kidney_summary)
     
-    # ✅ แสดงคำแนะนำ
-    if advice_kidney:
-        st.markdown(f"""
-        <div style='
-            background-color: rgba(0, 188, 212, 0.15);
-            padding: 1rem;
-            border-radius: 6px;
-            color: white;
-            margin-top: 1rem;
-        '>
-            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจไต ปี {2500 + selected_year}</div>
-            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_kidney}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
     # ===============================
     # ✅ คำแนะนำผลน้ำตาลในเลือด (FBS)
     # ===============================
@@ -712,20 +654,6 @@ if "person" in st.session_state:
     raw_value = str(person.get(col_name, "") or "").strip()
     advice_fbs = fbs_advice(raw_value)
     
-    if advice_fbs:
-        st.markdown(f"""
-        <div style='
-            background-color: rgba(255, 202, 40, 0.15);
-            padding: 1rem;
-            border-radius: 6px;
-            color: white;
-            margin-top: 1rem;
-        '>
-            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำระดับน้ำตาลในเลือด ปี {2500 + selected_year}</div>
-            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_fbs}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
     # 🧪 ฟังก์ชันสรุปผลไขมันในเลือด
     def summarize_lipids(chol_raw, tgl_raw, ldl_raw):
         try:
@@ -769,20 +697,6 @@ if "person" in st.session_state:
     summary = summarize_lipids(chol_raw, tgl_raw, ldl_raw)
     advice = lipids_advice(summary)
     
-    if advice:
-        st.markdown(f"""
-        <div style='
-            background-color: rgba(0, 150, 136, 0.15);
-            padding: 1rem;
-            border-radius: 6px;
-            color: white;
-            margin-top: 1rem;
-        '>
-            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำไขมันในเลือด ปี {2500 + selected_year}</div>
-            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
     # ✅ รวมคำแนะนำทุกหมวด
     all_advices = []
     

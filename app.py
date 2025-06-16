@@ -283,7 +283,7 @@ if "person" in st.session_state:
     st.markdown(render_health_report(person, selected_cols), unsafe_allow_html=True)
 
     # ================== CBC / BLOOD TEST DISPLAY ==================
-    st.markdown("### 🧪 รายงานผลตรวจเลือด")
+
     
     cbc_cols = cbc_columns_by_year[selected_year]
     blood_cols = blood_columns_by_year[selected_year]

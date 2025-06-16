@@ -839,7 +839,10 @@ if "person" in st.session_state:
                     "FBS": "🍬", "ไต": "💧", "ตับ": "🫀",
                     "ยูริค": "🦴", "ไขมัน": "🧈", "CBC": "🩸"
                 }.get(title, "📝")
-                merged = " ".join(OrderedDict.fromkeys(msgs))
+                merged_msgs = [m for m in msgs if m.strip() != "-"]
+                if not merged_msgs:
+                    continue  # ข้ามหมวดนี้ไปเลย
+                merged = " ".join(OrderedDict.fromkeys(merged_msgs))
                 section = f"<b>{icon} {title}:</b> {merged}"
                 section_texts.append(section)
     

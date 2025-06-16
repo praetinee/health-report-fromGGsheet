@@ -782,3 +782,4 @@ if "person" in st.session_state:
         {final_advice}
     </div>
     """, unsafe_allow_html=True)
+

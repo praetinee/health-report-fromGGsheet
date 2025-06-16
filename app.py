@@ -416,16 +416,32 @@ if "person" in st.session_state:
                 return val_str, True
     
         return val_str, False
+
+    def render_section_header(title):
+        return f"""
+        <div style="
+            background-color: #cce0c1;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: underline;
+            margin-bottom: 1rem;
+        ">
+            {title}
+        </div>
+        """
     
     # ✅ Render ทั้งสองตาราง
     left_spacer, col1, col2, right_spacer = st.columns([1, 3, 3, 1])
     
     with col1:
-        st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (CBC)")
+        st.markdown(render_section_header("ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)"), unsafe_allow_html=True)
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows), unsafe_allow_html=True)
     
     with col2:
-        st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
+        st.markdown(render_section_header("ผลตรวจเลือด (Blood Test)"), unsafe_allow_html=True)
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
 
     import re

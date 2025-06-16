@@ -1037,15 +1037,8 @@ if "person" in st.session_state:
     
     # แสดงข้อความแปลผล
     st.markdown(f"""
-    <div style='
-        background-color: #f6f6f6;
-        padding: 1rem 1.5rem;
-        border-radius: 6px;
-        margin-bottom: 2rem;
-        font-size: 16px;
-        line-height: 1.7;
-    '>
+    <p style='font-size: 16px; line-height: 1.7; margin-bottom: 2rem;'>
         <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
         <b>ผลเพาะเชื้ออุจจาระ:</b> {cs_text}
-    </div>
+    </p>
     """, unsafe_allow_html=True)

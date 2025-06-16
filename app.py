@@ -423,9 +423,6 @@ if "person" in st.session_state:
     
         return "<br><br>".join(section_texts)
 
-    # ✅ แสดงผลรวม
-    final_advice = merge_final_advice_grouped(all_advices)
-    
     # ✅ Render ทั้งสองตาราง
     left_spacer, col1, col2, right_spacer = st.columns([1, 3, 3, 1])
     
@@ -785,5 +782,7 @@ if "person" in st.session_state:
     if recommendation and recommendation != "-":
         all_advices.append(recommendation)
 
+    # ✅ แสดงผลรวม
+    final_advice = merge_final_advice_grouped(all_advices)
    
     

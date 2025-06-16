@@ -376,77 +376,13 @@ if "person" in st.session_state:
             html += f"<tr>{row_html}</tr>"
         html += "</tbody></table>"
         return html
-
-    # ✅ ฟังก์ชันรวมคำแนะนำทั้งหมด (ไม่ให้ซ้ำ)
-    from collections import OrderedDict
     
-    def merge_final_advice_grouped(messages):
-        groups = {
-            "FBS": [],
-            "ไต": [],
-            "ตับ": [],
-            "ยูริค": [],
-            "ไขมัน": [],
-            "CBC": [],
-        }
-    
-        for msg in messages:
-            if "น้ำตาล" in msg:
-                groups["FBS"].append(msg)
-            elif "ไต" in msg:
-                groups["ไต"].append(msg)
-            elif "ตับ" in msg:
-                groups["ตับ"].append(msg)
-            elif "ยูริค" in msg or "พิวรีน" in msg:
-                groups["ยูริค"].append(msg)
-            elif "ไขมัน" in msg:
-                groups["ไขมัน"].append(msg)
-            else:
-                groups["CBC"].append(msg)
-    
-        section_texts = []
-        for title, msgs in groups.items():
-            if msgs:
-                icon = {
-                    "FBS": "🍬", "ไต": "💧", "ตับ": "🫀",
-                    "ยูริค": "🦴", "ไขมัน": "🧈", "CBC": "🩸"
-                }.get(title, "📝")
-                merged_msgs = [m for m in msgs if m.strip() != "-"]
-                if not merged_msgs:
-                    continue  # ข้ามหมวดนี้ไปเลย
-                merged = " ".join(OrderedDict.fromkeys(merged_msgs))
-                section = f"<b>{icon} {title}:</b> {merged}"
-                section_texts.append(section)
-    
-        if not section_texts:
-            return "ไม่พบคำแนะนำเพิ่มเติมจากผลตรวจ"
-    
-        return "<br><br>".join(section_texts)
-
     # ✅ Render ทั้งสองตาราง
     left_spacer, col1, col2, right_spacer = st.columns([1, 3, 3, 1])
     
     with col1:
         st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (CBC)")
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows), unsafe_allow_html=True)
-
-        # ✅ คำแนะนำรวมทั้งหมด แสดงใต้ตาราง CBC เท่านั้น
-        st.markdown(f"""
-        <div style='
-            margin-top: 2rem;
-            padding: 1.2rem;
-            border-radius: 8px;
-            background-color: rgba(33, 150, 243, 0.15);
-            color: inherit;
-            font-size: 16px;
-            line-height: 1.7;
-        '>
-            <div style="font-size: 18px; font-weight: bold; margin-bottom: 0.8rem;">
-                📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}
-            </div>
-            {final_advice}
-        </div>
-        """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
@@ -614,6 +550,21 @@ if "person" in st.session_state:
     # 🩺 คำแนะนำ
     recommendation = cbc_advice(hb_result, wbc_result, plt_result)
     
+    # ✅ แสดงเฉพาะปีที่เลือก
+    if recommendation and not all(x == "-" for x in [hb_result, wbc_result, plt_result]):
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(255, 105, 135, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจเลือด (CBC) ปี {2500 + selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{recommendation}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     def summarize_liver(alp_val, sgot_val, sgpt_val):
         try:
             alp = float(alp_val)
@@ -645,6 +596,20 @@ if "person" in st.session_state:
     summary = summarize_liver(alp_raw, sgot_raw, sgpt_raw)
     advice_liver = liver_advice(summary)
     
+    if advice_liver and advice_liver != "-" and summary != "-":
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(100, 221, 23, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจตับ ปี {2500 + selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_liver}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     def uric_acid_advice(value_raw):
         try:
             value = float(value_raw)
@@ -662,6 +627,20 @@ if "person" in st.session_state:
     raw_value = str(person.get(col_name, "") or "").strip()
     advice_uric = uric_acid_advice(raw_value)
     
+    if advice_uric and advice_uric != "-":
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(245, 124, 0, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำกรดยูริคในเลือด ปี {2500 + selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_uric}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     # 🧪 แปลผลการทำงานของไตจาก GFR
     def kidney_summary_gfr_only(gfr_raw):
         try:
@@ -691,6 +670,21 @@ if "person" in st.session_state:
     kidney_summary = kidney_summary_gfr_only(gfr_raw)
     advice_kidney = kidney_advice_from_summary(kidney_summary)
     
+    # ✅ แสดงคำแนะนำ
+    if advice_kidney:
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(0, 188, 212, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจไต ปี {2500 + selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_kidney}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     # ===============================
     # ✅ คำแนะนำผลน้ำตาลในเลือด (FBS)
     # ===============================
@@ -718,6 +712,20 @@ if "person" in st.session_state:
     raw_value = str(person.get(col_name, "") or "").strip()
     advice_fbs = fbs_advice(raw_value)
     
+    if advice_fbs:
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(255, 202, 40, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำระดับน้ำตาลในเลือด ปี {2500 + selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_fbs}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     # 🧪 ฟังก์ชันสรุปผลไขมันในเลือด
     def summarize_lipids(chol_raw, tgl_raw, ldl_raw):
         try:
@@ -761,6 +769,20 @@ if "person" in st.session_state:
     summary = summarize_lipids(chol_raw, tgl_raw, ldl_raw)
     advice = lipids_advice(summary)
     
+    if advice:
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(0, 150, 136, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำไขมันในเลือด ปี {2500 + selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     # ✅ รวมคำแนะนำทุกหมวด
     all_advices = []
     
@@ -782,7 +804,67 @@ if "person" in st.session_state:
     if recommendation and recommendation != "-":
         all_advices.append(recommendation)
 
+   
+    # ✅ ฟังก์ชันรวมคำแนะนำทั้งหมด (ไม่ให้ซ้ำ)
+    from collections import OrderedDict
+    
+    def merge_final_advice_grouped(messages):
+        groups = {
+            "FBS": [],
+            "ไต": [],
+            "ตับ": [],
+            "ยูริค": [],
+            "ไขมัน": [],
+            "CBC": [],
+        }
+    
+        for msg in messages:
+            if "น้ำตาล" in msg:
+                groups["FBS"].append(msg)
+            elif "ไต" in msg:
+                groups["ไต"].append(msg)
+            elif "ตับ" in msg:
+                groups["ตับ"].append(msg)
+            elif "ยูริค" in msg or "พิวรีน" in msg:
+                groups["ยูริค"].append(msg)
+            elif "ไขมัน" in msg:
+                groups["ไขมัน"].append(msg)
+            else:
+                groups["CBC"].append(msg)
+    
+        section_texts = []
+        for title, msgs in groups.items():
+            if msgs:
+                icon = {
+                    "FBS": "🍬", "ไต": "💧", "ตับ": "🫀",
+                    "ยูริค": "🦴", "ไขมัน": "🧈", "CBC": "🩸"
+                }.get(title, "📝")
+                merged_msgs = [m for m in msgs if m.strip() != "-"]
+                if not merged_msgs:
+                    continue  # ข้ามหมวดนี้ไปเลย
+                merged = " ".join(OrderedDict.fromkeys(merged_msgs))
+                section = f"<b>{icon} {title}:</b> {merged}"
+                section_texts.append(section)
+    
+        if not section_texts:
+            return "ไม่พบคำแนะนำเพิ่มเติมจากผลตรวจ"
+    
+        return "<br><br>".join(section_texts)
+        
     # ✅ แสดงผลรวม
     final_advice = merge_final_advice_grouped(all_advices)
-   
     
+    st.markdown(f"""
+    <div style='
+        background-color: rgba(33, 150, 243, 0.15);
+        padding: 1.2rem;
+        border-radius: 6px;
+        color: inherit;
+        margin-top: 2rem;
+        font-size: 16px;
+        line-height: 1.7;
+    '>
+        <div style='font-size: 18px; font-weight: bold; margin-bottom: 0.8rem;'>📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}</div>
+        {final_advice}
+    </div>
+    """, unsafe_allow_html=True)

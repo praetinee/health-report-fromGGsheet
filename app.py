@@ -376,6 +376,40 @@ if "person" in st.session_state:
             html += f"<tr>{row_html}</tr>"
         html += "</tbody></table>"
         return html
+
+    def flag_urine_value(val, normal_range=None):
+        if not val or val.strip().upper() in ["N/A", "-", ""]:
+            return "-", False
+        val_clean = val.strip().lower()
+    
+        if normal_range == "Yellow, Pale Yellow":
+            return val, val_clean not in ["yellow", "pale yellow"]
+        if normal_range == "Negative":
+            return val, val_clean != "negative"
+        if normal_range == "Negative, trace":
+            return val, val_clean not in ["negative", "trace"]
+        if normal_range == "5.0 - 8.0":
+            try:
+                num = float(val)
+                return val, not (5.0 <= num <= 8.0)
+            except:
+                return val, True
+        if normal_range == "1.003 - 1.030":
+            try:
+                num = float(val)
+                return val, not (1.003 <= num <= 1.030)
+            except:
+                return val, True
+        if "cell/HPF" in normal_range:
+            try:
+                num = float(str(val).split()[0])
+                high = int(normal_range.split("-")[-1].split()[0])
+                return val, num > high
+            except:
+                return val, True
+    
+        return val, False
+
     
     # ✅ Render ทั้งสองตาราง
     left_spacer, col1, col2, right_spacer = st.columns([1, 3, 3, 1])
@@ -805,8 +839,11 @@ if "person" in st.session_state:
             ("อื่นๆ", person.get("ORTER68", "N/A"), "-"),
         ]
     
-        urine_rows = [[(name, False), (value, False), (normal, False)] for name, value, normal in urine_config_68]
-    
+        urine_rows = []
+        for name, value, normal in urine_config_68:
+            val_text, is_abn = flag_urine_value(value, normal)
+            urine_rows.append([(name, is_abn), (val_text, is_abn), (normal, is_abn)])
+
         st.markdown("### 🚻 ผลการตรวจปัสสาวะ (Urinalysis)")
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urine_rows), unsafe_allow_html=True)
     
@@ -815,8 +852,9 @@ if "person" in st.session_state:
         field_name = f"ผลปัสสาวะ{selected_year}"
         urine_text = person.get(field_name, "").strip()
     
+        st.markdown("### 🚻 ผลการตรวจปัสสาวะ (Urinalysis)")
+        
         if urine_text:
-            st.markdown("### 🚻 ผลการตรวจปัสสาวะ (Urinalysis)")
             st.markdown(f"""
             <div style='
                 margin-top: 1rem;
@@ -827,5 +865,17 @@ if "person" in st.session_state:
                 line-height: 1.7;
             '>
                 {urine_text}
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div style='
+                margin-top: 1rem;
+                padding: 1rem;
+                background-color: #f9f9f9;
+                font-size: 16px;
+                line-height: 1.7;
+            '>
+                ไม่พบข้อมูลผลตรวจปัสสาวะสำหรับปีนี้
             </div>
             """, unsafe_allow_html=True)

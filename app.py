@@ -875,7 +875,7 @@ if "person" in st.session_state:
         field_name = f"ผลปัสสาวะ{selected_year}"
         urine_text = person.get(field_name, "").strip()
     
-        st.markdown(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
+        st.markdown(render_section_header("ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
         
         if urine_text:
             st.markdown(f"""

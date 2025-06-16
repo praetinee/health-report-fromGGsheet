@@ -705,16 +705,17 @@ if "person" in st.session_state:
         except:
             return ""
     
-    # ✅ คำนวณปีและคอลัมน์
-    fbs_col = "FBS" if selected_year == 68 else f"FBS{selected_year}"
-    fbs_raw = str(person.get(fbs_col, "") or "").strip()
-    advice_fbs = fbs_advice(fbs_raw)
+    # ใช้ปีที่เลือกจาก dropdown
+    y = selected_year
+    y_label = "" if y == 68 else str(y)
+    col_name = f"FBS{y_label}"
+    raw_value = str(person.get(col_name, "") or "").strip()
+    advice_fbs = fbs_advice(raw_value)
     
-    # ✅ แสดงเฉพาะเมื่อมีคำแนะนำ
     if advice_fbs:
         st.markdown(f"""
         <div style='
-            background-color: rgba(255, 214, 0, 0.15);
+            background-color: rgba(255, 202, 40, 0.15);
             padding: 1rem;
             border-radius: 6px;
             color: white;

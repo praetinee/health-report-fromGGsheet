@@ -707,7 +707,7 @@ if "person" in st.session_state:
     
     # ใช้ปีที่เลือกจาก dropdown
     y = selected_year
-    y_label = "" if y == 68 else str(y % 100)  # 🔧 แก้ไขตรงนี้
+    y_label = str(y)
     col_name = f"FBS{y_label}"
     raw_value = str(person.get(col_name, "") or "").strip()
     advice_fbs = fbs_advice(raw_value)

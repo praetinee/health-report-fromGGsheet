@@ -807,24 +807,61 @@ if "person" in st.session_state:
    
     # ✅ ฟังก์ชันรวมคำแนะนำทั้งหมด (ไม่ให้ซ้ำ)
     from collections import OrderedDict
-    def merge_final_advice(messages):
-        unique_msgs = list(OrderedDict.fromkeys(m.strip() for m in messages if m.strip()))
-        if not unique_msgs:
-            return "ไม่พบคำแนะนำเพิ่มเติมจากผลตรวจ"
-        return " ".join(unique_msgs)
     
+    def merge_final_advice_grouped(messages):
+        groups = {
+            "FBS": [],
+            "ไต": [],
+            "ตับ": [],
+            "ยูริค": [],
+            "ไขมัน": [],
+            "CBC": [],
+        }
+    
+        for msg in messages:
+            if "น้ำตาล" in msg:
+                groups["FBS"].append(msg)
+            elif "ไต" in msg:
+                groups["ไต"].append(msg)
+            elif "ตับ" in msg:
+                groups["ตับ"].append(msg)
+            elif "ยูริค" in msg or "พิวรีน" in msg:
+                groups["ยูริค"].append(msg)
+            elif "ไขมัน" in msg:
+                groups["ไขมัน"].append(msg)
+            else:
+                groups["CBC"].append(msg)
+    
+        section_texts = []
+        for title, msgs in groups.items():
+            if msgs:
+                icon = {
+                    "FBS": "🍬", "ไต": "💧", "ตับ": "🫀",
+                    "ยูริค": "🦴", "ไขมัน": "🧈", "CBC": "🩸"
+                }.get(title, "📝")
+                merged = " ".join(OrderedDict.fromkeys(msgs))
+                section = f"<b>{icon} {title}:</b> {merged}"
+                section_texts.append(section)
+    
+        if not section_texts:
+            return "ไม่พบคำแนะนำเพิ่มเติมจากผลตรวจ"
+    
+        return "<br><br>".join(section_texts)
+        
     # ✅ แสดงผลรวม
-    final_advice = merge_final_advice(all_advices)
+    final_advice = merge_final_advice_grouped(all_advices)
     
     st.markdown(f"""
     <div style='
         background-color: rgba(33, 150, 243, 0.15);
         padding: 1.2rem;
         border-radius: 6px;
-        color: black;
+        color: inherit;
         margin-top: 2rem;
+        font-size: 16px;
+        line-height: 1.7;
     '>
-        <div style='font-size: 18px; font-weight: bold;'>📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}</div>
-        <div style='font-size: 16px; margin-top: 0.5rem;'>{final_advice}</div>
+        <div style='font-size: 18px; font-weight: bold; margin-bottom: 0.8rem;'>📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}</div>
+        {final_advice}
     </div>
     """, unsafe_allow_html=True)

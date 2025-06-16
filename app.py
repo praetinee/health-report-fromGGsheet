@@ -663,3 +663,25 @@ if "person" in st.session_state:
                 "และไม่ควรกลั้นปัสสาวะ มีอาการบวมผิดปกติให้พบแพทย์"
             )
         return ""
+    # ✅ ดึงค่าจาก person ตามปีที่เลือก
+    gfr_raw = str(person.get(f"GFR{y_label}", "") or "").strip()
+    
+    # ✅ วิเคราะห์ผลการทำงานของไต และให้คำแนะนำ
+    kidney_summary = kidney_summary_gfr_only(gfr_raw)
+    advice_kidney = kidney_advice_from_summary(kidney_summary)
+    
+    # ✅ แสดงคำแนะนำ
+    if advice_kidney:
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(0, 188, 212, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำผลตรวจไต ปี {2500 + selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_kidney}</div>
+        </div>
+        """, unsafe_allow_html=True)
+

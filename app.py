@@ -782,3 +782,51 @@ if "person" in st.session_state:
             <div style='font-size: 16px; margin-top: 0.3rem;'>{advice}</div>
         </div>
         """, unsafe_allow_html=True)
+
+    # ✅ รวมคำแนะนำทุกหมวด
+    all_advices = []
+    
+    if advice_fbs:
+        all_advices.append(advice_fbs)
+    
+    if advice_kidney:
+        all_advices.append(advice_kidney)
+    
+    if advice_liver:
+        all_advices.append(advice_liver)
+    
+    if advice_uric:
+        all_advices.append(advice_uric)
+    
+    if advice:
+        all_advices.append(advice)  # คำแนะนำไขมันในเลือด
+    
+    if recommendation and recommendation != "-":
+        all_advices.append(recommendation)
+    
+    if summary_advice and summary_advice != "ไม่พบข้อมูลเพียงพอในการประเมินสุขภาพ":
+        all_advices.append(summary_advice)
+    
+    # ✅ ฟังก์ชันรวมคำแนะนำทั้งหมด (ไม่ให้ซ้ำ)
+    from collections import OrderedDict
+    def merge_final_advice(messages):
+        unique_msgs = list(OrderedDict.fromkeys(m.strip() for m in messages if m.strip()))
+        if not unique_msgs:
+            return "ไม่พบคำแนะนำเพิ่มเติมจากผลตรวจ"
+        return " ".join(unique_msgs)
+    
+    # ✅ แสดงผลรวม
+    final_advice = merge_final_advice(all_advices)
+    
+    st.markdown(f"""
+    <div style='
+        background-color: rgba(33, 150, 243, 0.15);
+        padding: 1.2rem;
+        border-radius: 6px;
+        color: black;
+        margin-top: 2rem;
+    '>
+        <div style='font-size: 18px; font-weight: bold;'>📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}</div>
+        <div style='font-size: 16px; margin-top: 0.5rem;'>{final_advice}</div>
+    </div>
+    """, unsafe_allow_html=True)

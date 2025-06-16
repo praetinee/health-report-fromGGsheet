@@ -377,6 +377,52 @@ if "person" in st.session_state:
         html += "</tbody></table>"
         return html
 
+    # ✅ ฟังก์ชันรวมคำแนะนำทั้งหมด (ไม่ให้ซ้ำ)
+    from collections import OrderedDict
+    
+    def merge_final_advice_grouped(messages):
+        groups = {
+            "FBS": [],
+            "ไต": [],
+            "ตับ": [],
+            "ยูริค": [],
+            "ไขมัน": [],
+            "CBC": [],
+        }
+    
+        for msg in messages:
+            if "น้ำตาล" in msg:
+                groups["FBS"].append(msg)
+            elif "ไต" in msg:
+                groups["ไต"].append(msg)
+            elif "ตับ" in msg:
+                groups["ตับ"].append(msg)
+            elif "ยูริค" in msg or "พิวรีน" in msg:
+                groups["ยูริค"].append(msg)
+            elif "ไขมัน" in msg:
+                groups["ไขมัน"].append(msg)
+            else:
+                groups["CBC"].append(msg)
+    
+        section_texts = []
+        for title, msgs in groups.items():
+            if msgs:
+                icon = {
+                    "FBS": "🍬", "ไต": "💧", "ตับ": "🫀",
+                    "ยูริค": "🦴", "ไขมัน": "🧈", "CBC": "🩸"
+                }.get(title, "📝")
+                merged_msgs = [m for m in msgs if m.strip() != "-"]
+                if not merged_msgs:
+                    continue  # ข้ามหมวดนี้ไปเลย
+                merged = " ".join(OrderedDict.fromkeys(merged_msgs))
+                section = f"<b>{icon} {title}:</b> {merged}"
+                section_texts.append(section)
+    
+        if not section_texts:
+            return "ไม่พบคำแนะนำเพิ่มเติมจากผลตรวจ"
+    
+        return "<br><br>".join(section_texts)
+
     # ✅ แสดงผลรวม
     final_advice = merge_final_advice_grouped(all_advices)
     
@@ -740,51 +786,4 @@ if "person" in st.session_state:
         all_advices.append(recommendation)
 
    
-    # ✅ ฟังก์ชันรวมคำแนะนำทั้งหมด (ไม่ให้ซ้ำ)
-    from collections import OrderedDict
-    
-    def merge_final_advice_grouped(messages):
-        groups = {
-            "FBS": [],
-            "ไต": [],
-            "ตับ": [],
-            "ยูริค": [],
-            "ไขมัน": [],
-            "CBC": [],
-        }
-    
-        for msg in messages:
-            if "น้ำตาล" in msg:
-                groups["FBS"].append(msg)
-            elif "ไต" in msg:
-                groups["ไต"].append(msg)
-            elif "ตับ" in msg:
-                groups["ตับ"].append(msg)
-            elif "ยูริค" in msg or "พิวรีน" in msg:
-                groups["ยูริค"].append(msg)
-            elif "ไขมัน" in msg:
-                groups["ไขมัน"].append(msg)
-            else:
-                groups["CBC"].append(msg)
-    
-        section_texts = []
-        for title, msgs in groups.items():
-            if msgs:
-                icon = {
-                    "FBS": "🍬", "ไต": "💧", "ตับ": "🫀",
-                    "ยูริค": "🦴", "ไขมัน": "🧈", "CBC": "🩸"
-                }.get(title, "📝")
-                merged_msgs = [m for m in msgs if m.strip() != "-"]
-                if not merged_msgs:
-                    continue  # ข้ามหมวดนี้ไปเลย
-                merged = " ".join(OrderedDict.fromkeys(merged_msgs))
-                section = f"<b>{icon} {title}:</b> {merged}"
-                section_texts.append(section)
-    
-        if not section_texts:
-            return "ไม่พบคำแนะนำเพิ่มเติมจากผลตรวจ"
-    
-        return "<br><br>".join(section_texts)
-        
-
     

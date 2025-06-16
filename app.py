@@ -768,18 +768,22 @@ if "person" in st.session_state:
     # ✅ แสดงผลรวม
     final_advice = merge_final_advice_grouped(all_advices)
     
-    st.markdown(f"""
-    <div style='
+    centered_box = f"""
+    <div style="
+        max-width: 820px;
+        margin: 2rem auto 1rem auto;
         background-color: rgba(33, 150, 243, 0.15);
-        padding: 1.2rem;
-        border-radius: 6px;
-        color: inherit;
-        margin-top: 2rem;
+        padding: 1.5rem;
+        border-radius: 10px;
         font-size: 16px;
         line-height: 1.7;
-    '>
-        <div style='font-size: 18px; font-weight: bold; margin-bottom: 0.8rem;'>📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}</div>
+        color: inherit;
+    ">
+        <div style="font-size: 18px; font-weight: bold; margin-bottom: 1rem;">
+            📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}
+        </div>
         {final_advice}
     </div>
-    """, unsafe_allow_html=True)
-
+    """
+    
+    st.markdown(centered_box, unsafe_allow_html=True)

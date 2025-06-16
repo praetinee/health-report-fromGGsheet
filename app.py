@@ -959,13 +959,13 @@ if "person" in st.session_state:
         return "ควรตรวจปัสสาวะซ้ำเพื่อติดตามผล"
 
     # ===============================
-    # 🚽 DISPLAY: URINE TEST (เฉพาะปีที่เลือก)
+    # 🚽 คำแนะนำผลตรวจปัสสาวะ (เฉพาะปีที่เลือก)
     # ===============================
     
     def interpret_alb(value):
-        if value == "":
-            return "-"
-        if value.lower() == "negative":
+        if not value: return "-"
+        value = value.strip().lower()
+        if value == "negative":
             return "ไม่พบ"
         elif value in ["trace", "1+", "2+"]:
             return "พบโปรตีนในปัสสาวะเล็กน้อย"
@@ -974,9 +974,9 @@ if "person" in st.session_state:
         return "-"
     
     def interpret_sugar(value):
-        if value == "":
-            return "-"
-        if value.lower() == "negative":
+        if not value: return "-"
+        value = value.strip().lower()
+        if value == "negative":
             return "ไม่พบ"
         elif value == "trace":
             return "พบน้ำตาลในปัสสาวะเล็กน้อย"
@@ -985,8 +985,7 @@ if "person" in st.session_state:
         return "-"
     
     def interpret_rbc(value):
-        if value == "":
-            return "-"
+        if not value: return "-"
         if value in ["0-1", "negative", "1-2", "2-3", "3-5"]:
             return "ปกติ"
         elif value in ["5-10", "10-20"]:
@@ -995,8 +994,7 @@ if "person" in st.session_state:
             return "พบเม็ดเลือดแดงในปัสสาวะ"
     
     def interpret_wbc(value):
-        if value == "":
-            return "-"
+        if not value: return "-"
         if value in ["0-1", "negative", "1-2", "2-3", "3-5"]:
             return "ปกติ"
         elif value in ["5-10", "10-20"]:
@@ -1012,7 +1010,7 @@ if "person" in st.session_state:
     
         if all(x in ["-", "ปกติ", "ไม่พบ", "พบโปรตีนในปัสสาวะเล็กน้อย", "พบน้ำตาลในปัสสาวะเล็กน้อย"]
                for x in [alb_text, sugar_text, rbc_text, wbc_text]):
-            return "ผลปัสสาวะอยู่ในเกณฑ์ปกติ ควรรักษาสุขภาพและตรวจประจำปีสม่ำเสมอ"
+            return ""  # ไม่มีคำแนะนำ
     
         if "พบน้ำตาลในปัสสาวะ" in sugar_text and "เล็กน้อย" not in sugar_text:
             return "ควรลดการบริโภคน้ำตาล และตรวจระดับน้ำตาลในเลือดเพิ่มเติม"
@@ -1028,9 +1026,9 @@ if "person" in st.session_state:
     
         return "ควรตรวจปัสสาวะซ้ำเพื่อติดตามผล"
     
-    # 🔍 ดึงข้อมูลตามปีที่เลือก
+    # 🟡 ดึงค่าตามปีที่เลือก
     y = selected_year
-    y_label = str(y) if y != 68 else ""
+    y_label = "" if y == 68 else str(y)
     sex = person.get("เพศ", "").strip()
     
     alb_raw = person.get(f"Alb{y_label}", "").strip()
@@ -1038,34 +1036,19 @@ if "person" in st.session_state:
     rbc_raw = person.get(f"RBC1{y_label}", "").strip()
     wbc_raw = person.get(f"WBC1{y_label}", "").strip()
     
-    # สร้างตาราง 1 แถว
-    st.markdown("### 🚽 ผลตรวจปัสสาวะ")
+    # 🧠 วิเคราะห์และแสดงคำแนะนำ (ถ้ามี)
+    urine_advice = advice_urine(sex, alb_raw, sugar_raw, rbc_raw, wbc_raw)
     
-    urine_df = pd.DataFrame(
-        {
-            "โปรตีน": [f"{alb_raw}<br><span style='font-size:13px;color:gray;'>{interpret_alb(alb_raw)}</span>"] if alb_raw else ["-"],
-            "น้ำตาล": [f"{sugar_raw}<br><span style='font-size:13px;color:gray;'>{interpret_sugar(sugar_raw)}</span>"] if sugar_raw else ["-"],
-            "เม็ดเลือดแดง": [f"{rbc_raw}<br><span style='font-size:13px;color:gray;'>{interpret_rbc(rbc_raw)}</span>"] if rbc_raw else ["-"],
-            "เม็ดเลือดขาว": [f"{wbc_raw}<br><span style='font-size:13px;color:gray;'>{interpret_wbc(wbc_raw)}</span>"] if wbc_raw else ["-"],
-        },
-        index=[f"พ.ศ. {2500 + y}"]
-    )
-    
-    st.markdown(urine_df.to_html(escape=False), unsafe_allow_html=True)
-    
-    # 📌 แสดงคำแนะนำ ถ้ามี
-    advice_text = advice_urine(sex, alb_raw, sugar_raw, rbc_raw, wbc_raw)
-    
-    if advice_text and "ปกติ" not in advice_text:
+    if urine_advice:
         st.markdown(f"""
         <div style='
+            background-color: rgba(255, 215, 0, 0.2);
+            padding: 1rem;
+            border-radius: 6px;
             margin-top: 1rem;
-            background-color: rgba(255, 165, 0, 0.15);
-            padding: 1rem 1.2rem;
-            border-radius: 8px;
-            color: inherit;
+            font-size: 16px;
         '>
-            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำจากผลตรวจปัสสาวะ</div>
-            <div style='font-size: 16px; margin-top: 0.5rem;'>{advice_text}</div>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำจากผลตรวจปัสสาวะ ปี {2500 + y}</div>
+            <div style='margin-top: 0.5rem;'>{urine_advice}</div>
         </div>
         """, unsafe_allow_html=True)

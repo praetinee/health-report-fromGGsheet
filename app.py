@@ -383,6 +383,24 @@ if "person" in st.session_state:
     with col1:
         st.markdown("#### 🩸 ผลการตรวจความสมบูรณ์ของเม็ดเลือด (CBC)")
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows), unsafe_allow_html=True)
+
+        # ✅ คำแนะนำรวมทั้งหมด แสดงใต้ตาราง CBC เท่านั้น
+        st.markdown(f"""
+        <div style='
+            margin-top: 2rem;
+            padding: 1.2rem;
+            border-radius: 8px;
+            background-color: rgba(33, 150, 243, 0.15);
+            color: inherit;
+            font-size: 16px;
+            line-height: 1.7;
+        '>
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 0.8rem;">
+                📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}
+            </div>
+            {final_advice}
+        </div>
+        """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("#### 💉 ผลตรวจเลือด (Blood Test)")
@@ -768,22 +786,3 @@ if "person" in st.session_state:
     # ✅ แสดงผลรวม
     final_advice = merge_final_advice_grouped(all_advices)
     
-    centered_box = f"""
-    <div style="
-        max-width: 820px;
-        margin: 2rem auto 1rem auto;
-        background-color: rgba(33, 150, 243, 0.15);
-        padding: 1.5rem;
-        border-radius: 10px;
-        font-size: 16px;
-        line-height: 1.7;
-        color: inherit;
-    ">
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 1rem;">
-            📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}
-        </div>
-        {final_advice}
-    </div>
-    """
-    
-    st.markdown(centered_box, unsafe_allow_html=True)

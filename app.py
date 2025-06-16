@@ -725,3 +725,60 @@ if "person" in st.session_state:
             <div style='font-size: 16px; margin-top: 0.3rem;'>{advice_fbs}</div>
         </div>
         """, unsafe_allow_html=True)
+
+    # 🧪 ฟังก์ชันสรุปผลไขมันในเลือด
+    def summarize_lipids(chol_raw, tgl_raw, ldl_raw):
+        try:
+            chol = float(str(chol_raw).replace(",", "").strip())
+            tgl = float(str(tgl_raw).replace(",", "").strip())
+            ldl = float(str(ldl_raw).replace(",", "").strip())
+    
+            if chol == 0 and tgl == 0:
+                return ""
+            if chol >= 250 or tgl >= 250 or ldl >= 180:
+                return "ไขมันในเลือดสูง"
+            elif chol <= 200 and tgl <= 150:
+                return "ปกติ"
+            else:
+                return "ไขมันในเลือดสูงเล็กน้อย"
+        except:
+            return ""
+    
+    # 📝 ฟังก์ชันให้คำแนะนำ
+    def lipids_advice(summary_text):
+        if summary_text == "ไขมันในเลือดสูง":
+            return (
+                "ไขมันในเลือดสูง ควรลดอาหารที่มีไขมันอิ่มตัว เช่น ของทอด หนังสัตว์ "
+                "ออกกำลังกายสม่ำเสมอ และพิจารณาพบแพทย์เพื่อตรวจติดตาม"
+            )
+        elif summary_text == "ไขมันในเลือดสูงเล็กน้อย":
+            return (
+                "ไขมันในเลือดสูงเล็กน้อย ควรปรับพฤติกรรมการบริโภค ลดของมัน "
+                "และออกกำลังกายเพื่อควบคุมระดับไขมัน"
+            )
+        return ""
+    
+    # ✅ ดึงค่าตามปีที่เลือก
+    y = selected_year
+    y_label = str(y)  # ควรใช้ str(y) เช่น "68", "67"
+    
+    chol_raw = str(person.get(f"CHOL{y_label}", "") or "").strip()
+    tgl_raw = str(person.get(f"TGL{y_label}", "") or "").strip()
+    ldl_raw = str(person.get(f"LDL{y_label}", "") or "").strip()
+    
+    summary = summarize_lipids(chol_raw, tgl_raw, ldl_raw)
+    advice = lipids_advice(summary)
+    
+    if advice:
+        st.markdown(f"""
+        <div style='
+            background-color: rgba(0, 150, 136, 0.15);
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            margin-top: 1rem;
+        '>
+            <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำไขมันในเลือด ปี {2500 + selected_year}</div>
+            <div style='font-size: 16px; margin-top: 0.3rem;'>{advice}</div>
+        </div>
+        """, unsafe_allow_html=True)

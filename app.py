@@ -420,13 +420,14 @@ if "person" in st.session_state:
     def render_section_header(title):
         return f"""
         <div style="
-            background-color: #1B5E20;  /* เขียวใบไม้เข้มมาก */
-            padding: 18px 24px;
+            background-color: #1B5E20;
+            padding: 20px 24px;
             border-radius: 6px;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: bold;
             color: white;
             text-align: center;
+            line-height: 1.4;
             margin: 2rem 0 1rem 0;
         ">
             {title}

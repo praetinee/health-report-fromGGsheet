@@ -804,20 +804,7 @@ if "person" in st.session_state:
     if recommendation and recommendation != "-":
         all_advices.append(recommendation)
 
-    # 🧠 คำนวณค่า BMI/ความดันอีกครั้งเพื่อให้รวมในคำแนะนำสุดท้าย
-    try:
-        weight_val = float(str(person.get(selected_cols["weight"], "")).replace(" กก.", "").strip())
-        height_val = float(str(person.get(selected_cols["height"], "")).replace(" ซม.", "").strip())
-        bmi_val = weight_val / ((height_val / 100) ** 2)
-        sbp = float(person.get(selected_cols["sbp"], "0"))
-        dbp = float(person.get(selected_cols["dbp"], "0"))
-        advice_bmi_bp = combined_health_advice(bmi_val, sbp, dbp)
-        if advice_bmi_bp != "ไม่พบข้อมูลเพียงพอในการประเมินสุขภาพ":
-            all_advices.append(advice_bmi_bp)
-    except:
-        pass
-
-    
+   
     # ✅ ฟังก์ชันรวมคำแนะนำทั้งหมด (ไม่ให้ซ้ำ)
     from collections import OrderedDict
     def merge_final_advice(messages):

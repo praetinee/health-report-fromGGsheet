@@ -378,38 +378,38 @@ if "person" in st.session_state:
         return html
 
     def flag_urine_value(val, normal_range=None):
-        if not val or val.strip().upper() in ["N/A", "-", ""]:
+        val_str = str(val).strip()
+        if val_str.upper() in ["N/A", "-", ""]:
             return "-", False
-        val_clean = val.strip().lower()
+        val_clean = val_str.lower()
     
         if normal_range == "Yellow, Pale Yellow":
-            return val, val_clean not in ["yellow", "pale yellow"]
+            return val_str, val_clean not in ["yellow", "pale yellow"]
         if normal_range == "Negative":
-            return val, val_clean != "negative"
+            return val_str, val_clean != "negative"
         if normal_range == "Negative, trace":
-            return val, val_clean not in ["negative", "trace"]
+            return val_str, val_clean not in ["negative", "trace"]
         if normal_range == "5.0 - 8.0":
             try:
-                num = float(val)
-                return val, not (5.0 <= num <= 8.0)
+                num = float(val_str)
+                return val_str, not (5.0 <= num <= 8.0)
             except:
-                return val, True
+                return val_str, True
         if normal_range == "1.003 - 1.030":
             try:
-                num = float(val)
-                return val, not (1.003 <= num <= 1.030)
+                num = float(val_str)
+                return val_str, not (1.003 <= num <= 1.030)
             except:
-                return val, True
+                return val_str, True
         if "cell/HPF" in normal_range:
             try:
-                num = float(str(val).split()[0])
+                num = float(val_str.split()[0])
                 high = int(normal_range.split("-")[-1].split()[0])
-                return val, num > high
+                return val_str, num > high
             except:
-                return val, True
+                return val_str, True
     
-        return val, False
-
+        return val_str, False
     
     # ✅ Render ทั้งสองตาราง
     left_spacer, col1, col2, right_spacer = st.columns([1, 3, 3, 1])

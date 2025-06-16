@@ -788,19 +788,29 @@ if "person" in st.session_state:
     
     st.markdown(centered_box, unsafe_allow_html=True)
 
-    # ✅ ตารางผลตรวจปัสสาวะ (Urinalysis)
-    urine_config = [
-        ("สี (Colour)", person.get("สี (Colour)", "N/A"), "Yellow, Pale Yellow"),
-        ("น้ำตาล (sugar)", person.get("น้ำตาล (sugar)", "N/A"), "Negative"),
-        ("เม็ดเลือดขาว (Wbc/HPF)", person.get("เม็ดเลือดขาว (Wbc/HPF)", "N/A"), "0 - 5 cell/HPF"),
-        ("เม็ดเลือดแดง (Rbc/HPF)", person.get("เม็ดเลือดแดง (Rbc/HPF)", "N/A"), "0 - 2 cell/HPF"),
-        ("กรด-ด่าง (pH)", person.get("กรด-ด่าง (pH)", "N/A"), "5.0 - 8.0"),
-        ("โปรตีน (albumin)", person.get("โปรตีน (albumin)", "N/A"), "Negative, trace"),
-        ("ความถ่วงจำเพาะ (Sp.gr)", person.get("ความถ่วงจำเพาะ (Sp.gr)", "N/A"), "1.003 - 1.030"),
-        ("เซลล์เยื่อบุผิว (Squam.epit.)", person.get("เซลล์เยื่อบุผิว (Squam.epit.)", "N/A"), "0 - 10 cell/HPF"),
+    # ==============================
+    # 🚻 ผลตรวจปัสสาวะ (Urinalysis)
+    # ==============================
+    
+    urine_fields = [
+        ("สี (Colour)", "สี (Colour)", "Yellow, Pale Yellow"),
+        ("น้ำตาล (sugar)", "น้ำตาล (sugar)", "Negative"),
+        ("เม็ดเลือดขาว (Wbc/HPF)", "เม็ดเลือดขาว (Wbc/HPF)", "0 - 5 cell/HPF"),
+        ("เม็ดเลือดแดง (Rbc/HPF)", "เม็ดเลือดแดง (Rbc/HPF)", "0 - 2 cell/HPF"),
+        ("กรด-ด่าง (pH)", "กรด-ด่าง (pH)", "5.0 - 8.0"),
+        ("โปรตีน (albumin)", "โปรตีน (albumin)", "Negative, trace"),
+        ("ความถ่วงจำเพาะ (Sp.gr)", "ความถ่วงจำเพาะ (Sp.gr)", "1.003 - 1.030"),
+        ("เซลล์เยื่อบุผิว (Squam.epit.)", "เซลล์เยื่อบุผิว (Squam.epit.)", "0 - 10 cell/HPF"),
     ]
     
-    urine_rows = [[(name, False), (val, False), (norm, False)] for name, val, norm in urine_config]
+    urine_rows = []
     
-    st.markdown("### 🚻 ผลการตรวจปัสสาวะ (Urinalysis)")
-    st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urine_rows), unsafe_allow_html=True)
+    for label, col_key, normal in urine_fields:
+        raw = str(person.get(col_key, "N/A")).strip()
+        urine_rows.append([(label, False), (raw, False), (normal, False)])
+    
+    st.markdown("#### 🚻 ผลการตรวจปัสสาวะ (Urinalysis)")
+    st.markdown(
+        styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urine_rows),
+        unsafe_allow_html=True
+    )

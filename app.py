@@ -1017,3 +1017,35 @@ if "person" in st.session_state:
         if "ไม่พบ" in value or "ปกติ" in value:
             return "ไม่พบการติดเชื้อ"
         return "พบการติดเชื้อในอุจจาระ ให้พบแพทย์เพื่อตรวจรักษาเพิ่มเติม"
+
+    # ===============================
+    # 💩 DISPLAY: STOOL TEST BY YEAR
+    # ===============================
+    
+    # ดึงข้อมูลจากปีที่เลือก
+    y = selected_year
+    y_label = "" if y == 68 else str(y)
+    
+    stool_exam_raw = person.get(f"Stool exam{y_label}", "").strip()
+    stool_cs_raw = person.get(f"Stool C/S{y_label}", "").strip()
+    
+    exam_text = interpret_stool_exam(stool_exam_raw)
+    cs_text = interpret_stool_cs(stool_cs_raw)
+    
+    # แสดงหัวข้อสีเขียวเข้ม (แบบเดียวกับ render_section_header)
+    st.markdown(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)"), unsafe_allow_html=True)
+    
+    # แสดงข้อความแปลผล
+    st.markdown(f"""
+    <div style='
+        background-color: #f6f6f6;
+        padding: 1rem 1.5rem;
+        border-radius: 6px;
+        margin-bottom: 2rem;
+        font-size: 16px;
+        line-height: 1.7;
+    '>
+        <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
+        <b>ผลเพาะเชื้ออุจจาระ:</b> {cs_text}
+    </div>
+    """, unsafe_allow_html=True)

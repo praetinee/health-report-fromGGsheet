@@ -867,7 +867,7 @@ if "person" in st.session_state:
             val_text, is_abn = flag_urine_value(value, normal)
             urine_rows.append([(name, is_abn), (val_text, is_abn), (normal, is_abn)])
 
-        st.markdown(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
+        st.markdown(render_section_header("ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urine_rows), unsafe_allow_html=True)
     
     # ✅ สำหรับปีก่อน 68 → แสดงข้อความรวมในบรรทัดเดียว

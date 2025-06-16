@@ -423,7 +423,7 @@ if "person" in st.session_state:
             background-color: #1B5E20;
             padding: 20px 24px;
             border-radius: 6px;
-            font-size: 28px;
+            font-size: 20px;
             font-weight: bold;
             color: white;
             text-align: center;

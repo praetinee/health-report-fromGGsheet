@@ -1017,14 +1017,49 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
     
     with right_col:
-        st.markdown(render_section_header("🩻 ผลการตรวจเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
-        st.write("ผลตรวจ: N/A")
+        st.markdown(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
     
-        st.markdown(render_section_header("🦠 ผลตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
-        st.write("ผลตรวจ: N/A")
+        def get_cxr_col_name(year):
+            return "CXR" if year == 2568 else f"CXR{str(year)[-2:]}"
     
-        st.markdown(render_section_header("🦠 ผลตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
-        st.write("ผลตรวจ: N/A")
+        def interpret_cxr(value):
+            if not value or str(value).strip() == "":
+                return "-"
+            return str(value).strip()
     
-        st.markdown(render_section_header("💓 ผลตรวจคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
-        st.write("ผลตรวจ: N/A")
+        cxr_data = []
+        for y in range(2561, 2569):
+            col_name = get_cxr_col_name(y)
+            raw_value = person.get(col_name, "")
+            result = interpret_cxr(raw_value)
+            cxr_data.append(result)
+    
+        cxr_df = pd.DataFrame({
+            "ผลเอกซเรย์": cxr_data
+        }, index=list(range(2561, 2569))).T
+    
+        st.markdown(cxr_df.to_html(escape=False), unsafe_allow_html=True)
+    
+        # ==================================
+        st.markdown(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
+    
+        def get_ekg_col_name(year):
+            return "EKG" if year == 2568 else f"EKG{str(year)[-2:]}"
+    
+        def interpret_ekg(value):
+            if not value or str(value).strip() == "":
+                return "-"
+            return str(value).strip()
+    
+        ekg_data = []
+        for y in range(2561, 2569):
+            col_name = get_ekg_col_name(y)
+            raw_value = person.get(col_name, "")
+            result = interpret_ekg(raw_value)
+            ekg_data.append(result)
+    
+        ekg_df = pd.DataFrame({
+            "ผลคลื่นไฟฟ้าหัวใจ (EKG)": ekg_data
+        }, index=list(range(2561, 2569))).T
+    
+        st.markdown(ekg_df.to_html(escape=False), unsafe_allow_html=True)

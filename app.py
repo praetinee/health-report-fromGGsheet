@@ -1016,21 +1016,6 @@ if "person" in st.session_state:
         </p>
         """, unsafe_allow_html=True)
     
-        # ✅ แสดงผลอุจจาระ
-        stool_exam_raw = person.get(f"Stool exam{'' if y == 68 else y_label}", "").strip()
-        stool_cs_raw = person.get(f"Stool C/S{'' if y == 68 else y_label}", "").strip()
-    
-        exam_text = interpret_stool_exam(stool_exam_raw)
-        cs_text = interpret_stool_cs(stool_cs_raw)
-    
-        st.markdown(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)"), unsafe_allow_html=True)
-        st.markdown(f"""
-        <p style='font-size: 16px; line-height: 1.7; margin-bottom: 2rem;'>
-            <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
-            <b>ผลเพาะเชื้ออุจจาระ:</b> {cs_text}
-        </p>
-        """, unsafe_allow_html=True)
-    
     with right_col:
         st.markdown(render_section_header("🩻 ผลการตรวจเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
         st.write("ผลตรวจ: N/A")

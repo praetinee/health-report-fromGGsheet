@@ -1034,9 +1034,9 @@ if "person" in st.session_state:
         st.markdown(f"""
         <div style='
             font-size: 16px;
-            background-color: #f5f5f5;
             padding: 1rem;
             border-radius: 6px;
+            border-left: 5px solid #2196f3;
             margin-bottom: 1.5rem;
         '>
             <b>ปี พ.ศ. {2500 + selected_year}:</b> {cxr_result}
@@ -1062,9 +1062,9 @@ if "person" in st.session_state:
         st.markdown(f"""
         <div style='
             font-size: 16px;
-            background-color: #f5f5f5;
             padding: 1rem;
             border-radius: 6px;
+            border-left: 5px solid #e91e63;
             margin-bottom: 1.5rem;
         '>
             <b>ปี พ.ศ. {2500 + selected_year}:</b> {ekg_result}

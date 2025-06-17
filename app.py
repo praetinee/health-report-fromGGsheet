@@ -1062,3 +1062,69 @@ if "person" in st.session_state:
             margin-bottom: 1.5rem;
         '>{ekg_result}</div>
         """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <style>
+            .doctor-section {
+                font-size: 16px;
+                line-height: 1.8;
+                margin-top: 2rem;
+            }
+        
+            .summary-box {
+                background-color: #dcedc8;
+                padding: 12px 18px;
+                font-weight: bold;
+                border-radius: 6px;
+                margin-bottom: 1.5rem;
+            }
+        
+            .appointment-box {
+                background-color: #ffcdd2;
+                padding: 12px 18px;
+                border-radius: 6px;
+                margin-bottom: 1.5rem;
+            }
+        
+            .remark {
+                font-weight: bold;
+                margin-top: 2rem;
+            }
+        
+            .footer {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 3rem;
+                font-size: 16px;
+            }
+        
+            .footer .right {
+                text-align: right;
+            }
+        </style>
+        
+        <div class="doctor-section">
+        
+            <div class="summary-box">
+                สรุปความเห็นของแพทย์ : <span style='margin-left: 2rem;'>556162 ไม่ต้องงดน้ำงดอาหาร นัดตรวจการได้ยิน</span>
+            </div>
+        
+            <div class="appointment-box">
+                กำหนดนัดติดตามที่คลินิกตรวจสุขภาพ ชั้น 2 (ตรงข้ามห้องเจาะเลือด) อาคารผู้ป่วยนอกและอุบัติเหตุ 5 ชั้น<br>
+                <b>ในวันที่</b> <span style='padding: 0 12px; background-color: white; font-weight: bold;'>27 มิถุนายน 2568</span>
+                ไม่ต้องงดน้ำงดอาหาร นัดตรวจการได้ยิน
+            </div>
+        
+            <div class="remark">
+                หมายเหตุ <span style='font-weight: normal;'>N/A หมายถึง ไม่ได้ตรวจในรายการนั้น ๆ</span>
+            </div>
+        
+            <div class="footer">
+                <div></div>
+                <div class="right">
+                    <div>นายแพทย์นพรัตน์ รัฐภูพร</div>
+                    <div>เลขที่ใบอนุญาตผู้ประกอบวิชาชีพเวชกรรม ว.26674</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)

@@ -1095,4 +1095,52 @@ if "person" in st.session_state:
         ekg_col = get_ekg_col_name(2500 + selected_year)
         ekg_raw = person.get(ekg_col, "")
         ekg_result = interpret_ekg(ekg_raw)
-    
+
+        st.markdown(f"""
+        <div style='
+            font-size: 16px;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        '>{ekg_result}</div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <style>
+            .doctor-section {
+                font-size: 16px;
+                line-height: 1.8;
+                margin-top: 2rem;
+            }
+        
+            .summary-box {
+                background-color: #dcedc8;
+                padding: 12px 18px;
+                font-weight: bold;
+                border-radius: 6px;
+                margin-bottom: 1.5rem;
+            }
+        
+            .appointment-box {
+                background-color: #ffcdd2;
+                padding: 12px 18px;
+                border-radius: 6px;
+                margin-bottom: 1.5rem;
+            }
+        
+            .remark {
+                font-weight: bold;
+                margin-top: 2rem;
+            }
+        
+            .footer {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 3rem;
+                font-size: 16px;
+            }
+        
+            .footer .right {
+                text-align: right;
+            }
+        </style>

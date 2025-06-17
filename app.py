@@ -1036,14 +1036,13 @@ if "person" in st.session_state:
             font-size: 16px;
             padding: 1rem;
             border-radius: 6px;
-            border-left: 5px solid #2196f3;
             margin-bottom: 1.5rem;
         '>
             <b>ปี พ.ศ. {2500 + selected_year}:</b> {cxr_result}
         </div>
         """, unsafe_allow_html=True)
     
-        # ------------------------------------------------------------
+        # ----------------------------
     
         st.markdown(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
     
@@ -1064,9 +1063,9 @@ if "person" in st.session_state:
             font-size: 16px;
             padding: 1rem;
             border-radius: 6px;
-            border-left: 5px solid #e91e63;
             margin-bottom: 1.5rem;
         '>
             <b>ปี พ.ศ. {2500 + selected_year}:</b> {ekg_result}
         </div>
         """, unsafe_allow_html=True)
+

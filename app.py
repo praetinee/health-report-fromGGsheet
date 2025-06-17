@@ -927,14 +927,16 @@ if "person" in st.session_state:
     left_col, right_col = st.columns(2)
     
     with left_col:
+        # 📌 Render: หัวข้อปัสสาวะ
         st.markdown(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
-    
+        
         y = selected_year
         y_label = str(y)
         sex = person.get("เพศ", "").strip()
-    
+        
         if y == 68:
-            urine_config_68 = [
+            # 🔎 ปี 68 มีรายละเอียดครบ
+            urine_config = [
                 ("สี (Colour)", person.get("Color68", "N/A"), "Yellow, Pale Yellow"),
                 ("น้ำตาล (Sugar)", person.get("sugar68", "N/A"), "Negative"),
                 ("โปรตีน (Albumin)", person.get("Alb68", "N/A"), "Negative, trace"),
@@ -945,61 +947,59 @@ if "person" in st.session_state:
                 ("เซลล์เยื่อบุผิว (Squam.epit.)", person.get("SQ-epi68", "N/A"), "0 - 10 cell/HPF"),
                 ("อื่นๆ", person.get("ORTER68", "N/A"), "-"),
             ]
-    
+            
             urine_rows = []
-            for name, value, normal in urine_config_68:
+            for name, value, normal in urine_config:
                 val_text, is_abn = flag_urine_value(value, normal)
                 urine_rows.append([(name, is_abn), (val_text, is_abn), (normal, is_abn)])
-    
+            
             st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urine_rows), unsafe_allow_html=True)
+        
+            # ✅ คำแนะนำ
+            alb_raw = person.get("Alb68", "").strip()
+            sugar_raw = person.get("sugar68", "").strip()
+            rbc_raw = person.get("RBC168", "").strip()
+            wbc_raw = person.get("WBC168", "").strip()
+        
+            urine_advice = advice_urine(sex, alb_raw, sugar_raw, rbc_raw, wbc_raw)
+            if urine_advice:
+                st.markdown(f"""
+                <div style='
+                    background-color: rgba(255, 215, 0, 0.2);
+                    padding: 1rem;
+                    border-radius: 6px;
+                    margin-top: 1rem;
+                    font-size: 16px;
+                '>
+                    <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำจากผลตรวจปัสสาวะ ปี 2568</div>
+                    <div style='margin-top: 0.5rem;'>{urine_advice}</div>
+                </div>
+                """, unsafe_allow_html=True)
+        
         else:
-            field_name = f"ผลปัสสาวะ{y}"
-            urine_text = person.get(field_name, "").strip()
-            st.markdown(render_section_header("ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
-    
+            # 🔎 ปี < 68 → ใช้ข้อมูลสรุปจากฟิลด์ "ผลปัสสาวะ<ปี>"
+            urine_text = person.get(f"ผลปัสสาวะ{y_label}", "").strip()
+        
             if urine_text:
                 st.markdown(f"""
                 <div style='
                     margin-top: 1rem;
                     padding: 1rem;
-                    border-left: 5px solid #4CAF50;
-                    background-color: #f5f5f5;
+                    background-color: rgba(255,255,255,0.05);
                     font-size: 16px;
                     line-height: 1.7;
                 '>{urine_text}</div>
                 """, unsafe_allow_html=True)
             else:
-                st.markdown("""
+                st.markdown(f"""
                 <div style='
                     margin-top: 1rem;
                     padding: 1rem;
-                    background-color: #f9f9f9;
+                    background-color: rgba(255,255,255,0.05);
                     font-size: 16px;
                     line-height: 1.7;
-                '>ไม่พบข้อมูลผลตรวจปัสสาวะสำหรับปีนี้</div>
+                '>ไม่พบข้อมูลผลตรวจปัสสาวะในปีนี้</div>
                 """, unsafe_allow_html=True)
-    
-        # ✅ คำแนะนำปัสสาวะ
-        alb_raw = person.get(f"Alb{y_label}", "").strip()
-        sugar_raw = person.get(f"sugar{y_label}", "").strip()
-        rbc_raw = person.get(f"RBC1{y_label}", "").strip()
-        wbc_raw = person.get(f"WBC1{y_label}", "").strip()
-    
-        urine_advice = advice_urine(sex, alb_raw, sugar_raw, rbc_raw, wbc_raw)
-    
-        if urine_advice:
-            st.markdown(f"""
-            <div style='
-                background-color: rgba(255, 215, 0, 0.2);
-                padding: 1rem;
-                border-radius: 6px;
-                margin-top: 1rem;
-                font-size: 16px;
-            '>
-                <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำจากผลตรวจปัสสาวะ ปี {2500 + y}</div>
-                <div style='margin-top: 0.5rem;'>{urine_advice}</div>
-            </div>
-            """, unsafe_allow_html=True)
     
         # ✅ ผลตรวจอุจจาระ + คำแนะนำ
         stool_exam_raw = person.get(f"Stool exam{'' if y == 68 else y_label}", "").strip()

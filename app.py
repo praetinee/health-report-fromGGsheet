@@ -1027,20 +1027,24 @@ if "person" in st.session_state:
                 return "-"
             return str(value).strip()
     
-        cxr_data = []
-        for y in range(2561, 2569):
-            col_name = get_cxr_col_name(y)
-            raw_value = person.get(col_name, "")
-            result = interpret_cxr(raw_value)
-            cxr_data.append(result)
+        cxr_col = get_cxr_col_name(2500 + selected_year)
+        cxr_raw = person.get(cxr_col, "")
+        cxr_result = interpret_cxr(cxr_raw)
     
-        cxr_df = pd.DataFrame({
-            "ผลเอกซเรย์": cxr_data
-        }, index=list(range(2561, 2569))).T
+        st.markdown(f"""
+        <div style='
+            font-size: 16px;
+            background-color: #f5f5f5;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        '>
+            <b>ปี พ.ศ. {2500 + selected_year}:</b> {cxr_result}
+        </div>
+        """, unsafe_allow_html=True)
     
-        st.markdown(cxr_df.to_html(escape=False), unsafe_allow_html=True)
+        # ------------------------------------------------------------
     
-        # ==================================
         st.markdown(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
     
         def get_ekg_col_name(year):
@@ -1051,15 +1055,18 @@ if "person" in st.session_state:
                 return "-"
             return str(value).strip()
     
-        ekg_data = []
-        for y in range(2561, 2569):
-            col_name = get_ekg_col_name(y)
-            raw_value = person.get(col_name, "")
-            result = interpret_ekg(raw_value)
-            ekg_data.append(result)
+        ekg_col = get_ekg_col_name(2500 + selected_year)
+        ekg_raw = person.get(ekg_col, "")
+        ekg_result = interpret_ekg(ekg_raw)
     
-        ekg_df = pd.DataFrame({
-            "ผลคลื่นไฟฟ้าหัวใจ (EKG)": ekg_data
-        }, index=list(range(2561, 2569))).T
-    
-        st.markdown(ekg_df.to_html(escape=False), unsafe_allow_html=True)
+        st.markdown(f"""
+        <div style='
+            font-size: 16px;
+            background-color: #f5f5f5;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        '>
+            <b>ปี พ.ศ. {2500 + selected_year}:</b> {ekg_result}
+        </div>
+        """, unsafe_allow_html=True)

@@ -984,8 +984,6 @@ if "person" in st.session_state:
                 st.markdown(f"""
                 <div style='
                     margin-top: 1rem;
-                    padding: 1rem;
-                    background-color: rgba(255,255,255,0.05);
                     font-size: 16px;
                     line-height: 1.7;
                 '>{urine_text}</div>

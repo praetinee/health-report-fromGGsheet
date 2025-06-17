@@ -845,44 +845,111 @@ if "person" in st.session_state:
     
     st.markdown(centered_box, unsafe_allow_html=True)
 
-    # ==================== Urinalysis & Other Tests ====================
-    urinalysis_results = {
-        "สี (Colour)": ("N/A", "Yellow, Pale Yellow"),
-        "น้ำตาล (sugar)": ("N/A", "Negative"),
-        "เม็ดเลือดขาว (Wbc/HPF)": ("N/A", "0–5 cell/HPF"),
-        "เม็ดเลือดแดง (Rbc/HPF)": ("N/A", "0–2 cell/HPF"),
-        "กรด-ด่าง (pH)": ("N/A", "5.0–8.0"),
-        "โปรตีน (albumin)": ("N/A", "Negative, trace"),
-        "ความถ่วงจำเพาะ (Sp.gr)": ("N/A", "1.003–1.030"),
-        "เซลล์เยื่อบุผิว (Squam.epit.)": ("N/A", "0–10 cell/HPF"),
-    }
-    
-    urinalysis_rows = []
-    for name, (val, normal) in urinalysis_results.items():
-        val_str, is_abn = flag_urine_value(val, normal)
-        urinalysis_rows.append([(name, is_abn), (val_str, is_abn), (normal, is_abn)])
-    
-    st.markdown("## 🔬 ผลการตรวจทางห้องปฏิบัติการเพิ่มเติม")
-    
+    # ==================== Urinalysis & Additional Tests ====================
     left_col, right_col = st.columns(2)
     
     with left_col:
-        st.markdown(render_section_header("ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
-        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urinalysis_rows), unsafe_allow_html=True)
+        st.markdown(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
     
-        st.markdown(render_section_header("ผลการตรวจอุจจาระ (Stool Exam)"), unsafe_allow_html=True)
-        st.write("ผลตรวจ: N/A")
+        y = selected_year
+        y_label = str(y)
+        sex = person.get("เพศ", "").strip()
+    
+        if y == 68:
+            urine_config_68 = [
+                ("สี (Colour)", person.get("Color68", "N/A"), "Yellow, Pale Yellow"),
+                ("น้ำตาล (Sugar)", person.get("sugar68", "N/A"), "Negative"),
+                ("โปรตีน (Albumin)", person.get("Alb68", "N/A"), "Negative, trace"),
+                ("กรด-ด่าง (pH)", person.get("pH68", "N/A"), "5.0 - 8.0"),
+                ("ความถ่วงจำเพาะ (Sp.gr)", person.get("Spgr68", "N/A"), "1.003 - 1.030"),
+                ("เม็ดเลือดแดง (RBC)", person.get("RBC168", "N/A"), "0 - 2 cell/HPF"),
+                ("เม็ดเลือดขาว (WBC)", person.get("WBC168", "N/A"), "0 - 5 cell/HPF"),
+                ("เซลล์เยื่อบุผิว (Squam.epit.)", person.get("SQ-epi68", "N/A"), "0 - 10 cell/HPF"),
+                ("อื่นๆ", person.get("ORTER68", "N/A"), "-"),
+            ]
+    
+            urine_rows = []
+            for name, value, normal in urine_config_68:
+                val_text, is_abn = flag_urine_value(value, normal)
+                urine_rows.append([(name, is_abn), (val_text, is_abn), (normal, is_abn)])
+    
+            st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urine_rows), unsafe_allow_html=True)
+    
+        else:
+            field_name = f"ผลปัสสาวะ{y}"
+            urine_text = person.get(field_name, "").strip()
+            if urine_text:
+                st.markdown(f"""
+                <div style='
+                    margin-top: 1rem;
+                    padding: 1rem;
+                    border-left: 5px solid #4CAF50;
+                    background-color: #f5f5f5;
+                    font-size: 16px;
+                    line-height: 1.7;
+                '>
+                    {urine_text}
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                <div style='
+                    margin-top: 1rem;
+                    padding: 1rem;
+                    background-color: #f9f9f9;
+                    font-size: 16px;
+                    line-height: 1.7;
+                '>
+                    ไม่พบข้อมูลผลตรวจปัสสาวะสำหรับปีนี้
+                </div>
+                """, unsafe_allow_html=True)
+    
+        # ✅ คำแนะนำจากผลตรวจปัสสาวะ
+        alb_raw = person.get(f"Alb{y_label}", "").strip()
+        sugar_raw = person.get(f"sugar{y_label}", "").strip()
+        rbc_raw = person.get(f"RBC1{y_label}", "").strip()
+        wbc_raw = person.get(f"WBC1{y_label}", "").strip()
+    
+        urine_advice = advice_urine(sex, alb_raw, sugar_raw, rbc_raw, wbc_raw)
+    
+        if urine_advice:
+            st.markdown(f"""
+            <div style='
+                background-color: rgba(255, 215, 0, 0.2);
+                padding: 1rem;
+                border-radius: 6px;
+                margin-top: 1rem;
+                font-size: 16px;
+            '>
+                <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำจากผลตรวจปัสสาวะ ปี {2500 + y}</div>
+                <div style='margin-top: 0.5rem;'>{urine_advice}</div>
+            </div>
+            """, unsafe_allow_html=True)
+    
+        # ✅ แสดงผลอุจจาระ
+        stool_exam_raw = person.get(f"Stool exam{'' if y == 68 else y_label}", "").strip()
+        stool_cs_raw = person.get(f"Stool C/S{'' if y == 68 else y_label}", "").strip()
+    
+        exam_text = interpret_stool_exam(stool_exam_raw)
+        cs_text = interpret_stool_cs(stool_cs_raw)
+    
+        st.markdown(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)"), unsafe_allow_html=True)
+        st.markdown(f"""
+        <p style='font-size: 16px; line-height: 1.7; margin-bottom: 2rem;'>
+            <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
+            <b>ผลเพาะเชื้ออุจจาระ:</b> {cs_text}
+        </p>
+        """, unsafe_allow_html=True)
     
     with right_col:
-        st.markdown(render_section_header("ผลการตรวจเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
+        st.markdown(render_section_header("🩻 ผลการตรวจเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
         st.write("ผลตรวจ: N/A")
     
-        st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
+        st.markdown(render_section_header("🦠 ผลตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
         st.write("ผลตรวจ: N/A")
     
-        st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
+        st.markdown(render_section_header("🦠 ผลตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
         st.write("ผลตรวจ: N/A")
     
-        st.markdown(render_section_header("ผลการตรวจคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
+        st.markdown(render_section_header("💓 ผลตรวจคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
         st.write("ผลตรวจ: N/A")
-

@@ -844,3 +844,45 @@ if "person" in st.session_state:
     """
     
     st.markdown(centered_box, unsafe_allow_html=True)
+
+    # ==================== Urinalysis & Other Tests ====================
+    urinalysis_results = {
+        "สี (Colour)": ("N/A", "Yellow, Pale Yellow"),
+        "น้ำตาล (sugar)": ("N/A", "Negative"),
+        "เม็ดเลือดขาว (Wbc/HPF)": ("N/A", "0–5 cell/HPF"),
+        "เม็ดเลือดแดง (Rbc/HPF)": ("N/A", "0–2 cell/HPF"),
+        "กรด-ด่าง (pH)": ("N/A", "5.0–8.0"),
+        "โปรตีน (albumin)": ("N/A", "Negative, trace"),
+        "ความถ่วงจำเพาะ (Sp.gr)": ("N/A", "1.003–1.030"),
+        "เซลล์เยื่อบุผิว (Squam.epit.)": ("N/A", "0–10 cell/HPF"),
+    }
+    
+    urinalysis_rows = []
+    for name, (val, normal) in urinalysis_results.items():
+        val_str, is_abn = flag_urine_value(val, normal)
+        urinalysis_rows.append([(name, is_abn), (val_str, is_abn), (normal, is_abn)])
+    
+    st.markdown("## 🔬 ผลการตรวจทางห้องปฏิบัติการเพิ่มเติม")
+    
+    left_col, right_col = st.columns(2)
+    
+    with left_col:
+        st.markdown(render_section_header("ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
+        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urinalysis_rows), unsafe_allow_html=True)
+    
+        st.markdown(render_section_header("ผลการตรวจอุจจาระ (Stool Exam)"), unsafe_allow_html=True)
+        st.write("ผลตรวจ: N/A")
+    
+    with right_col:
+        st.markdown(render_section_header("ผลการตรวจเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
+        st.write("ผลตรวจ: N/A")
+    
+        st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
+        st.write("ผลตรวจ: N/A")
+    
+        st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
+        st.write("ผลตรวจ: N/A")
+    
+        st.markdown(render_section_header("ผลการตรวจคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
+        st.write("ผลตรวจ: N/A")
+

@@ -8,6 +8,48 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 st.set_page_config(page_title="ระบบรายงานสุขภาพ", layout="wide")
 
+st.markdown("""
+<style>
+    .doctor-section {
+        font-size: 16px;
+        line-height: 1.8;
+        margin-top: 2rem;
+    }
+
+    .summary-box {
+        background-color: #dcedc8;
+        padding: 12px 18px;
+        font-weight: bold;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+    }
+
+    .appointment-box {
+        background-color: #ffcdd2;
+        padding: 12px 18px;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+    }
+
+    .remark {
+        font-weight: bold;
+        margin-top: 2rem;
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 3rem;
+        font-size: 16px;
+    }
+
+    .footer .right {
+        text-align: right;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
 # ==================== STYLE ====================
 st.markdown("""
     <style>
@@ -1064,45 +1106,6 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
 
         st.markdown("""
-        <style>
-            .doctor-section {
-                font-size: 16px;
-                line-height: 1.8;
-                margin-top: 2rem;
-            }
-        
-            .summary-box {
-                background-color: #dcedc8;
-                padding: 12px 18px;
-                font-weight: bold;
-                border-radius: 6px;
-                margin-bottom: 1.5rem;
-            }
-        
-            .appointment-box {
-                background-color: #ffcdd2;
-                padding: 12px 18px;
-                border-radius: 6px;
-                margin-bottom: 1.5rem;
-            }
-        
-            .remark {
-                font-weight: bold;
-                margin-top: 2rem;
-            }
-        
-            .footer {
-                display: flex;
-                justify-content: space-between;
-                margin-top: 3rem;
-                font-size: 16px;
-            }
-        
-            .footer .right {
-                text-align: right;
-            }
-        </style>
-        
         <div class="doctor-section">
         
             <div class="summary-box">
@@ -1126,5 +1129,7 @@ if "person" in st.session_state:
                     <div>เลขที่ใบอนุญาตผู้ประกอบวิชาชีพเวชกรรม ว.26674</div>
                 </div>
             </div>
+        
         </div>
         """, unsafe_allow_html=True)
+        

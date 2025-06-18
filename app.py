@@ -1066,18 +1066,17 @@ if "person" in st.session_state:
         cs_text = interpret_stool_cs(stool_cs_raw)
     
         st.markdown(wrap_with_container(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)")), unsafe_allow_html=True)
-        st.markdown(wrap_with_container(f"""<p>...</p>"""), unsafe_allow_html=True)
-
+        st.markdown(wrap_with_container(f"""
         <p style='font-size: 16px; line-height: 1.7; margin-bottom: 1rem;'>
             <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
             <b>ผลเพาะเชื้ออุจจาระ:</b> {cs_text}
         </p>
-        """, unsafe_allow_html=True)
+        """), unsafe_allow_html=True)
+
     
     with right_col:
         st.markdown(wrap_with_container(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)")), unsafe_allow_html=True)
         st.markdown(wrap_with_container(f"""<div>...</div>"""), unsafe_allow_html=True)
-        st.markdown(f"<div style='font-size: 16px; padding: 1rem;'>...</div>", unsafe_allow_html=True)
     
         def get_cxr_col_name(year):
             return "CXR" if year == 2568 else f"CXR{str(year)[-2:]}"
@@ -1103,8 +1102,12 @@ if "person" in st.session_state:
         # ----------------------------
 
         st.markdown(wrap_with_container(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)")), unsafe_allow_html=True)
-        st.markdown(wrap_with_container(f"""<div>...</div>"""), unsafe_allow_html=True)
-        st.markdown(f"<div style='font-size: 16px; padding: 1rem;'>...</div>", unsafe_allow_html=True)
+        st.markdown(wrap_with_container(f"""
+            <div style='font-size: 16px; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;'>
+                {ekg_result}
+            </div>
+        """), unsafe_allow_html=True)
+
         
         def get_ekg_col_name(year):
             return "EKG" if year == 2568 else f"EKG{str(year)[-2:]}"

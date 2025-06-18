@@ -983,8 +983,11 @@ if "person" in st.session_state:
     
     with left_col:
         # 📌 Render: หัวข้อปัสสาวะ
-        st.markdown(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
-        
+        st.markdown(
+            wrap_with_container(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)")),
+            unsafe_allow_html=True
+        )
+
         y = selected_year
         y_label = str(y)
         sex = person.get("เพศ", "").strip()
@@ -1070,7 +1073,11 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
     
     with right_col:
-        st.markdown(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
+        st.markdown(
+            wrap_with_container(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)")),
+            unsafe_allow_html=True
+        )
+
     
         def get_cxr_col_name(year):
             return "CXR" if year == 2568 else f"CXR{str(year)[-2:]}"

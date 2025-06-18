@@ -960,7 +960,7 @@ if "person" in st.session_state:
     
     centered_box = f"""
     <div style="
-        max-width: 820px;
+        max-width: 900px;
         margin: 2rem auto 1rem auto;
         background-color: rgba(33, 150, 243, 0.15);
         padding: 2rem 2.5rem;

@@ -483,6 +483,9 @@ if "person" in st.session_state:
                 padding: 6px 12px;
                 vertical-align: middle;
             }}
+            .styled-result td:nth-child(2) {{
+                text-align: center;
+            }}
             .styled-result th {{
                 background-color: #111;
                 color: white;

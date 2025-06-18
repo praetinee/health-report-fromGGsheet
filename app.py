@@ -960,13 +960,13 @@ if "person" in st.session_state:
     
     centered_box = f"""
     <div style="
-        max-width: 1200px;
+        max-width: 820px;
         margin: 2rem auto 1rem auto;
         background-color: rgba(33, 150, 243, 0.15);
         padding: 2rem 2.5rem;
         border-radius: 10px;
         font-size: 16px;
-        line-height: 1.3;
+        line-height: 1.5;
         color: inherit;
     ">
         <div style="font-size: 18px; font-weight: bold; margin-bottom: 1.5rem;">

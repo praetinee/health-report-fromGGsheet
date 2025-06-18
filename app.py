@@ -953,7 +953,7 @@ if "person" in st.session_state:
         if not section_texts:
             return "ไม่พบคำแนะนำเพิ่มเติมจากผลตรวจ"
     
-        return "<br><br>".join(section_texts)
+        return "<div style='margin-bottom: 0.75rem;'>" + "</div><div style='margin-bottom: 0.75rem;'>".join(section_texts) + "</div>"
         
     # ✅ แสดงผลรวม
     final_advice = merge_final_advice_grouped(all_advices)

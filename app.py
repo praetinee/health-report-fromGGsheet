@@ -17,7 +17,7 @@ st.markdown("""
     .doctor-section {
         font-size: 16px;
         line-height: 1.8;
-        margin-top: 2rem;
+        margin-top: 1rem;
     }
 
     .summary-box {
@@ -488,6 +488,7 @@ if "person" in st.session_state:
                 color: white;
                 padding: 6px 12px;
                 text-align: center;
+                vertical-align: middle;
             }}
             .styled-result td {{
                 padding: 6px 12px;
@@ -1073,7 +1074,11 @@ if "person" in st.session_state:
     
     with right_col:
         st.markdown(wrap_with_container(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)")), unsafe_allow_html=True)
-        st.markdown(wrap_with_container(f"""<div>...</div>"""), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(f"""
+            <div style='font-size: 16px; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;'>
+                {cxr_result}
+            </div>
+        """), unsafe_allow_html=True)
     
         def get_cxr_col_name(year):
             return "CXR" if year == 2568 else f"CXR{str(year)[-2:]}"
@@ -1087,7 +1092,7 @@ if "person" in st.session_state:
         cxr_raw = person.get(cxr_col, "")
         cxr_result = interpret_cxr(cxr_raw)
     
-        st.markdown(f"""
+        st.markdown(wrap_with_container(f"""
         <div style='
             font-size: 16px;
             padding: 1rem;
@@ -1129,8 +1134,13 @@ if "person" in st.session_state:
         
         # 👉 หัวข้อ Hepatitis A
         st.markdown(wrap_with_container(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)")), unsafe_allow_html=True)
-        st.markdown(wrap_with_container(f"""<div>...</div>"""), unsafe_allow_html=True)
-        st.markdown(f"""
+        st.markdown(wrap_with_container(f"""
+            <div style='font-size: 16px; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;'>
+                {cxr_result}
+            </div>
+        """), unsafe_allow_html=True)
+
+        st.markdown(wrap_with_container(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
         {hep_a_raw}
         </div>
@@ -1138,8 +1148,13 @@ if "person" in st.session_state:
         
         # 👉 หัวข้อ Hepatitis B
         st.markdown(wrap_with_container(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)")), unsafe_allow_html=True)
-        st.markdown(wrap_with_container(f"""<div>...</div>"""), unsafe_allow_html=True)
-        st.markdown(f"""
+        st.markdown(wrap_with_container(f"""
+            <div style='font-size: 16px; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;'>
+                {cxr_result}
+            </div>
+        """), unsafe_allow_html=True)
+
+        st.markdown(wrap_with_container(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
         {hep_b_raw}
         </div>

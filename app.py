@@ -979,6 +979,17 @@ if "person" in st.session_state:
     st.markdown(centered_box, unsafe_allow_html=True)
 
     # ==================== Urinalysis & Additional Tests ====================
+    def wrap_with_container(inner_html: str) -> str:
+        return f"""
+        <div style='
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 1rem;
+        '>
+            {inner_html}
+        </div>
+        """
+
     left_col, right_col = st.columns(2)
     
     with left_col:

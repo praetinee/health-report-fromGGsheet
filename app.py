@@ -548,31 +548,22 @@ if "person" in st.session_state:
             color: white;
             text-align: center;
             line-height: 1.4;
-            margin: 2rem auto 1rem auto;
-            max-width: 820px;
+            margin: 2rem 0 1rem 0;
         ">
             {title}
         </div>
         """
     
-    cbc_html = styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows)
-    blood_html = styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows)
+    # ✅ Render ทั้งสองตาราง
+    left_spacer, col1, col2, right_spacer = st.columns([1, 3, 3, 1])
     
-    # Render CBC
-    st.markdown(f"""
-    <div style="max-width: 820px; margin: 0 auto;">
-        {render_section_header("ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)")}
-        {cbc_html}
-    </div>
-    """, unsafe_allow_html=True)
+    with col1:
+        st.markdown(render_section_header("ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)"), unsafe_allow_html=True)
+        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows), unsafe_allow_html=True)
     
-    # Render BLOOD
-    st.markdown(f"""
-    <div style="max-width: 820px; margin: 2rem auto 0 auto;">
-        {render_section_header("ผลตรวจเลือด (Blood Test)")}
-        {blood_html}
-    </div>
-    """, unsafe_allow_html=True)
+    with col2:
+        st.markdown(render_section_header("ผลตรวจเลือด (Blood Test)"), unsafe_allow_html=True)
+        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
 
     import re
     
@@ -835,7 +826,7 @@ if "person" in st.session_state:
     
     # ใช้ปีที่เลือกจาก dropdown
     y = selected_year
-    y_label = "" if selected_year == 68 else str(selected_year % 100)
+    y_label = str(y)
     col_name = f"FBS{y_label}"
     raw_value = str(person.get(col_name, "") or "").strip()
     advice_fbs = fbs_advice(raw_value)
@@ -874,7 +865,7 @@ if "person" in st.session_state:
     
     # ✅ ดึงค่าตามปีที่เลือก
     y = selected_year
-    y_label = "" if selected_year == 68 else str(selected_year % 100)
+    y_label = str(y)  # ควรใช้ str(y) เช่น "68", "67"
     
     chol_raw = str(person.get(f"CHOL{y_label}", "") or "").strip()
     tgl_raw = str(person.get(f"TGL{y_label}", "") or "").strip()
@@ -1115,7 +1106,7 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
         
         # ✅ Hepatitis Section (A & B)
-        y_label = "" if selected_year == 68 else str(selected_year % 100)
+        y_label = str(selected_year)
         
         hep_a_col = f"Hepatitis A{y_label}"
         hep_b_col = f"Hepatitis B{y_label}"

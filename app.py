@@ -966,7 +966,7 @@ if "person" in st.session_state:
         padding: 2rem 2.5rem;
         border-radius: 10px;
         font-size: 16px;
-        line-height: 1.5;
+        line-height: 1.0;
         color: inherit;
     ">
         <div style="font-size: 18px; font-weight: bold; margin-bottom: 1.5rem;">

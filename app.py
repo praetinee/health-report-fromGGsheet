@@ -1142,3 +1142,36 @@ if "person" in st.session_state:
         {hep_b_raw}
         </div>
         """, unsafe_allow_html=True)
+
+        # 👉 หัวข้อ Hepatitis B Antigen/Antibody
+        st.markdown(render_section_header("ผลการตรวจแอนติเจนและแอนติบอดีไวรัสตับอักเสบบี"), unsafe_allow_html=True)
+        
+        # ดึงค่าจาก DataFrame
+        hbsag_raw = person.get("HbsAg", "N/A").strip()
+        hbsab_raw = person.get("HbsAb", "N/A").strip()
+        hbcab_raw = person.get("HBcAB", "N/A").strip()
+        
+        # แสดงผลในตาราง
+        hepb_table = f"""
+        <table style='width:100%; font-size:16px; text-align:center; border-collapse: collapse; margin-bottom: 1rem;'>
+            <tr style='background-color:#eeeeee; font-weight:bold;'>
+                <td>รายการตรวจ</td><td>ผลตรวจ</td><td>ความหมายเบื้องต้น</td>
+            </tr>
+            <tr>
+                <td>HbsAg</td>
+                <td>{hbsag_raw}</td>
+                <td>{"พบเชื้อไวรัสตับอักเสบบี" if hbsag_raw.lower() == "positive" else "ไม่พบเชื้อ"}</td>
+            </tr>
+            <tr>
+                <td>HbsAb</td>
+                <td>{hbsab_raw}</td>
+                <td>{"มีภูมิคุ้มกันต่อไวรัสตับอักเสบบี" if hbsab_raw.lower() == "positive" else "ยังไม่มีภูมิคุ้มกัน"}</td>
+            </tr>
+            <tr>
+                <td>HBcAB</td>
+                <td>{hbcab_raw}</td>
+                <td>{"เคยติดเชื้อหรือเคยสัมผัสเชื้อ" if hbcab_raw.lower() == "positive" else "ไม่พบการติดเชื้อในอดีต"}</td>
+            </tr>
+        </table>
+        """
+        st.markdown(hepb_table, unsafe_allow_html=True)

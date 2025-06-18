@@ -1116,14 +1116,7 @@ if "person" in st.session_state:
         ekg_raw = person.get(ekg_col, "")
         ekg_result = interpret_ekg(ekg_raw)
         
-        st.markdown(f"""
-        <div style='
-            font-size: 16px;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1.5rem;
-        '>{ekg_result}</div>
-        """, unsafe_allow_html=True)
+        st.markdown(f"<div style='font-size: 16px; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;'>{some_value}</div>", unsafe_allow_html=True)
         
         # ✅ Hepatitis Section (A & B)
         y_label = str(selected_year)

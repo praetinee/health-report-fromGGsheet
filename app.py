@@ -1099,7 +1099,6 @@ if "person" in st.session_state:
         st.markdown(f"""
         <div style='
             font-size: 16px;
-            background-color: #f5f5f5;
             padding: 1rem;
             border-radius: 6px;
             margin-bottom: 1.5rem;

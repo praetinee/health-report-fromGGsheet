@@ -987,14 +987,12 @@ if "person" in st.session_state:
     
     with left_col:
         st.markdown(wrap_with_container(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)")), unsafe_allow_html=True)
-        st.markdown(wrap_with_container(styled_result_table(...)), unsafe_allow_html=True)
-        
+    
         y = selected_year
         y_label = str(y)
         sex = person.get("เพศ", "").strip()
-        
+    
         if y == 68:
-            # 🔎 ปี 68 มีรายละเอียดครบ
             urine_config = [
                 ("สี (Colour)", person.get("Color68", "N/A"), "Yellow, Pale Yellow"),
                 ("น้ำตาล (Sugar)", person.get("sugar68", "N/A"), "Negative"),
@@ -1006,57 +1004,56 @@ if "person" in st.session_state:
                 ("เซลล์เยื่อบุผิว (Squam.epit.)", person.get("SQ-epi68", "N/A"), "0 - 10 cell/HPF"),
                 ("อื่นๆ", person.get("ORTER68", "N/A"), "-"),
             ]
-            
+    
             urine_rows = []
             for name, value, normal in urine_config:
                 val_text, is_abn = flag_urine_value(value, normal)
                 urine_rows.append([(name, is_abn), (val_text, is_abn), (normal, is_abn)])
-            
-            st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urine_rows), unsafe_allow_html=True)
-        
-            # ✅ คำแนะนำ
+    
+            st.markdown(wrap_with_container(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], urine_rows)), unsafe_allow_html=True)
+    
+            # ✅ คำแนะนำปัสสาวะ
             alb_raw = person.get("Alb68", "").strip()
             sugar_raw = person.get("sugar68", "").strip()
             rbc_raw = person.get("RBC168", "").strip()
             wbc_raw = person.get("WBC168", "").strip()
-        
+    
             urine_advice = advice_urine(sex, alb_raw, sugar_raw, rbc_raw, wbc_raw)
             if urine_advice:
-                st.markdown(f"""
-                <div style='
-                    background-color: rgba(255, 215, 0, 0.2);
-                    padding: 1rem;
-                    border-radius: 6px;
-                    margin-top: 1rem;
-                    font-size: 16px;
-                '>
-                    <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำจากผลตรวจปัสสาวะ ปี 2568</div>
-                    <div style='margin-top: 0.5rem;'>{urine_advice}</div>
-                </div>
-                """, unsafe_allow_html=True)
-        
+                st.markdown(wrap_with_container(f"""
+                    <div style='
+                        background-color: rgba(255, 215, 0, 0.2);
+                        padding: 1rem;
+                        border-radius: 6px;
+                        margin-top: 1rem;
+                        font-size: 16px;
+                    '>
+                        <div style='font-size: 18px; font-weight: bold;'>📌 คำแนะนำจากผลตรวจปัสสาวะ ปี 2568</div>
+                        <div style='margin-top: 0.5rem;'>{urine_advice}</div>
+                    </div>
+                """), unsafe_allow_html=True)
+    
         else:
-            # 🔎 ปี < 68 → ใช้ข้อมูลสรุปจากฟิลด์ "ผลปัสสาวะ<ปี>"
             urine_text = person.get(f"ผลปัสสาวะ{y_label}", "").strip()
-        
+    
             if urine_text:
-                st.markdown(f"""
-                <div style='
-                    margin-top: 1rem;
-                    font-size: 16px;
-                    line-height: 1.7;
-                '>{urine_text}</div>
-                """, unsafe_allow_html=True)
+                st.markdown(wrap_with_container(f"""
+                    <div style='
+                        margin-top: 1rem;
+                        font-size: 16px;
+                        line-height: 1.7;
+                    '>{urine_text}</div>
+                """), unsafe_allow_html=True)
             else:
-                st.markdown(f"""
-                <div style='
-                    margin-top: 1rem;
-                    padding: 1rem;
-                    background-color: rgba(255,255,255,0.05);
-                    font-size: 16px;
-                    line-height: 1.7;
-                '>ไม่พบข้อมูลผลตรวจปัสสาวะในปีนี้</div>
-                """, unsafe_allow_html=True)
+                st.markdown(wrap_with_container(f"""
+                    <div style='
+                        margin-top: 1rem;
+                        padding: 1rem;
+                        background-color: rgba(255,255,255,0.05);
+                        font-size: 16px;
+                        line-height: 1.7;
+                    '>ไม่พบข้อมูลผลตรวจปัสสาวะในปีนี้</div>
+                """), unsafe_allow_html=True)
     
         # ✅ ผลตรวจอุจจาระ + คำแนะนำ
         stool_exam_raw = person.get(f"Stool exam{'' if y == 68 else y_label}", "").strip()
@@ -1100,14 +1097,6 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
     
         # ----------------------------
-
-        st.markdown(wrap_with_container(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)")), unsafe_allow_html=True)
-        st.markdown(wrap_with_container(f"""
-            <div style='font-size: 16px; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;'>
-                {ekg_result}
-            </div>
-        """), unsafe_allow_html=True)
-
         
         def get_ekg_col_name(year):
             return "EKG" if year == 2568 else f"EKG{str(year)[-2:]}"
@@ -1121,14 +1110,13 @@ if "person" in st.session_state:
         ekg_raw = person.get(ekg_col, "")
         ekg_result = interpret_ekg(ekg_raw)
         
-        st.markdown(f"""
-        <div style='
-            font-size: 16px;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1.5rem;
-        '>{ekg_result}</div>
-        """, unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)")), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(f"""
+            <div style='font-size: 16px; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;'>
+                {ekg_result}
+            </div>
+        """), unsafe_allow_html=True)
+
         
         # ✅ Hepatitis Section (A & B)
         y_label = str(selected_year)

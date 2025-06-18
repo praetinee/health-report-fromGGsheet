@@ -1081,21 +1081,21 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
     
         # ----------------------------
-    
+
         st.markdown(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
-    
+        
         def get_ekg_col_name(year):
             return "EKG" if year == 2568 else f"EKG{str(year)[-2:]}"
-    
+        
         def interpret_ekg(value):
             if not value or str(value).strip() == "":
                 return "-"
             return str(value).strip()
-    
+        
         ekg_col = get_ekg_col_name(2500 + selected_year)
         ekg_raw = person.get(ekg_col, "")
         ekg_result = interpret_ekg(ekg_raw)
-    
+        
         st.markdown(f"""
         <div style='
             font-size: 16px;
@@ -1104,16 +1104,17 @@ if "person" in st.session_state:
             margin-bottom: 1.5rem;
         '>{ekg_result}</div>
         """, unsafe_allow_html=True)
-
+        
         # ✅ Hepatitis Section (A & B)
+        y_label = str(selected_year)
+        
         hep_a_col = f"Hepatitis A{y_label}"
         hep_b_col = f"Hepatitis B{y_label}"
         
         hep_a_raw = person.get(hep_a_col, "N/A").strip() or "N/A"
         hep_b_raw = person.get(hep_b_col, "N/A").strip() or "N/A"
         
-        # 👉 กล่องผลไวรัสตับอักเสบ A
-        st.markdown("""
+        # 👉 หัวข้อ Hepatitis A
         st.markdown(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
         st.markdown(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
@@ -1121,9 +1122,8 @@ if "person" in st.session_state:
         </div>
         """, unsafe_allow_html=True)
         
-        # 👉 กล่องผลไวรัสตับอักเสบบี
+        # 👉 หัวข้อ Hepatitis B
         st.markdown(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
-   
         st.markdown(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
         {hep_b_raw}

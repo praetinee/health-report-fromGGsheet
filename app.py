@@ -1105,34 +1105,35 @@ if "person" in st.session_state:
         '>{ekg_result}</div>
         """, unsafe_allow_html=True)
 
-        # ==================== Hepatitis A & B ====================
-        st.markdown(render_section_header("🦠 ผลการตรวจไวรัสตับอักเสบ (Hepatitis)"), unsafe_allow_html=True)
+        # ✅ Hepatitis Section (A & B)
+        hep_a_col = f"Hepatitis A{y_label}"
+        hep_b_col = f"Hepatitis B{y_label}"
         
-        # ปีที่เลือก
-        y_label = str(selected_year)
+        hep_a_raw = person.get(hep_a_col, "N/A").strip() or "N/A"
+        hep_b_raw = person.get(hep_b_col, "N/A").strip() or "N/A"
         
-        # ดึงค่าผลตรวจ
-        hep_a_result = person.get(f"Hepatitis A{y_label}", "").strip() or "-"
-        hep_b_result = person.get(f"Hepatitis B{y_label}", "").strip() or "-"
+        # 👉 กล่องผลไวรัสตับอักเสบ A
+        st.markdown("""
+        <div style="background-color: #dcedc8; padding: 12px 18px; border-radius: 6px; font-weight: bold;">
+        ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)
+        </div>
+        """, unsafe_allow_html=True)
         
-        # สร้างตารางแสดงผล
         st.markdown(f"""
-        <table class='styled-result'>
-            <thead>
-                <tr>
-                    <th>รายการตรวจ</th>
-                    <th>ผลตรวจ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Hepatitis A</td>
-                    <td>{hep_a_result}</td>
-                </tr>
-                <tr>
-                    <td>Hepatitis B</td>
-                    <td>{hep_b_result}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
+        {hep_a_raw}
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # 👉 กล่องผลไวรัสตับอักเสบบี
+        st.markdown("""
+        <div style="background-color: #dcedc8; padding: 12px 18px; border-radius: 6px; font-weight: bold;">
+        ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+        <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
+        {hep_b_raw}
+        </div>
         """, unsafe_allow_html=True)

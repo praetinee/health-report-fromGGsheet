@@ -475,32 +475,31 @@ if "person" in st.session_state:
         header_html = "".join([f"<th>{h}</th>" for h in headers])
         html = f"""
         <style>
-            .styled-wrapper {{
+            .styled-wrapper {
                 max-width: 820px;
                 margin: 0 auto;
-            }}
-            .styled-result {{
+            }
+            .styled-result {
                 width: 100%;
                 border-collapse: collapse;
-            }}
-            .styled-result th {{
+            }
+            .styled-result th {
                 background-color: #111;
                 color: white;
-                padding: 6px 12px;
+                padding: 10px 12px;
                 text-align: center;
+                vertical-align: middle; /* ✅ ตรงนี้ทำให้ header อยู่กึ่งกลาง */
+            }
+            .styled-result td {
+                padding: 10px 12px;
                 vertical-align: middle;
-            }}
-            .styled-result td {{
-                padding: 6px 12px;
-                vertical-align: middle;
-            }}
-            .styled-result td:nth-child(2) {{
-                text-align: center;
-            }}
-            .abn {{
+                text-align: center;      /* ✅ ให้ผลตรวจกึ่งกลางทุกคอลัมน์ */
+            }
+            .abn {
                 background-color: rgba(255, 0, 0, 0.15);
-            }}
+            }
         </style>
+
         <div class="styled-wrapper">
             <table class='styled-result'>
                 <thead><tr>{header_html}</tr></thead>
@@ -581,7 +580,7 @@ if "person" in st.session_state:
     
     with col2:
         st.markdown(render_section_header("ผลตรวจเลือด (Blood Test)"), unsafe_allow_html=True)
-        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows)), unsafe_allow_html=True)
 
     import re
     

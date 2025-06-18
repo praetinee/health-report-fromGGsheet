@@ -979,26 +979,12 @@ if "person" in st.session_state:
     st.markdown(centered_box, unsafe_allow_html=True)
 
     # ==================== Urinalysis & Additional Tests ====================
-    def wrap_with_container(inner_html: str) -> str:
-        return f"""
-        <div style='
-            max-width: 1200px;
-            margin: auto;
-            padding: 0 1rem;
-        '>
-            {inner_html}
-        </div>
-        """
-
     left_col, right_col = st.columns(2)
     
     with left_col:
         # 📌 Render: หัวข้อปัสสาวะ
-        st.markdown(
-            wrap_with_container(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)")),
-            unsafe_allow_html=True
-        )
-
+        st.markdown(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
+        
         y = selected_year
         y_label = str(y)
         sex = person.get("เพศ", "").strip()
@@ -1084,11 +1070,7 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
     
     with right_col:
-        st.markdown(
-            wrap_with_container(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)")),
-            unsafe_allow_html=True
-        )
-
+        st.markdown(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
     
         def get_cxr_col_name(year):
             return "CXR" if year == 2568 else f"CXR{str(year)[-2:]}"

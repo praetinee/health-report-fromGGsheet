@@ -555,19 +555,8 @@ if "person" in st.session_state:
         """
     
     # ✅ Render ทั้งสองตาราง
-    spacer, main_col, spacer2 = st.columns([1, 6, 1])
+    left_spacer, col1, col2, right_spacer = st.columns([1, 3, 3, 1])
     
-    with main_col:
-        inner_left, inner_right = st.columns(2)
-    
-        with inner_left:
-            st.markdown(render_section_header("ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)"), unsafe_allow_html=True)
-            st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows), unsafe_allow_html=True)
-    
-        with inner_right:
-            st.markdown(render_section_header("ผลตรวจเลือด (Blood Test)"), unsafe_allow_html=True)
-            st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
-        
     with col1:
         st.markdown(render_section_header("ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)"), unsafe_allow_html=True)
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows), unsafe_allow_html=True)

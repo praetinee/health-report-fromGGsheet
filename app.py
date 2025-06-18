@@ -550,6 +550,17 @@ if "person" in st.session_state:
     
         return val_str, False
 
+    def wrap_with_container(inner_html: str) -> str:
+        return f"""
+        <div style='
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 1rem;
+        '>
+            {inner_html}
+        </div>
+        """
+
     def render_section_header(title):
         return f"""
         <div style="

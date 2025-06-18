@@ -1114,11 +1114,7 @@ if "person" in st.session_state:
         
         # 👉 กล่องผลไวรัสตับอักเสบ A
         st.markdown("""
-        <div style="background-color: #dcedc8; padding: 12px 18px; border-radius: 6px; font-weight: bold;">
-        ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)
-        </div>
-        """, unsafe_allow_html=True)
-        
+        st.markdown(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
         st.markdown(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
         {hep_a_raw}
@@ -1126,12 +1122,8 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
         
         # 👉 กล่องผลไวรัสตับอักเสบบี
-        st.markdown("""
-        <div style="background-color: #dcedc8; padding: 12px 18px; border-radius: 6px; font-weight: bold;">
-        ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)
-        </div>
-        """, unsafe_allow_html=True)
-        
+        st.markdown(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
+   
         st.markdown(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
         {hep_b_raw}

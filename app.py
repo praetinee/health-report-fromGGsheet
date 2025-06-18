@@ -548,22 +548,31 @@ if "person" in st.session_state:
             color: white;
             text-align: center;
             line-height: 1.4;
-            margin: 2rem 0 1rem 0;
+            margin: 2rem auto 1rem auto;
+            max-width: 820px;
         ">
             {title}
         </div>
         """
     
-    # ✅ Render ทั้งสองตาราง
-    left_spacer, col1, col2, right_spacer = st.columns([1, 3, 3, 1])
+    cbc_html = styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows)
+    blood_html = styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows)
     
-    with col1:
-        st.markdown(render_section_header("ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)"), unsafe_allow_html=True)
-        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows), unsafe_allow_html=True)
+    # Render CBC
+    st.markdown(f"""
+    <div style="max-width: 820px; margin: 0 auto;">
+        {render_section_header("ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)")}
+        {cbc_html}
+    </div>
+    """, unsafe_allow_html=True)
     
-    with col2:
-        st.markdown(render_section_header("ผลตรวจเลือด (Blood Test)"), unsafe_allow_html=True)
-        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
+    # Render BLOOD
+    st.markdown(f"""
+    <div style="max-width: 820px; margin: 2rem auto 0 auto;">
+        {render_section_header("ผลตรวจเลือด (Blood Test)")}
+        {blood_html}
+    </div>
+    """, unsafe_allow_html=True)
 
     import re
     

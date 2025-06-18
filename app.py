@@ -1102,7 +1102,5 @@ if "person" in st.session_state:
             padding: 1rem;
             border-radius: 6px;
             margin-bottom: 1.5rem;
-        '>
-            <b>ปี พ.ศ. {2500 + selected_year}:</b> {ekg_result}
-        </div>
+        '>{ekg_result}</div>
         """, unsafe_allow_html=True)

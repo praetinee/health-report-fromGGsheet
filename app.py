@@ -1095,7 +1095,7 @@ if "person" in st.session_state:
         ekg_col = get_ekg_col_name(2500 + selected_year)
         ekg_raw = person.get(ekg_col, "")
         ekg_result = interpret_ekg(ekg_raw)
-
+    
         st.markdown(f"""
         <div style='
             font-size: 16px;

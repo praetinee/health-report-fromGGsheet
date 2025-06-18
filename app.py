@@ -1092,13 +1092,13 @@ if "person" in st.session_state:
         cxr_result = interpret_cxr(cxr_raw)
     
         st.markdown(wrap_with_container(f"""
-        <div style='
-            font-size: 16px;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1.5rem;
-        '>{cxr_result}</div>
-        """, unsafe_allow_html=True)
+            <div style='
+                font-size: 16px;
+                padding: 1rem;
+                border-radius: 6px;
+                margin-bottom: 1.5rem;
+            '>{cxr_result}</div>
+        """), unsafe_allow_html=True)
     
         # ----------------------------
         

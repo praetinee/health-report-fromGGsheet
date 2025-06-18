@@ -1136,9 +1136,12 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
         
         # 👉 หัวข้อ Hepatitis B
-        st.markdown(wrap_with_container(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)")), unsafe_allow_html=True)
-        st.markdown(f"""
-        <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
-            {hep_b_raw}
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(
+            wrap_with_container(f"""
+                <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
+                    {hep_b_raw}
+                </div>
+            """),
+            unsafe_allow_html=True
+        )
+

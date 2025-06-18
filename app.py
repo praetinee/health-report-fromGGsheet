@@ -8,6 +8,17 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 st.set_page_config(page_title="ระบบรายงานสุขภาพ", layout="wide")
 
+def wrap_with_container(inner_html: str) -> str:
+    return f"""
+    <div style='
+        max-width: 1200px;
+        margin: auto;
+        padding: 0 1rem;
+    '>
+        {inner_html}
+    </div>
+    """
+
 st.markdown("""
 <style>
     .doctor-section {
@@ -554,14 +565,15 @@ if "person" in st.session_state:
         return f"""
         <div style="
             background-color: #1B5E20;
-            padding: 20px 24px;
-            border-radius: 6px;
-            font-size: 18px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 20px;
             font-weight: bold;
             color: white;
             text-align: center;
-            line-height: 1.4;
-            margin: 2rem 0 1rem 0;
+            margin: 1.5rem auto;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         ">
             {title}
         </div>
@@ -571,11 +583,11 @@ if "person" in st.session_state:
     left_spacer, col1, col2, right_spacer = st.columns([1, 3, 3, 1])
     
     with col1:
-        st.markdown(render_section_header("ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("ผลการตรวจความสมบูรณ์ของเม็ดเลือด (Complete Blood Count)")), unsafe_allow_html=True)
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows), unsafe_allow_html=True)
     
     with col2:
-        st.markdown(render_section_header("ผลตรวจเลือด (Blood Test)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("ผลตรวจเลือด (Blood Test)")), unsafe_allow_html=True)
         st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], blood_rows), unsafe_allow_html=True)
 
     import re
@@ -983,7 +995,7 @@ if "person" in st.session_state:
     
     with left_col:
         # 📌 Render: หัวข้อปัสสาวะ
-        st.markdown(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)")), unsafe_allow_html=True)
         
         y = selected_year
         y_label = str(y)
@@ -1061,7 +1073,7 @@ if "person" in st.session_state:
         exam_text = interpret_stool_exam(stool_exam_raw)
         cs_text = interpret_stool_cs(stool_cs_raw)
     
-        st.markdown(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)")), unsafe_allow_html=True)
         st.markdown(f"""
         <p style='font-size: 16px; line-height: 1.7; margin-bottom: 1rem;'>
             <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
@@ -1070,7 +1082,7 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
     
     with right_col:
-        st.markdown(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)")), unsafe_allow_html=True)
     
         def get_cxr_col_name(year):
             return "CXR" if year == 2568 else f"CXR{str(year)[-2:]}"
@@ -1095,7 +1107,7 @@ if "person" in st.session_state:
     
         # ----------------------------
 
-        st.markdown(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)")), unsafe_allow_html=True)
         
         def get_ekg_col_name(year):
             return "EKG" if year == 2568 else f"EKG{str(year)[-2:]}"
@@ -1128,7 +1140,7 @@ if "person" in st.session_state:
         hep_b_raw = person.get(hep_b_col, "N/A").strip() or "N/A"
         
         # 👉 หัวข้อ Hepatitis A
-        st.markdown(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)")), unsafe_allow_html=True)
         st.markdown(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
         {hep_a_raw}
@@ -1136,7 +1148,7 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
         
         # 👉 หัวข้อ Hepatitis B
-        st.markdown(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)")), unsafe_allow_html=True)
         st.markdown(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
         {hep_b_raw}

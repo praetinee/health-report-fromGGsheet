@@ -479,17 +479,18 @@ if "person" in st.session_state:
                 width: 100%;
                 border-collapse: collapse;
             }}
+            .styled-result th {{
+                background-color: #111;
+                color: white;
+                padding: 6px 12px;
+                text-align: center;
+            }}
             .styled-result td {{
                 padding: 6px 12px;
                 vertical-align: middle;
             }}
             .styled-result td:nth-child(2) {{
                 text-align: center;
-            }}
-            .styled-result th {{
-                background-color: #111;
-                color: white;
-                padding: 6px 12px;
             }}
             .abn {{
                 background-color: rgba(255, 0, 0, 0.15);

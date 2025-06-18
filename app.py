@@ -1072,13 +1072,17 @@ if "person" in st.session_state:
         exam_text = interpret_stool_exam(stool_exam_raw)
         cs_text = interpret_stool_cs(stool_cs_raw)
     
-        st.markdown(f"""
-        {wrap_with_container(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)"))}
+       stool_html = f"""
         <div style='font-size: 16px; line-height: 1.7; margin-bottom: 1rem;'>
             <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
             <b>ผลเพาะเชื้ออุจจาระ:</b> {cs_text}
         </div>
-        """, unsafe_allow_html=True)
+        """
+        
+        st.markdown(
+            wrap_with_container(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)") + stool_html),
+            unsafe_allow_html=True
+        )
 
     
     with right_col:
@@ -1118,7 +1122,11 @@ if "person" in st.session_state:
         ekg_raw = person.get(ekg_col, "")
         ekg_result = interpret_ekg(ekg_raw)
         
-        st.markdown(f"<div style='font-size: 16px; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;'>{some_value}</div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div style='font-size: 16px; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;'>
+            {ekg_result}
+        </div>
+        """, unsafe_allow_html=True)
         
         # ✅ Hepatitis Section (A & B)
         y_label = str(selected_year)
@@ -1138,12 +1146,10 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
         
         # 👉 หัวข้อ Hepatitis B
-        st.markdown(
-            wrap_with_container(f"""
-                <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
-                    {hep_b_raw}
-                </div>
-            """),
-            unsafe_allow_html=True
-        )
-
+        hep_b_html = f"""
+        <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
+            {hep_b_raw}
+        </div>
+        """
+        
+        st.markdown(wrap_with_container(hep_b_html), unsafe_allow_html=True)

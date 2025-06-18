@@ -1072,8 +1072,7 @@ if "person" in st.session_state:
         exam_text = interpret_stool_exam(stool_exam_raw)
         cs_text = interpret_stool_cs(stool_cs_raw)
     
-        st.markdown(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)"), unsafe_allow_html=True)
-        st.markdown(f"""
+        st.markdown(wrap_with_container(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)")), unsafe_allow_html=True)
         <p style='font-size: 16px; line-height: 1.7; margin-bottom: 1rem;'>
             <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
             <b>ผลเพาะเชื้ออุจจาระ:</b> {cs_text}
@@ -1081,7 +1080,7 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
     
     with right_col:
-        st.markdown(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)")), unsafe_allow_html=True)
     
         def get_cxr_col_name(year):
             return "CXR" if year == 2568 else f"CXR{str(year)[-2:]}"
@@ -1106,7 +1105,7 @@ if "person" in st.session_state:
     
         # ----------------------------
 
-        st.markdown(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)")), unsafe_allow_html=True)
         
         def get_ekg_col_name(year):
             return "EKG" if year == 2568 else f"EKG{str(year)[-2:]}"
@@ -1139,7 +1138,7 @@ if "person" in st.session_state:
         hep_b_raw = person.get(hep_b_col, "N/A").strip() or "N/A"
         
         # 👉 หัวข้อ Hepatitis A
-        st.markdown(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)")), unsafe_allow_html=True)
         st.markdown(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
         {hep_a_raw}
@@ -1147,7 +1146,7 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
         
         # 👉 หัวข้อ Hepatitis B
-        st.markdown(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
+        st.markdown(wrap_with_container(render_section_header("🍃 ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)")), unsafe_allow_html=True)
         st.markdown(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
         {hep_b_raw}

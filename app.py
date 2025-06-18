@@ -979,7 +979,7 @@ if "person" in st.session_state:
     st.markdown(centered_box, unsafe_allow_html=True)
 
     # ==================== Urinalysis & Additional Tests ====================
-    left_col, right_col = st.columns([1, 3, 3, 1])
+    left_spacer2, left_col, right_col, right_spacer2 = st.columns([1, 3, 3, 1])
     
     with left_col:
         # 📌 Render: หัวข้อปัสสาวะ

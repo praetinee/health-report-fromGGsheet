@@ -960,7 +960,7 @@ if "person" in st.session_state:
     
     centered_box = f"""
     <div style="
-        max-width: 1100px;
+        max-width: 1000px;
         margin: 2rem auto 1rem auto;
         background-color: rgba(33, 150, 243, 0.15);
         padding: 2rem 2.5rem;
@@ -983,7 +983,7 @@ if "person" in st.session_state:
     
     with left_col:
         # 📌 Render: หัวข้อปัสสาวะ
-        st.markdown(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
+        st.markdown(render_section_header("ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
         
         y = selected_year
         y_label = str(y)
@@ -1061,7 +1061,7 @@ if "person" in st.session_state:
         exam_text = interpret_stool_exam(stool_exam_raw)
         cs_text = interpret_stool_cs(stool_cs_raw)
     
-        st.markdown(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)"), unsafe_allow_html=True)
+        st.markdown(render_section_header("ผลตรวจอุจจาระ (Stool Examination)"), unsafe_allow_html=True)
         st.markdown(f"""
         <p style='font-size: 16px; line-height: 1.7; margin-bottom: 1rem;'>
             <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
@@ -1070,7 +1070,7 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
     
     with right_col:
-        st.markdown(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
+        st.markdown(render_section_header("ผลเอกซเรย์ (Chest X-ray)"), unsafe_allow_html=True)
     
         def get_cxr_col_name(year):
             return "CXR" if year == 2568 else f"CXR{str(year)[-2:]}"
@@ -1095,7 +1095,7 @@ if "person" in st.session_state:
     
         # ----------------------------
 
-        st.markdown(render_section_header("💓 ผลคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
+        st.markdown(render_section_header("ผลคลื่นไฟฟ้าหัวใจ (EKG)"), unsafe_allow_html=True)
         
         def get_ekg_col_name(year):
             return "EKG" if year == 2568 else f"EKG{str(year)[-2:]}"

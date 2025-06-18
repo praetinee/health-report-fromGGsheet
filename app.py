@@ -960,16 +960,16 @@ if "person" in st.session_state:
     
     centered_box = f"""
     <div style="
-        max-width: 820px;
+        max-width: 1200px;
         margin: 2rem auto 1rem auto;
         background-color: rgba(33, 150, 243, 0.15);
-        padding: 1.5rem;
+        padding: 2rem 2.5rem;
         border-radius: 10px;
         font-size: 16px;
-        line-height: 1.7;
+        line-height: 1.8;
         color: inherit;
     ">
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 1rem;">
+        <div style="font-size: 18px; font-weight: bold; margin-bottom: 1.5rem;">
             📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}
         </div>
         {final_advice}

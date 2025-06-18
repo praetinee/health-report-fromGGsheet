@@ -835,7 +835,7 @@ if "person" in st.session_state:
     
     # ใช้ปีที่เลือกจาก dropdown
     y = selected_year
-    y_label = str(y)
+    y_label = "" if selected_year == 68 else str(selected_year % 100)
     col_name = f"FBS{y_label}"
     raw_value = str(person.get(col_name, "") or "").strip()
     advice_fbs = fbs_advice(raw_value)
@@ -874,7 +874,7 @@ if "person" in st.session_state:
     
     # ✅ ดึงค่าตามปีที่เลือก
     y = selected_year
-    y_label = str(y)  # ควรใช้ str(y) เช่น "68", "67"
+    y_label = "" if selected_year == 68 else str(selected_year % 100)
     
     chol_raw = str(person.get(f"CHOL{y_label}", "") or "").strip()
     tgl_raw = str(person.get(f"TGL{y_label}", "") or "").strip()
@@ -1115,7 +1115,7 @@ if "person" in st.session_state:
         """, unsafe_allow_html=True)
         
         # ✅ Hepatitis Section (A & B)
-        y_label = str(selected_year)
+        y_label = "" if selected_year == 68 else str(selected_year % 100)
         
         hep_a_col = f"Hepatitis A{y_label}"
         hep_b_col = f"Hepatitis B{y_label}"

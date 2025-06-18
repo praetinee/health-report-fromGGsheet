@@ -471,6 +471,14 @@ if "person" in st.session_state:
         header_html = "".join([f"<th>{h}</th>" for h in headers])
         html = f"""
         <style>
+            .styled-wrapper {{
+                max-width: 820px;
+                margin: 0 auto;
+            }}
+            .styled-result {{
+                width: 100%;
+                border-collapse: collapse;
+            }}
             .styled-result td {{
                 padding: 6px 12px;
                 vertical-align: middle;
@@ -484,9 +492,10 @@ if "person" in st.session_state:
                 background-color: rgba(255, 0, 0, 0.15);
             }}
         </style>
-        <table class='styled-result'>
-            <thead><tr>{header_html}</tr></thead>
-            <tbody>
+        <div class="styled-wrapper">
+            <table class='styled-result'>
+                <thead><tr>{header_html}</tr></thead>
+                <tbody>
         """
         for row in rows:
             row_html = ""
@@ -494,7 +503,7 @@ if "person" in st.session_state:
                 css = " class='abn'" if is_abn else ""
                 row_html += f"<td{css}>{cell}</td>"
             html += f"<tr>{row_html}</tr>"
-        html += "</tbody></table>"
+        html += "</tbody></table></div>"
         return html
 
     def flag_urine_value(val, normal_range=None):

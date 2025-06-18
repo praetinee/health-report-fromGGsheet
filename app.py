@@ -1104,3 +1104,35 @@ if "person" in st.session_state:
             margin-bottom: 1.5rem;
         '>{ekg_result}</div>
         """, unsafe_allow_html=True)
+
+        # ==================== Hepatitis A & B ====================
+        st.markdown(render_section_header("🦠 ผลการตรวจไวรัสตับอักเสบ (Hepatitis)"), unsafe_allow_html=True)
+        
+        # ปีที่เลือก
+        y_label = str(selected_year)
+        
+        # ดึงค่าผลตรวจ
+        hep_a_result = person.get(f"Hepatitis A{y_label}", "").strip() or "-"
+        hep_b_result = person.get(f"Hepatitis B{y_label}", "").strip() or "-"
+        
+        # สร้างตารางแสดงผล
+        st.markdown(f"""
+        <table class='styled-result'>
+            <thead>
+                <tr>
+                    <th>รายการตรวจ</th>
+                    <th>ผลตรวจ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Hepatitis A</td>
+                    <td>{hep_a_result}</td>
+                </tr>
+                <tr>
+                    <td>Hepatitis B</td>
+                    <td>{hep_b_result}</td>
+                </tr>
+            </tbody>
+        </table>
+        """, unsafe_allow_html=True)

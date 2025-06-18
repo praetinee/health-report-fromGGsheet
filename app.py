@@ -1072,12 +1072,14 @@ if "person" in st.session_state:
         exam_text = interpret_stool_exam(stool_exam_raw)
         cs_text = interpret_stool_cs(stool_cs_raw)
     
-        st.markdown(wrap_with_container(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)")), unsafe_allow_html=True)
-        <p style='font-size: 16px; line-height: 1.7; margin-bottom: 1rem;'>
+        st.markdown(f"""
+        {wrap_with_container(render_section_header("💩 ผลตรวจอุจจาระ (Stool Examination)"))}
+        <div style='font-size: 16px; line-height: 1.7; margin-bottom: 1rem;'>
             <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
             <b>ผลเพาะเชื้ออุจจาระ:</b> {cs_text}
-        </p>
+        </div>
         """, unsafe_allow_html=True)
+
     
     with right_col:
         st.markdown(wrap_with_container(render_section_header("🩻 ผลเอกซเรย์ (Chest X-ray)")), unsafe_allow_html=True)

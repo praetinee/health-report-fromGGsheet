@@ -984,7 +984,6 @@ if "person" in st.session_state:
     with left_col:
         # 📌 Render: หัวข้อปัสสาวะ
         st.markdown(render_section_header("🚻 ผลการตรวจปัสสาวะ (Urinalysis)"), unsafe_allow_html=True)
-        st.markdown(styled_result_table(["ชื่อการตรวจ", "ผลตรวจ", "ค่าปกติ"], cbc_rows), unsafe_allow_html=True)
         
         y = selected_year
         y_label = str(y)

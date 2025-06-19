@@ -1128,10 +1128,10 @@ if "person" in st.session_state:
             hep_a_raw = "-"
         hep_b_raw = person.get(hep_b_col, "N/A").strip() or "N/A"
         
-        # 👉 หัวข้อ Hepatitis A
+        # แสดงผลไวรัสตับอักเสบ A แบบชิดซ้าย
         st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
         st.markdown(f"""
-        <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
+        <div style="text-align: left; font-size: 18px; margin: 1rem 0;">
         {hep_a_raw}
         </div>
         """, unsafe_allow_html=True)

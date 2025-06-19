@@ -1193,12 +1193,13 @@ if "person" in st.session_state:
     with doctor_col:
         st.markdown(f"""
         <div style='
-            background-color: #1B5E20;
+            background-color: rgba(76, 175, 80, 0.15);  /* เขียวอ่อนโปร่งแสง */
             padding: 20px 24px;
             border-radius: 6px;
             font-size: 18px;
             line-height: 1.6;
             margin: 1.5rem 0;
+            color: inherit;  /* ใช้สีตามธีมของอุปกรณ์ */
         '>
             <b>สรุปความเห็นของแพทย์ :</b> ๒๕๖๒ ไม่ต้องงดน้ำงดอาหาร นัดตรวจการได้ยิน
         </div>

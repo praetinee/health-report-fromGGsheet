@@ -1185,3 +1185,20 @@ if "person" in st.session_state:
         {hepatitis_b_advice(hbsag_raw, hbsab_raw, hbcab_raw)}
         </div>
         """, unsafe_allow_html=True)
+
+    left_spacer3, doctor_col, right_spacer3 = st.columns([1, 6, 1])
+    
+    with doctor_col:
+        st.markdown(f"""
+        <div style='
+            background-color: #a5d6a7;
+            padding: 16px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 1.5rem 0;
+        '>
+            <b>สรุปความเห็นของแพทย์ :</b> ๒๕๖๒ ไม่ต้องงดน้ำงดอาหาร นัดตรวจการได้ยิน
+        </div>
+        """, unsafe_allow_html=True)
+

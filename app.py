@@ -338,8 +338,10 @@ if "person" in st.session_state:
     selected_year = st.selectbox(
         "📅 เลือกปีที่ต้องการดูผลตรวจรายงาน", 
         options=sorted(years, reverse=True),
-        format_func=lambda y: f"พ.ศ. {y + 2500}"
+        format_func=lambda y: f"พ.ศ. {y + 2500}",
+        container_width=False  # 🔹 เพิ่มบรรทัดนี้เพื่อให้กล่องไม่เต็มความกว้าง
     )
+
     selected_cols = columns_by_year[selected_year]
 
     def render_health_report(person, year_cols):

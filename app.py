@@ -1130,11 +1130,13 @@ if "person" in st.session_state:
         
         # แสดงผลไวรัสตับอักเสบ A แบบชิดซ้าย
         st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
-        st.markdown(f"""
-        <div style="text-align: left; font-size: 18px; margin: 1.5rem 0;">
-        {hep_a_raw}
-        </div>
-        """, unsafe_allow_html=True)
+        _, col_hep_a, _, _ = st.columns([1, 3, 3, 1])
+        with col_hep_a:
+            st.markdown(f"""
+            <div style="font-size: 18px; margin: 1rem 0;">
+            {hep_a_raw}
+            </div>
+            """, unsafe_allow_html=True)
         
         # 👉 หัวข้อ Hepatitis B (ใหม่: รวมตาราง HBsAg/HBsAb/HBcAb)
         st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)

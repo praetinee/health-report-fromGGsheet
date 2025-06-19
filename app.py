@@ -1183,6 +1183,6 @@ if "person" in st.session_state:
         # แสดงคำแนะนำ
         st.markdown(f"""
         <div style="font-size: 16px; padding: 1rem; background-color: rgba(255, 215, 0, 0.2); border-radius: 6px;">
-        <b>คำแนะนำ:</b> {hepatitis_b_advice(hbsag_raw, hbsab_raw, hbcab_raw)}
+        {hepatitis_b_advice(hbsag_raw, hbsab_raw, hbcab_raw)}
         </div>
         """, unsafe_allow_html=True)

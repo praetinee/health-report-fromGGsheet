@@ -1139,75 +1139,54 @@ if "person" in st.session_state:
         st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
         
         # ดึงค่าจาก DataFrame
-        def summarize_hepatitis_b(hbsag, hbsab, hbcab):
-            hbsag = hbsag.lower().strip()
-            hbsab = hbsab.lower().strip()
-            hbcab = hbcab.lower().strip()
-        
-            if hbsag == "positive":
-                return "กำลังติดเชื้อไวรัสตับอักเสบบี"
-            if hbsag == "negative" and hbsab == "positive" and hbcab == "positive":
-                return "เคยติดเชื้อและมีภูมิคุ้มกันแล้ว"
-            if hbsag == "negative" and hbsab == "positive" and hbcab == "negative":
-                return "มีภูมิคุ้มกันจากการได้รับวัคซีน"
-            if hbsag == "negative" and hbsab == "negative" and hbcab == "positive":
-                return "อาจเคยติดเชื้อไวรัสตับอักเสบบี (latent)"
-            if hbsag == "negative" and hbsab == "negative" and hbcab == "negative":
-                return "ไม่พบภูมิคุ้มกัน ควรพิจารณารับวัคซีน"
-        
-            return "ข้อมูลไม่เพียงพอในการแปลผล"
-        
-        # ดึงค่าจาก DataFrame
         hbsag_raw = person.get("HbsAg", "N/A").strip()
         hbsab_raw = person.get("HbsAb", "N/A").strip()
         hbcab_raw = person.get("HBcAB", "N/A").strip()
         
-        # ใช้สรุปแทน hep_b_raw เดิม
-        hep_b_summary = summarize_hepatitis_b(hbsag_raw, hbsab_raw, hbcab_raw)
-
-        
-        st.markdown(f"""
-        <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
-        {hep_b_summary}
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # แสดงผลตารางรวม
-        hepb_table_combined = f"""
-        <style>
-            .hepb-table {{
-                width: 100%;
-                font-size: 16px;
-                text-align: center;
-                border-collapse: collapse;
-                margin-bottom: 1rem;
-            }}
-            .hepb-table th, .hepb-table td {{
-                padding: 10px;
-                border: 1px solid #444;
-                color: white;
-            }}
-            .hepb-table th {{
-                color: #bbb;
-                background-color: transparent;
-            }}
-        </style>
-        
-        <table class="hepb-table">
-            <thead>
-                <tr>
-                    <th>HBsAg</th>
-                    <th>HBsAb</th>
-                    <th>HBcAb</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{hbsag_raw}</td>
-                    <td>{hbsab_raw}</td>
-                    <td>{hbcab_raw}</td>
-                </tr>
-            </tbody>
+        # แสดงผลในตาราง
+        hepb_table = f"""
+        <table style='width:100%; font-size:16px; text-align:center; border-collapse: collapse; margin-bottom: 1rem;'>
+            <tr style='background-color:#eeeeee; font-weight:bold;'>
+                <td>รายการตรวจ</td><td>ผลตรวจ</td><td>ความหมายเบื้องต้น</td>
+            </tr>
+            <tr>
+                <td>HbsAg</td>
+                <td>{hbsag_raw}</td>
+                <td>{"พบเชื้อไวรัสตับอักเสบบี" if hbsag_raw.lower() == "positive" else "ไม่พบเชื้อ"}</td>
+            </tr>
+            <tr>
+                <td>HbsAb</td>
+                <td>{hbsab_raw}</td>
+                <td>{"มีภูมิคุ้มกันต่อไวรัสตับอักเสบบี" if hbsab_raw.lower() == "positive" else "ยังไม่มีภูมิคุ้มกัน"}</td>
+            </tr>
+            <tr>
+                <td>HBcAB</td>
+                <td>{hbcab_raw}</td>
+                <td>{"เคยติดเชื้อหรือเคยสัมผัสเชื้อ" if hbcab_raw.lower() == "positive" else "ไม่พบการติดเชื้อในอดีต"}</td>
+            </tr>
         </table>
         """
-        st.markdown(hepb_table_combined, unsafe_allow_html=True)
+        st.markdown(hepb_table, unsafe_allow_html=True)
+
+        def hepatitis_b_advice(hbsag, hbsab, hbcab):
+            hbsag = hbsag.lower()
+            hbsab = hbsab.lower()
+            hbcab = hbcab.lower()
+        
+            if hbsag == "positive":
+                return "❗ พบเชื้อไวรัสตับอักเสบบี แนะนำพบแพทย์เพื่อตรวจและติดตามเพิ่มเติม"
+            elif hbsab == "positive" and hbsag == "negative":
+                return "✅ คุณมีภูมิคุ้มกันไวรัสตับอักเสบบีแล้ว ไม่จำเป็นต้องฉีดวัคซีน"
+            elif hbcab == "positive" and hbsab == "negative":
+                return "⚠️ เคยติดเชื้อแต่ไม่มีภูมิคุ้มกันในปัจจุบัน ควรปรึกษาแพทย์"
+            elif all(x == "negative" for x in [hbsag, hbsab, hbcab]):
+                return "🛡️ ไม่พบภูมิคุ้มกันไวรัสตับอักเสบบี แนะนำฉีดวัคซีนเพื่อป้องกันการติดเชื้อ"
+            else:
+                return "ℹ️ ไม่สามารถสรุปผลชัดเจน แนะนำให้พบแพทย์เพื่อประเมินซ้ำ"
+        
+        # แสดงคำแนะนำ
+        st.markdown(f"""
+        <div style="font-size: 16px; padding: 1rem; background-color: rgba(255, 215, 0, 0.2); border-radius: 6px;">
+        <b>คำแนะนำ:</b> {hepatitis_b_advice(hbsag_raw, hbsab_raw, hbcab_raw)}
+        </div>
+        """, unsafe_allow_html=True)

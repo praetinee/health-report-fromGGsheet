@@ -1125,8 +1125,8 @@ if "person" in st.session_state:
         hep_a_col = f"Hepatitis A{y_label}"
         hep_b_col = f"Hepatitis B{y_label}"
         
-        hep_a_raw = person.get(hep_a_col, "N/A").strip() or "N/A"
-        hep_b_raw = person.get(hep_b_col, "N/A").strip() or "N/A"
+        hep_a_raw = person.get(hep_a_col, "-").strip() or "-"
+        hep_b_raw = person.get(hep_b_col, "-").strip() or "-"
         
         # 👉 หัวข้อ Hepatitis A
         st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)

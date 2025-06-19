@@ -958,25 +958,24 @@ if "person" in st.session_state:
     # ✅ แสดงผลรวม
     final_advice = merge_final_advice_grouped(all_advices)
     
-    centered_box = f"""
-    <div style="
-        max-width: 1070px;
-        margin: 2rem auto 1rem auto;
-        background-color: rgba(33, 150, 243, 0.15);
-        padding: 2rem 2.5rem;
-        border-radius: 10px;
-        font-size: 16px;
-        line-height: 1.5;
-        color: inherit;
-    ">
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 1.5rem;">
-            📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}
-        </div>
-        {final_advice}
-    </div>
-    """
+    left_spacer, center_col, right_spacer = st.columns([1, 6, 1])
     
-    st.markdown(centered_box, unsafe_allow_html=True)
+    with center_col:
+        st.markdown(f"""
+        <div style="
+            background-color: rgba(33, 150, 243, 0.15);
+            padding: 2rem 2.5rem;
+            border-radius: 10px;
+            font-size: 16px;
+            line-height: 1.5;
+            color: inherit;
+        ">
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 1.5rem;">
+                📋 คำแนะนำสรุปผลตรวจสุขภาพ ปี {2500 + selected_year}
+            </div>
+            {final_advice}
+        </div>
+        """, unsafe_allow_html=True)
 
     # ==================== Urinalysis & Additional Tests ====================
     left_spacer2, left_col, right_col, right_spacer2 = st.columns([1, 3, 3, 1])

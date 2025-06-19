@@ -1143,27 +1143,23 @@ if "person" in st.session_state:
         hbsab_raw = person.get("HbsAb", "N/A").strip()
         hbcab_raw = person.get("HBcAB", "N/A").strip()
         
-        # แสดงผลในตาราง
+        # แสดงผลแบบหัวตารางด้านบน ไม่ใช้คำอธิบาย
         hepb_table = f"""
         <table style='width:100%; font-size:16px; text-align:center; border-collapse: collapse; margin-bottom: 1rem;'>
-            <tr style='background-color:#eeeeee; font-weight:bold;'>
-                <td>รายการตรวจ</td><td>ผลตรวจ</td><td>ความหมายเบื้องต้น</td>
-            </tr>
-            <tr>
-                <td>HbsAg</td>
-                <td>{hbsag_raw}</td>
-                <td>{"พบเชื้อไวรัสตับอักเสบบี" if hbsag_raw.lower() == "positive" else "ไม่พบเชื้อ"}</td>
-            </tr>
-            <tr>
-                <td>HbsAb</td>
-                <td>{hbsab_raw}</td>
-                <td>{"มีภูมิคุ้มกันต่อไวรัสตับอักเสบบี" if hbsab_raw.lower() == "positive" else "ยังไม่มีภูมิคุ้มกัน"}</td>
-            </tr>
-            <tr>
-                <td>HBcAB</td>
-                <td>{hbcab_raw}</td>
-                <td>{"เคยติดเชื้อหรือเคยสัมผัสเชื้อ" if hbcab_raw.lower() == "positive" else "ไม่พบการติดเชื้อในอดีต"}</td>
-            </tr>
+            <thead>
+                <tr style='background-color:#2e7d32; color:white;'>
+                    <th>HBsAg</th>
+                    <th>HBsAb</th>
+                    <th>HBcAb</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{hbsag_raw}</td>
+                    <td>{hbsab_raw}</td>
+                    <td>{hbcab_raw}</td>
+                </tr>
+            </tbody>
         </table>
         """
         st.markdown(hepb_table, unsafe_allow_html=True)

@@ -415,9 +415,9 @@ if "person" in st.session_state:
         try:
             val = float(str(raw).replace(",", "").strip())
             if higher_is_better:
-                return f"{val:.1f}", val < low
+                return f"{val:,.1f}", val < low  # หรือ True หรือ False ตามเงื่อนไข
             if (low is not None and val < low) or (high is not None and val > high):
-                return f"{val:.1f}", True
+                return f"{val:,.1f}", val < low  # หรือ True หรือ False ตามเงื่อนไข
             return f"{val:.1f}", False
         except:
             return "-", False

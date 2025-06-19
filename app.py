@@ -414,11 +414,17 @@ if "person" in st.session_state:
     def flag_value(raw, low=None, high=None, higher_is_better=False):
         try:
             val = float(str(raw).replace(",", "").strip())
+    
+            if val.is_integer():
+                formatted_val = f"{val:,.0f}"  # ใช้คอมม่าและไม่ต้องมี .0 ถ้าไม่จำเป็น
+            else:
+                formatted_val = f"{val:,.1f}"
+    
             if higher_is_better:
-                return f"{val:.1f}", val < low
+                return formatted_val, val < low
             if (low is not None and val < low) or (high is not None and val > high):
-                return f"{val:.1f}", True
-            return f"{val:.1f}", False
+                return formatted_val, True
+            return formatted_val, False
         except:
             return "-", False
     

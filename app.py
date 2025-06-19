@@ -1218,18 +1218,21 @@ if "person" in st.session_state:
         <div style='
             margin-top: 3rem;
             text-align: right;
+            padding-right: 1rem;
         '>
             <div style='
                 display: inline-block;
                 text-align: center;
+                width: 340px;
             '>
                 <div style='
                     border-bottom: 1px dotted #ccc;
-                    width: 240px;
                     margin-bottom: 0.5rem;
+                    width: 100%;
                 '></div>
                 <div style='white-space: nowrap;'>นายแพทย์นพรัตน์ รัชฎาพร</div>
                 <div style='white-space: nowrap;'>เลขที่ใบอนุญาตผู้ประกอบวิชาชีพเวชกรรม ว.26674</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
+

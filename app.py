@@ -1139,10 +1139,32 @@ if "person" in st.session_state:
         st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
         
         # ดึงค่าจาก DataFrame
+        def summarize_hepatitis_b(hbsag, hbsab, hbcab):
+            hbsag = hbsag.lower().strip()
+            hbsab = hbsab.lower().strip()
+            hbcab = hbcab.lower().strip()
+        
+            if hbsag == "positive":
+                return "กำลังติดเชื้อไวรัสตับอักเสบบี"
+            if hbsag == "negative" and hbsab == "positive" and hbcab == "positive":
+                return "เคยติดเชื้อและมีภูมิคุ้มกันแล้ว"
+            if hbsag == "negative" and hbsab == "positive" and hbcab == "negative":
+                return "มีภูมิคุ้มกันจากการได้รับวัคซีน"
+            if hbsag == "negative" and hbsab == "negative" and hbcab == "positive":
+                return "อาจเคยติดเชื้อไวรัสตับอักเสบบี (latent)"
+            if hbsag == "negative" and hbsab == "negative" and hbcab == "negative":
+                return "ไม่พบภูมิคุ้มกัน ควรพิจารณารับวัคซีน"
+        
+            return "ข้อมูลไม่เพียงพอในการแปลผล"
+        
+        # ดึงค่าจาก DataFrame
         hbsag_raw = person.get("HbsAg", "N/A").strip()
         hbsab_raw = person.get("HbsAb", "N/A").strip()
         hbcab_raw = person.get("HBcAB", "N/A").strip()
-        hep_b_raw = person.get(f"Hepatitis B{str(selected_year)}", "N/A").strip()
+        
+        # ใช้สรุปแทน hep_b_raw เดิม
+        hep_b_summary = summarize_hepatitis_b(hbsag_raw, hbsab_raw, hbcab_raw)
+
         
         # แสดงผลการสรุปเบื้องต้น
         st.markdown(f"""

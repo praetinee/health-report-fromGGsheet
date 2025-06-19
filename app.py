@@ -1225,13 +1225,8 @@ if "person" in st.session_state:
                 font-size: 16px;
                 margin-top: 2rem;
                 text-align: right;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 100%;
-                display: inline-block;
             '>
-                <b>นายแพทย์นพรัตน์ รัชฎาพร</b><br>
-                เลขที่ใบอนุญาตผู้ประกอบวิชาชีพเวชกรรม ว.26674
+                <div style='white-space: nowrap;'>นายแพทย์นพรัตน์ รัชฎาพร</div>
+                <div style='white-space: nowrap;'>เลขที่ใบอนุญาตผู้ประกอบวิชาชีพเวชกรรม ว.26674</div>
             </div>
             """, unsafe_allow_html=True)

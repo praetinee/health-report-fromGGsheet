@@ -1136,8 +1136,8 @@ if "person" in st.session_state:
         # 👉 หัวข้อ Hepatitis A
         st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)
         st.markdown(f"""
-        <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
-        {hep_a_raw}
+        <div style="text-align: left; font-size: 18px; margin: 1rem 0;">
+        {hep_a_result}
         </div>
         """, unsafe_allow_html=True)
         

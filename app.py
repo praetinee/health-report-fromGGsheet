@@ -1191,10 +1191,10 @@ if "person" in st.session_state:
     with doctor_col:
         st.markdown(f"""
         <div style='
-            background-color: #a5d6a7;
-            padding: 16px 24px;
+            background-color: #1B5E20;
+            padding: 20px 24px;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 18px;
             line-height: 1.6;
             margin: 1.5rem 0;
         '>

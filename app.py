@@ -1214,12 +1214,19 @@ if "person" in st.session_state:
         '>
             <b>สรุปความเห็นของแพทย์ :</b> ๒๕๖๒ ไม่ต้องงดน้ำงดอาหาร นัดตรวจการได้ยิน
         </div>
+    
         <div style='
             font-size: 16px;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
             text-align: right;
             white-space: nowrap;
         '>
+            <div style='
+                display: inline-block;
+                border-bottom: 1px dotted #ccc;
+                width: 220px;
+                margin-bottom: 0.5rem;
+            '></div><br>
             <div>นายแพทย์นพรัตน์ รัชฎาพร</div>
             <div>เลขที่ใบอนุญาตผู้ประกอบวิชาชีพเวชกรรม ว.26674</div>
         </div>

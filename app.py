@@ -1202,3 +1202,14 @@ if "person" in st.session_state:
         </div>
         """, unsafe_allow_html=True)
 
+        # ใช้คอลัมน์เพื่อจัดตำแหน่งขวา
+        _, _, col_right = st.columns([3, 3, 2])
+        
+        with col_right:
+            st.markdown("""
+            <div style='font-size: 16px; margin-top: 2rem; text-align: right;'>
+                <b>นายแพทย์พรัตน์ รัฐาภาพร</b><br>
+                เลขที่ใบอนุญาตผู้ประกอบวิชาชีพเวชกรรม ว.26674
+            </div>
+            """, unsafe_allow_html=True)
+

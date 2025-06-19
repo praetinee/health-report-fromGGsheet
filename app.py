@@ -1125,8 +1125,13 @@ if "person" in st.session_state:
         hep_a_col = f"Hepatitis A{y_label}"
         hep_b_col = f"Hepatitis B{y_label}"
         
-        hep_a_raw = person.get(hep_a_col, "-").strip() or "-"
-        hep_b_raw = person.get(hep_b_col, "-").strip() or "-"
+        def interpret_hep(value):
+            if not value or str(value).strip() == "":
+                return "-"
+            return str(value).strip()
+        
+        hep_a_raw = interpret_hep(person.get(hep_a_col))
+        hep_b_raw = interpret_hep(person.get(hep_b_col))
         
         # 👉 หัวข้อ Hepatitis A
         st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบเอ (Viral hepatitis A)"), unsafe_allow_html=True)

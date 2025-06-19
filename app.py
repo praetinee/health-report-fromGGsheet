@@ -1217,17 +1217,16 @@ if "person" in st.session_state:
     
         <div style='
             font-size: 16px;
-            margin-top: 1.5rem;
-            text-align: right;
-            white-space: nowrap;
+            margin-top: 3rem;  /* ✅ เพิ่มพื้นที่สำหรับลายเซ็น */
+            text-align: center;
         '>
             <div style='
                 display: inline-block;
                 border-bottom: 1px dotted #ccc;
-                width: 220px;
+                width: 240px;  /* ✅ ความยาวเส้นพอดีกับชื่อ */
                 margin-bottom: 0.5rem;
             '></div><br>
-            <div>นายแพทย์นพรัตน์ รัชฎาพร</div>
-            <div>เลขที่ใบอนุญาตผู้ประกอบวิชาชีพเวชกรรม ว.26674</div>
+            <div style='white-space: nowrap;'>นายแพทย์นพรัตน์ รัชฎาพร</div>
+            <div style='white-space: nowrap;'>เลขที่ใบอนุญาตผู้ประกอบวิชาชีพเวชกรรม ว.26674</div>
         </div>
         """, unsafe_allow_html=True)

@@ -1166,10 +1166,9 @@ if "person" in st.session_state:
         hep_b_summary = summarize_hepatitis_b(hbsag_raw, hbsab_raw, hbcab_raw)
 
         
-        # แสดงผลการสรุปเบื้องต้น
         st.markdown(f"""
         <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
-        {hep_b_raw}
+        {hep_b_summary}
         </div>
         """, unsafe_allow_html=True)
         

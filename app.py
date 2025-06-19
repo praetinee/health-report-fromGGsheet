@@ -1123,7 +1123,9 @@ if "person" in st.session_state:
         hep_a_col = f"Hepatitis A{y_label}"
         hep_b_col = f"Hepatitis B{y_label}"
         
-        hep_a_raw = person.get(hep_a_col, "N/A").strip() or "N/A"
+        hep_a_raw = person.get(hep_a_col, "").strip()
+        if hep_a_raw.upper() == "N/A" or hep_a_raw == "":
+            hep_a_raw = "-"
         hep_b_raw = person.get(hep_b_col, "N/A").strip() or "N/A"
         
         # 👉 หัวข้อ Hepatitis A

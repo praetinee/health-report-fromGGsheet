@@ -1066,7 +1066,7 @@ if "person" in st.session_state:
         st.markdown(f"""
         <p style='font-size: 16px; line-height: 1.7; margin-bottom: 1rem;'>
             <b>ผลตรวจอุจจาระทั่วไป:</b> {exam_text}<br>
-            <b>ผลตรวจอุจาระเพาะเชื้อ:</b> {cs_text}
+            <b>ผลตรวจอุจจาระเพาะเชื้อ:</b> {cs_text}
         </p>
         """, unsafe_allow_html=True)
     

@@ -1135,27 +1135,46 @@ if "person" in st.session_state:
         </div>
         """, unsafe_allow_html=True)
         
-        # 👉 หัวข้อ Hepatitis B
+        # 👉 หัวข้อ Hepatitis B (ใหม่: รวมตาราง HBsAg/HBsAb/HBcAb)
         st.markdown(render_section_header("ผลการตรวจไวรัสตับอักเสบบี (Viral hepatitis B)"), unsafe_allow_html=True)
-        st.markdown(f"""
-        <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
-        {hep_b_raw}
-        </div>
-        """, unsafe_allow_html=True)
-
-        # 👉 หัวข้อ Hepatitis B Antigen/Antibody
-        st.markdown(render_section_header("ผลการตรวจ HBsAg, HBsAb, HBcAb"), unsafe_allow_html=True)
         
         # ดึงค่าจาก DataFrame
         hbsag_raw = person.get("HbsAg", "N/A").strip()
         hbsab_raw = person.get("HbsAb", "N/A").strip()
         hbcab_raw = person.get("HBcAB", "N/A").strip()
+        hep_b_raw = person.get(f"Hepatitis B{str(selected_year)}", "N/A").strip()
         
-        # แสดงผลแบบหัวตารางด้านบน
-        hepb_table_simple = f"""
-        <table style='width:100%; font-size:16px; text-align:center; border-collapse: collapse; margin-bottom: 1rem;'>
+        # แสดงผลการสรุปเบื้องต้น
+        st.markdown(f"""
+        <div style="text-align: center; font-size: 18px; margin: 1rem 0;">
+        {hep_b_raw}
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # แสดงผลตารางรวม
+        hepb_table_combined = f"""
+        <style>
+            .hepb-table {{
+                width: 100%;
+                font-size: 16px;
+                text-align: center;
+                border-collapse: collapse;
+                margin-bottom: 1rem;
+            }}
+            .hepb-table th, .hepb-table td {{
+                padding: 10px;
+                border: 1px solid #444;
+                color: white;
+            }}
+            .hepb-table th {{
+                color: #bbb;
+                background-color: transparent;
+            }}
+        </style>
+        
+        <table class="hepb-table">
             <thead>
-                <tr style='background-color:#eeeeee; font-weight:bold;'>
+                <tr>
                     <th>HBsAg</th>
                     <th>HBsAb</th>
                     <th>HBcAb</th>
@@ -1170,4 +1189,4 @@ if "person" in st.session_state:
             </tbody>
         </table>
         """
-        st.markdown(hepb_table_simple, unsafe_allow_html=True)
+        st.markdown(hepb_table_combined, unsafe_allow_html=True)

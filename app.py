@@ -333,10 +333,7 @@ def interpret_stool_cs(value):
 
 # ==================== DISPLAY ====================
 if "person" in st.session_state:
-    st.write("🧪 PERSON DATA")
-    st.write(st.session_state["person"])
-    st.write("🧪 AVAILABLE COLUMNS")
-    st.write(df.columns.tolist())
+    person = st.session_state["person"]
 
     selected_year = st.selectbox(
         "📅 เลือกปีที่ต้องการดูผลตรวจรายงาน", 
@@ -417,17 +414,11 @@ if "person" in st.session_state:
     def flag_value(raw, low=None, high=None, higher_is_better=False):
         try:
             val = float(str(raw).replace(",", "").strip())
-    
-            if val.is_integer():
-                formatted_val = f"{val:,.0f}"  # ใช้คอมม่าและไม่ต้องมี .0 ถ้าไม่จำเป็น
-            else:
-                formatted_val = f"{val:,.1f}"
-    
             if higher_is_better:
-                return formatted_val, val < low
+                return f"{val:.1f}", val < low
             if (low is not None and val < low) or (high is not None and val > high):
-                return formatted_val, True
-            return formatted_val, False
+                return f"{val:.1f}", True
+            return f"{val:.1f}", False
         except:
             return "-", False
     

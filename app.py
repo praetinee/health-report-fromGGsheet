@@ -333,7 +333,10 @@ def interpret_stool_cs(value):
 
 # ==================== DISPLAY ====================
 if "person" in st.session_state:
-    person = st.session_state["person"]
+    st.write("🧪 PERSON DATA")
+    st.write(st.session_state["person"])
+    st.write("🧪 AVAILABLE COLUMNS")
+    st.write(df.columns.tolist())
 
     selected_year = st.selectbox(
         "📅 เลือกปีที่ต้องการดูผลตรวจรายงาน", 
